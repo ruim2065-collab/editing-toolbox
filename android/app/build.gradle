@@ -12,7 +12,7 @@ android {
         targetSdk 34
         versionCode 1
         versionName "1.0"
-        setProperty("archivesBaseName", "剪辑接单百宝箱_v1.0")
+        setProperty("archivesBaseName", "百宝箱_v1.0")
     }
 
     signingConfigs {
