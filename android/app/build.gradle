@@ -1,0 +1,45 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.toolbox.editing'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.toolbox.editing"
+        minSdk 23
+        targetSdk 34
+        versionCode 1
+        versionName "1.0"
+        setProperty("archivesBaseName", "剪辑接单百宝箱_v1.0")
+    }
+
+    signingConfigs {
+        release {
+            storeFile rootProject.file('release.keystore')
+            storePassword 'toolbox2026'
+            keyAlias 'toolbox'
+            keyPassword 'toolbox2026'
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.webkit:webkit:1.9.0'
+}
