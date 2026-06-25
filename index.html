@@ -1496,6 +1496,55 @@ el("#revisionForm").addEventListener("submit", event => {
   </script>
   <!-- PWA Service Worker -->
   <script>
+    // Link analyzer - available globally
+    const API_BASE = 'https://editing-toolbox.vercel.app';
+
+    async function analyzeLink(url) {
+      try {
+        const res = await fetch(API_BASE + '/api/fetch?url=' + encodeURIComponent(url), { signal: AbortSignal.timeout(8000) });
+        if (res.ok) return await res.json();
+      } catch(e) {}
+      // Fallback: client-side platform detection
+      var hostname = url.replace(/^https?:\/\//, '').split('/')[0];
+      var platform =
+        hostname.indexOf('douyin') !== -1 ? 'douyin' :
+        hostname.indexOf('xiaohongshu') !== -1 || hostname.indexOf('xhslink') !== -1 ? 'xiaohongshu' :
+        hostname.indexOf('bilibili') !== -1 || hostname.indexOf('b23.tv') !== -1 ? 'bilibili' :
+        hostname.indexOf('youtube') !== -1 || hostname.indexOf('youtu.be') !== -1 ? 'youtube' : 'web';
+      return { platform: platform, url: url, title: '', description: '', fallback: true };
+    }
+
+    window._analyzeLink = analyzeLink;
+
+    // Global link detection: any input field with a pasted URL gets auto-analyzed
+    document.addEventListener('input', function(e) {
+      var val = (e.target.value || '').trim();
+      if (!val.startsWith('http')) return;
+      var input = e.target;
+      var parent = input.closest('.form-panel');
+      if (!parent || input._linkChecked) return;
+      input._linkChecked = true;
+      analyzeLink(val).then(function(data) {
+        var note = parent.querySelector('.link-note');
+        if (!note) {
+          note = document.createElement('div');
+          note.className = 'link-note';
+          note.style.cssText = 'margin:4px 0 0 4px;padding:6px 10px;border-radius:10px;font-size:11px;font-weight:650;display:inline-flex;align-items:center;gap:5px';
+          input.parentNode.appendChild(note);
+        }
+        if (data.error) {
+          note.style.background = '#f5e0dc'; note.style.color = '#6b3a30';
+          note.textContent = '⚠ 无法读取该链接，请手动输入信息';
+        } else {
+          note.style.background = '#d4e8de'; note.style.color = '#2d4d3c';
+          var p = data.platform === 'douyin' ? '抖音' : data.platform === 'xiaohongshu' ? '小红书' : data.platform === 'bilibili' ? 'B站' : data.platform === 'youtube' ? 'YouTube' : '网页';
+          note.innerHTML = '✓ 已识别 <b>' + p + '</b>' + (data.title ? ' | ' + data.title.substring(0, 30) : '') + (data.fallback ? ' (本地识别)' : '');
+        }
+        // Store result for form handlers
+        input._linkData = data;
+      });
+    }, true);
+
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('sw.js').then(reg => {
