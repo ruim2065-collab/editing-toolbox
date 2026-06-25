@@ -20,38 +20,44 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - uses: android-actions/setup-android@v3
-        with:
-          cmdline-tools-version: 11076708
+      - uses: gradle/actions/setup-gradle@v3
+
+      - name: Setup Android SDK
+        run: |
+          ANDROID_SDK=$HOME/android-sdk
+          mkdir -p $ANDROID_SDK/cmdline-tools
+          cd $ANDROID_SDK/cmdline-tools
+          curl -sL -o tools.zip https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
+          unzip -q tools.zip
+          # The zip extracts to cmdline-tools/ directly. Move into 'latest' subdir
+          mkdir -p latest
+          for item in bin lib NOTICE.txt source.properties; do
+            if [ -e "$item" ]; then mv "$item" latest/; fi
+          done
+          yes | latest/bin/sdkmanager --sdk_root=$ANDROID_SDK --licenses
+          latest/bin/sdkmanager --sdk_root=$ANDROID_SDK "platforms;android-34" "build-tools;34.0.0"
+          echo "ANDROID_HOME=$ANDROID_SDK" >> $GITHUB_ENV
+          echo "ANDROID_SDK_ROOT=$ANDROID_SDK" >> $GITHUB_ENV
+
+      - name: Create local.properties
+        working-directory: android
+        run: echo "sdk.dir=$ANDROID_HOME" > local.properties
 
       - name: Generate keystore
-        working-directory: android
         run: |
           keytool -genkey -v \
-            -keystore release.keystore \
+            -keystore android/release.keystore \
             -alias toolbox \
             -keyalg RSA -keysize 2048 -validity 10000 \
-            -storepass toolbox2026 \
-            -keypass toolbox2026 \
-            -dname "CN=百宝箱, OU=Toolbox, O=Editing, L=Beijing, ST=Beijing, C=CN" \
-            -noprompt
+            -storepass toolbox2026 -keypass toolbox2026 \
+            -dname "CN=Toolbox" -noprompt
 
-      - name: Grant gradlew permission
+      - name: Build APK
         working-directory: android
-        run: chmod +x gradlew 2>/dev/null || true
-
-      - name: Setup Gradle wrapper
-        working-directory: android
-        run: |
-          if [ ! -f gradlew ]; then
-            gradle wrapper --gradle-version 8.5
-          fi
-
-      - name: Build release APK
-        working-directory: android
-        run: ./gradlew assembleRelease
+        run: gradle assembleRelease --no-daemon
 
       - name: Upload APK
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: 剪辑接单百宝箱-APK
