@@ -20,28 +20,25 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - uses: gradle/actions/setup-gradle@v3
+      - name: Install Gradle 8.5
+        run: |
+          curl -sL https://services.gradle.org/distributions/gradle-8.5-bin.zip -o /tmp/gradle.zip
+          sudo unzip -q /tmp/gradle.zip -d /opt
+          echo "/opt/gradle-8.5/bin" >> $GITHUB_PATH
 
       - name: Setup Android SDK
         run: |
-          ANDROID_SDK=$HOME/android-sdk
-          mkdir -p $ANDROID_SDK/cmdline-tools
-          cd $ANDROID_SDK/cmdline-tools
-          curl -sL -o tools.zip https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
+          SDK=$HOME/android-sdk
+          mkdir -p $SDK/cmdline-tools
+          cd $SDK/cmdline-tools
+          curl -sL https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip -o tools.zip
           unzip -q tools.zip
-          # The zip extracts to cmdline-tools/ directly. Move into 'latest' subdir
           mkdir -p latest
-          for item in bin lib NOTICE.txt source.properties; do
-            if [ -e "$item" ]; then mv "$item" latest/; fi
-          done
-          yes | latest/bin/sdkmanager --sdk_root=$ANDROID_SDK --licenses
-          latest/bin/sdkmanager --sdk_root=$ANDROID_SDK "platforms;android-34" "build-tools;34.0.0"
-          echo "ANDROID_HOME=$ANDROID_SDK" >> $GITHUB_ENV
-          echo "ANDROID_SDK_ROOT=$ANDROID_SDK" >> $GITHUB_ENV
-
-      - name: Create local.properties
-        working-directory: android
-        run: echo "sdk.dir=$ANDROID_HOME" > local.properties
+          shopt -s dotglob
+          for f in *; do [ "$f" != "latest" ] && [ "$f" != "tools.zip" ] && mv "$f" latest/; done
+          yes | latest/bin/sdkmanager --sdk_root=$SDK --licenses
+          latest/bin/sdkmanager --sdk_root=$SDK "platforms;android-34" "build-tools;34.0.0" "platform-tools"
+          echo "ANDROID_HOME=$SDK" >> $GITHUB_ENV
 
       - name: Generate keystore
         run: |
@@ -54,11 +51,17 @@ jobs:
 
       - name: Build APK
         working-directory: android
-        run: gradle assembleRelease --no-daemon
+        run: |
+          echo "sdk.dir=$ANDROID_HOME" > local.properties
+          gradle assembleRelease --no-daemon 2>&1
+
+      - name: Debug
+        if: always()
+        run: find . -name "*.apk" 2>/dev/null; ls -R android/app/build/outputs/apk/ 2>/dev/null || true
 
       - name: Upload APK
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: 剪辑接单百宝箱-APK
-          path: android/app/build/outputs/apk/release/*.apk
+          name: APK
+          path: "**/*.apk"
