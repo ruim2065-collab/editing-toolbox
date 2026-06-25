@@ -1,0 +1,27 @@
+{
+  "name": "剪辑接单百宝箱",
+  "short_name": "百宝箱",
+  "description": "剪辑课学员专属接单、报价、沟通、素材与作品集工具箱",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#aaa9a5",
+  "theme_color": "#292a2d",
+  "lang": "zh-CN",
+  "categories": ["productivity", "education", "utilities"],
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

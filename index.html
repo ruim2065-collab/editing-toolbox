@@ -1,0 +1,1510 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="剪辑接单百宝箱——剪辑课程学员专属接单、沟通、素材与作品集工具箱。" />
+  <title>剪辑接单百宝箱</title>
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#292a2d" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="百宝箱" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+  <style>
+    :root {
+      --bg: #aaa9a5;
+      --shell: #b8b7b3;
+      --panel: #c3c2be;
+      --panel-light: #cecdc9;
+      --panel-dark: #a3a29e;
+      --ink: #171817;
+      --muted: #686965;
+      --line: rgba(54, 55, 53, .16);
+      --light-line: rgba(255, 255, 255, .42);
+      --rail: #222326;
+      --accent: #333539;
+      --focus: #5d8cb0;
+      --radius-xl: 30px;
+      --radius-lg: 22px;
+      --radius-md: 16px;
+      --shadow-shell: 18px 24px 48px rgba(41, 42, 40, .22), -10px -10px 28px rgba(255, 255, 255, .20);
+      --shadow-raised: 7px 8px 14px rgba(61, 62, 59, .25), -5px -5px 11px rgba(255, 255, 255, .50), inset 0 1px 1px rgba(255,255,255,.55);
+      --shadow-soft: 4px 5px 10px rgba(61, 62, 59, .18), -3px -3px 8px rgba(255, 255, 255, .38);
+      --shadow-inset: inset 3px 4px 8px rgba(61, 62, 59, .20), inset -3px -3px 7px rgba(255, 255, 255, .46);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-width: 320px;
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: "Microsoft YaHei UI", "PingFang SC", "Noto Sans SC", system-ui, sans-serif;
+      background:
+        radial-gradient(circle at 13% 5%, rgba(255,255,255,.22), transparent 28%),
+        radial-gradient(circle at 92% 95%, rgba(59,60,58,.14), transparent 36%),
+        linear-gradient(135deg, #b9b8b4 0%, var(--bg) 48%, #9e9d99 100%);
+    }
+
+    button, input, textarea, select { font: inherit; color: inherit; }
+    button { border: 0; cursor: pointer; }
+    button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
+      outline: 2px solid rgba(93, 140, 176, .66);
+      outline-offset: 3px;
+    }
+
+    .app-shell {
+      display: grid;
+      grid-template-columns: 76px 252px minmax(0, 1fr);
+      min-height: calc(100vh - 40px);
+      margin: 20px;
+      border: 1px solid rgba(255,255,255,.28);
+      border-radius: 34px;
+      background: rgba(185, 184, 180, .80);
+      box-shadow: var(--shadow-shell), inset 0 1px rgba(255,255,255,.42);
+      overflow: hidden;
+      backdrop-filter: blur(18px) saturate(90%);
+    }
+
+    .icon-rail {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 18px 10px;
+      background: linear-gradient(180deg, #292a2d, #202124 68%, #292a2d);
+      border-right: 1px solid rgba(255,255,255,.12);
+      box-shadow: 10px 0 24px rgba(42,43,41,.20), inset -1px 0 rgba(0,0,0,.36);
+      z-index: 5;
+    }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 48px;
+      height: 48px;
+      margin-bottom: 24px;
+      border-radius: 17px;
+      color: #f1f1ee;
+      font-size: 21px;
+      font-weight: 300;
+      background: linear-gradient(145deg, #333438, #1c1d20);
+      box-shadow: 6px 7px 13px rgba(0,0,0,.34), -3px -3px 8px rgba(255,255,255,.09), inset 0 1px rgba(255,255,255,.13);
+    }
+
+    .rail-line { width: 32px; height: 1px; background: rgba(255,255,255,.14); margin-bottom: 15px; }
+    .rail-nav { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+    .rail-button {
+      position: relative;
+      display: grid;
+      place-items: center;
+      width: 48px;
+      height: 48px;
+      margin: auto;
+      border-radius: 15px;
+      color: rgba(255,255,255,.72);
+      background: transparent;
+      transition: .22s ease;
+    }
+    .rail-button:hover { color: #fff; background: rgba(255,255,255,.08); }
+    .rail-button.active {
+      color: #fff;
+      background: linear-gradient(145deg, #3d3e42, #2d2e31);
+      box-shadow: 4px 5px 9px rgba(0,0,0,.30), -2px -2px 6px rgba(255,255,255,.08), inset 0 1px rgba(255,255,255,.16);
+    }
+    .rail-button .icon { font-size: 17px; font-weight: 700; letter-spacing: -.08em; }
+    .rail-button .tooltip {
+      position: absolute;
+      left: 58px;
+      top: 50%;
+      transform: translateY(-50%) translateX(-4px);
+      padding: 7px 10px;
+      color: #f5f5f3;
+      white-space: nowrap;
+      font-size: 12px;
+      border-radius: 9px;
+      background: #242528;
+      opacity: 0;
+      pointer-events: none;
+      transition: .18s ease;
+      box-shadow: 0 8px 18px rgba(0,0,0,.22);
+      z-index: 20;
+    }
+    .rail-button:hover .tooltip { opacity: 1; transform: translateY(-50%); }
+    .rail-spacer { flex: 1; }
+    .rail-settings { margin-top: 18px; }
+
+    .side-panel {
+      display: flex;
+      flex-direction: column;
+      padding: 24px 18px 20px;
+      border-right: 1px solid rgba(70,71,68,.15);
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.18), transparent 42%),
+        rgba(190, 189, 185, .72);
+      box-shadow: inset -1px 0 rgba(255,255,255,.30);
+    }
+
+    .window-dots { display: flex; gap: 9px; margin: 2px 0 25px 4px; }
+    .window-dots i {
+      width: 11px; height: 11px; border-radius: 50%;
+      box-shadow: inset 1px 1px 2px rgba(255,255,255,.8), 1px 2px 4px rgba(59,60,57,.24);
+    }
+    .window-dots i:nth-child(1) { background: #b98c98; }
+    .window-dots i:nth-child(2) { background: #b7aa78; }
+    .window-dots i:nth-child(3) { background: #82aaa0; }
+
+    .brand-copy { padding: 0 7px 22px; border-bottom: 1px solid var(--line); }
+    .eyebrow {
+      margin: 0 0 8px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+    }
+    .brand-copy h1 { margin: 0; font-size: 20px; line-height: 1.35; letter-spacing: -.02em; }
+    .brand-copy p { margin: 8px 0 0; color: var(--muted); font-size: 12px; line-height: 1.7; }
+
+    .side-section { padding: 20px 0 0; }
+    .side-label { margin: 0 8px 10px; color: #747570; font-size: 12px; }
+    .side-nav { display: flex; flex-direction: column; gap: 7px; }
+    .side-nav button {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      width: 100%;
+      min-height: 44px;
+      padding: 0 14px;
+      text-align: left;
+      border-radius: 14px;
+      background: transparent;
+      transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+    }
+    .side-nav button:hover { background: rgba(255,255,255,.14); }
+    .side-nav button.active {
+      background:
+        linear-gradient(110deg, rgba(255,255,255,.36), rgba(199,211,208,.25) 64%, rgba(255,255,255,.12)),
+        #c1c1bd;
+      border: 1px solid rgba(255,255,255,.44);
+      box-shadow: var(--shadow-soft), inset 0 1px 1px rgba(255,255,255,.65);
+    }
+    .side-nav button:active { transform: translateY(1px); box-shadow: var(--shadow-inset); }
+    .nav-symbol {
+      display: grid; place-items: center;
+      width: 25px; height: 25px;
+      color: #343532;
+      font-size: 12px;
+      font-weight: 800;
+      border-radius: 8px;
+      background: rgba(255,255,255,.17);
+      box-shadow: inset 0 1px rgba(255,255,255,.35);
+      flex: 0 0 auto;
+    }
+    .nav-name { font-size: 14px; font-weight: 650; }
+    .nav-arrow { margin-left: auto; color: #797a76; font-size: 14px; }
+
+    .side-note {
+      margin-top: auto;
+      padding: 15px;
+      border: 1px solid rgba(255,255,255,.27);
+      border-radius: 18px;
+      color: #4e4f4c;
+      font-size: 12px;
+      line-height: 1.65;
+      background: rgba(255,255,255,.11);
+      box-shadow: inset 0 1px rgba(255,255,255,.28);
+    }
+    .side-note strong { display: block; margin-bottom: 4px; color: var(--ink); font-size: 13px; }
+
+    .main {
+      min-width: 0;
+      padding: 28px;
+      background:
+        radial-gradient(circle at 88% 5%, rgba(255,255,255,.22), transparent 29%),
+        linear-gradient(150deg, rgba(205,204,200,.90), rgba(174,173,169,.94));
+      overflow-x: hidden;
+    }
+
+    .mobile-header { display: none; }
+    .topbar {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+    .page-heading h2 { margin: 2px 0 7px; font-size: clamp(27px, 3vw, 42px); letter-spacing: -.055em; font-weight: 720; }
+    .page-heading p { margin: 0; color: #5f605c; font-size: 14px; line-height: 1.7; }
+    .student-badge {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px 10px 10px;
+      border-radius: 17px;
+      background: #c8c7c3;
+      box-shadow: var(--shadow-raised);
+      white-space: nowrap;
+    }
+    .student-badge i {
+      display: grid; place-items: center;
+      width: 32px; height: 32px;
+      border-radius: 11px;
+      color: #eee;
+      font-size: 11px;
+      font-style: normal;
+      font-weight: 800;
+      background: #2f3033;
+      box-shadow: 3px 4px 7px rgba(50,51,49,.28);
+    }
+    .student-badge span { font-size: 12px; font-weight: 650; }
+
+    .view { display: none; animation: viewIn .38s cubic-bezier(.2,.8,.2,1); }
+    .view.active { display: block; }
+    @keyframes viewIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+    .surface {
+      border: 1px solid rgba(255,255,255,.31);
+      border-radius: var(--radius-xl);
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.18), transparent 44%),
+        rgba(194,193,189,.72);
+      box-shadow: 10px 13px 28px rgba(65,66,63,.18), -6px -6px 18px rgba(255,255,255,.18), inset 0 1px rgba(255,255,255,.38);
+    }
+
+    .welcome {
+      position: relative;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 28px;
+      align-items: center;
+      padding: 34px;
+      margin-bottom: 18px;
+    }
+    .welcome::after {
+      content: "";
+      position: absolute;
+      right: -80px; top: -120px;
+      width: 280px; height: 280px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(228,229,226,.46), rgba(171,181,179,.10) 48%, transparent 70%);
+      pointer-events: none;
+    }
+    .welcome h3 { margin: 0 0 13px; font-size: clamp(23px, 2.5vw, 35px); letter-spacing: -.04em; }
+    .welcome p { max-width: 740px; margin: 0; color: #5b5c58; font-size: 14px; line-height: 1.85; }
+    .welcome-seal {
+      position: relative;
+      z-index: 1;
+      display: grid; place-items: center;
+      width: 102px; height: 102px;
+      border-radius: 31px;
+      background: linear-gradient(145deg, #cccbc7, #b6b5b1);
+      box-shadow: var(--shadow-raised);
+    }
+    .welcome-seal::before {
+      content: "8";
+      display: grid; place-items: center;
+      width: 66px; height: 66px;
+      border-radius: 23px;
+      color: #f0f0ed;
+      font-size: 31px;
+      font-weight: 750;
+      background: linear-gradient(145deg, #3e3f42, #292a2d);
+      box-shadow: 5px 6px 12px rgba(56,57,54,.30), inset 0 1px rgba(255,255,255,.12);
+    }
+
+    .stat-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      margin-bottom: 18px;
+      overflow: hidden;
+    }
+    .stat { min-height: 108px; padding: 23px 25px; border-right: 1px solid var(--line); }
+    .stat:last-child { border-right: 0; }
+    .stat small { display: block; margin-bottom: 10px; color: #73746f; font-size: 11px; }
+    .stat strong { display: block; font-size: 16px; line-height: 1.45; }
+
+    .section-head { display: flex; align-items: end; justify-content: space-between; gap: 15px; margin: 28px 3px 15px; }
+    .section-head h3 { margin: 0; font-size: 20px; letter-spacing: -.025em; }
+    .section-head p { margin: 0; color: #6c6d68; font-size: 12px; }
+    .tool-list { overflow: hidden; }
+    .tool-row {
+      display: grid;
+      grid-template-columns: 48px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 16px;
+      min-height: 84px;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--line);
+      transition: background .2s ease;
+    }
+    .tool-row:last-child { border-bottom: 0; }
+    .tool-row:hover { background: rgba(255,255,255,.10); }
+    .tool-number {
+      display: grid; place-items: center;
+      width: 45px; height: 45px;
+      color: #363734;
+      font-size: 12px;
+      font-weight: 800;
+      border-radius: 15px;
+      background: #c6c5c1;
+      box-shadow: var(--shadow-soft);
+    }
+    .tool-row h4 { margin: 0 0 5px; font-size: 15px; }
+    .tool-row p { margin: 0; color: #676864; font-size: 12px; line-height: 1.55; }
+
+    .round-button, .primary-button, .secondary-button, .chip-button {
+      background: linear-gradient(145deg, #cfceca, #b8b7b3);
+      border: 1px solid rgba(255,255,255,.36);
+      box-shadow: var(--shadow-raised);
+      transition: transform .16s ease, box-shadow .16s ease, filter .16s ease;
+    }
+    .round-button:hover, .primary-button:hover, .secondary-button:hover, .chip-button:hover { filter: brightness(1.025); transform: translateY(-1px); }
+    .round-button:active, .primary-button:active, .secondary-button:active, .chip-button:active,
+    .is-pressed { transform: translateY(1px); box-shadow: var(--shadow-inset); }
+    .round-button { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; font-size: 17px; }
+    .primary-button {
+      min-height: 48px;
+      padding: 0 23px;
+      color: #f3f3f0;
+      font-weight: 700;
+      border-color: rgba(255,255,255,.16);
+      border-radius: 16px;
+      background: linear-gradient(145deg, #46474a, #292a2d);
+      box-shadow: 7px 8px 15px rgba(51,52,50,.31), -4px -4px 9px rgba(255,255,255,.25), inset 0 1px rgba(255,255,255,.15);
+    }
+    .secondary-button { min-height: 45px; padding: 0 18px; border-radius: 15px; font-weight: 650; }
+    .button-loading { pointer-events: none; opacity: .78; }
+    .button-loading::after {
+      content: "";
+      display: inline-block;
+      width: 12px; height: 12px;
+      margin-left: 9px;
+      border: 2px solid rgba(255,255,255,.32);
+      border-top-color: #fff;
+      border-radius: 50%;
+      vertical-align: -2px;
+      animation: spin .7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .tool-layout { display: grid; grid-template-columns: minmax(0, .95fr) minmax(360px, 1.05fr); gap: 18px; align-items: start; }
+    .form-panel, .result-panel { padding: 25px; }
+    .result-panel { position: sticky; top: 20px; min-height: 500px; }
+    .panel-title { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 21px; }
+    .panel-title h3 { margin: 0; font-size: 18px; }
+    .panel-title span {
+      padding: 7px 10px;
+      color: #676864;
+      font-size: 10px;
+      font-weight: 700;
+      border-radius: 999px;
+      background: rgba(255,255,255,.13);
+      border: 1px solid rgba(255,255,255,.25);
+    }
+
+    .field-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    .field { min-width: 0; }
+    .field.full { grid-column: 1 / -1; }
+    .field label { display: block; margin: 0 0 8px 4px; color: #4c4d4a; font-size: 12px; font-weight: 700; }
+    .control {
+      width: 100%;
+      min-height: 47px;
+      padding: 0 16px;
+      border: 1px solid rgba(255,255,255,.28);
+      border-radius: 16px;
+      background: rgba(197,196,192,.80);
+      box-shadow: var(--shadow-inset);
+      transition: border-color .18s ease, background .18s ease;
+    }
+    textarea.control { min-height: 112px; padding-top: 14px; line-height: 1.65; resize: vertical; }
+    .control::placeholder { color: #82837e; }
+    .control:focus { background: rgba(204,203,199,.90); border-color: rgba(93,140,176,.45); }
+    select.control { appearance: none; background-image: linear-gradient(45deg, transparent 50%, #555 50%), linear-gradient(135deg, #555 50%, transparent 50%); background-position: calc(100% - 18px) 20px, calc(100% - 13px) 20px; background-size: 5px 5px; background-repeat: no-repeat; }
+
+    .choice-row { display: flex; flex-wrap: wrap; gap: 9px; }
+    .choice { position: relative; }
+    .choice input { position: absolute; opacity: 0; pointer-events: none; }
+    .choice span {
+      display: inline-flex;
+      align-items: center;
+      min-height: 39px;
+      padding: 0 14px;
+      border: 1px solid rgba(255,255,255,.31);
+      border-radius: 13px;
+      font-size: 12px;
+      background: linear-gradient(145deg, #cbc9c5, #b7b6b2);
+      box-shadow: var(--shadow-soft);
+      cursor: pointer;
+      transition: .17s ease;
+    }
+    .choice input:checked + span {
+      color: #f3f3f0;
+      background: linear-gradient(145deg, #4a4b4e, #303135);
+      box-shadow: 4px 5px 9px rgba(54,55,52,.28), inset 0 1px rgba(255,255,255,.12);
+    }
+    .choice input:focus-visible + span { outline: 2px solid var(--focus); outline-offset: 3px; }
+
+    .form-actions { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-top: 22px; padding-top: 20px; border-top: 1px solid var(--line); }
+    .form-tip { color: #777873; font-size: 11px; line-height: 1.5; }
+
+    .empty-result {
+      display: grid;
+      place-items: center;
+      min-height: 390px;
+      padding: 30px;
+      text-align: center;
+      color: #6c6d68;
+      border: 1px dashed rgba(70,71,68,.24);
+      border-radius: 22px;
+      background: rgba(255,255,255,.06);
+    }
+    .empty-result .empty-icon {
+      display: grid; place-items: center;
+      width: 72px; height: 72px;
+      margin: 0 auto 17px;
+      border-radius: 24px;
+      color: #4d4e4b;
+      font-weight: 800;
+      background: #c6c5c1;
+      box-shadow: var(--shadow-raised);
+    }
+    .empty-result strong { display: block; margin-bottom: 8px; color: #3d3e3b; }
+    .empty-result p { max-width: 320px; margin: 0; font-size: 12px; line-height: 1.7; }
+
+    .result-content { animation: resultIn .35s ease; }
+    @keyframes resultIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+    .result-hero {
+      padding: 22px;
+      margin-bottom: 13px;
+      border-radius: 20px;
+      color: #f3f3f0;
+      background: linear-gradient(145deg, #444548, #2e2f32);
+      box-shadow: 7px 9px 17px rgba(55,56,53,.28), inset 0 1px rgba(255,255,255,.12);
+    }
+    .result-hero small { color: rgba(255,255,255,.62); }
+    .result-hero h4 { margin: 8px 0 0; font-size: 24px; }
+    .result-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .result-card {
+      padding: 17px;
+      border: 1px solid rgba(255,255,255,.25);
+      border-radius: 18px;
+      background: rgba(204,203,199,.46);
+      box-shadow: 3px 4px 9px rgba(62,63,60,.10), inset 0 1px rgba(255,255,255,.25);
+    }
+    .result-card.full { grid-column: 1 / -1; }
+    .result-card h5 { margin: 0 0 9px; font-size: 13px; }
+    .result-card p, .result-card li { color: #555652; font-size: 12px; line-height: 1.7; }
+    .result-card p { margin: 0; white-space: pre-line; }
+    .result-card ul { margin: 0; padding-left: 18px; }
+    .result-tag { display: inline-flex; margin: 0 5px 6px 0; padding: 6px 9px; border-radius: 9px; color: #454643; font-size: 10px; font-weight: 700; background: #c7c6c2; box-shadow: var(--shadow-soft); }
+    .result-toolbar { display: flex; justify-content: flex-end; gap: 9px; margin-top: 14px; }
+
+    .upload-zone {
+      position: relative;
+      display: grid;
+      place-items: center;
+      min-height: 210px;
+      padding: 28px;
+      text-align: center;
+      border: 1.5px dashed rgba(55,56,53,.34);
+      border-radius: 22px;
+      background: rgba(255,255,255,.07);
+      transition: .2s ease;
+      overflow: hidden;
+    }
+    .upload-zone:hover, .upload-zone.dragging { background: rgba(255,255,255,.15); border-color: rgba(55,56,53,.52); }
+    .upload-zone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+    .upload-zone .upload-symbol {
+      display: grid; place-items: center;
+      width: 58px; height: 58px;
+      margin: 0 auto 14px;
+      border-radius: 19px;
+      font-size: 22px;
+      background: #c9c8c4;
+      box-shadow: var(--shadow-raised);
+    }
+    .upload-zone strong { display: block; margin-bottom: 6px; font-size: 14px; }
+    .upload-zone p { margin: 0; color: #73746f; font-size: 11px; line-height: 1.6; }
+    .preview-image { display: none; width: 100%; max-height: 230px; object-fit: cover; border-radius: 17px; box-shadow: var(--shadow-soft); }
+    .file-list { display: grid; gap: 8px; margin-top: 12px; }
+    .file-item { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 13px; border-radius: 13px; font-size: 11px; background: rgba(255,255,255,.11); border: 1px solid rgba(255,255,255,.20); }
+    .file-item span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    .result-table-wrap { overflow-x: auto; border-radius: 16px; border: 1px solid var(--line); }
+    .result-table { width: 100%; min-width: 620px; border-collapse: collapse; font-size: 11px; }
+    .result-table th, .result-table td { padding: 12px 13px; text-align: left; border-bottom: 1px solid var(--line); }
+    .result-table th { color: #555652; background: rgba(255,255,255,.12); }
+    .result-table tr:last-child td { border-bottom: 0; }
+    .priority { display: inline-flex; padding: 5px 8px; border-radius: 8px; background: #bbb9b5; box-shadow: var(--shadow-soft); }
+
+    .mobile-nav-overlay { display: none; }
+    .toast {
+      position: fixed;
+      right: 28px;
+      bottom: 28px;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      max-width: 330px;
+      padding: 14px 17px;
+      border: 1px solid rgba(255,255,255,.30);
+      border-radius: 17px;
+      color: #2f302e;
+      background: #c9c8c4;
+      box-shadow: var(--shadow-raised);
+      opacity: 0;
+      transform: translateY(16px);
+      pointer-events: none;
+      transition: .25s ease;
+    }
+    .toast.show { opacity: 1; transform: none; }
+    .toast i { display: grid; place-items: center; width: 26px; height: 26px; color: #eee; font-style: normal; border-radius: 50%; background: #35363a; }
+    .toast span { font-size: 12px; line-height: 1.5; }
+
+    @media (max-width: 1080px) {
+      .app-shell { grid-template-columns: 68px 218px minmax(0, 1fr); margin: 10px; min-height: calc(100vh - 20px); }
+      .main { padding: 22px; }
+      .tool-layout { grid-template-columns: 1fr; }
+      .result-panel { position: static; }
+      .stat-strip { grid-template-columns: repeat(2, 1fr); }
+      .stat:nth-child(2) { border-right: 0; }
+      .stat:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+    }
+
+    @media (max-width: 760px) {
+      body { background: #a9a8a4; }
+      .app-shell { display: block; min-height: 100vh; margin: 0; border: 0; border-radius: 0; }
+      .icon-rail, .side-panel { display: none; }
+      .main { min-height: 100vh; padding: 16px; }
+      .mobile-header {
+        position: sticky;
+        top: 10px;
+        z-index: 40;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 23px;
+        padding: 10px 12px;
+        border: 1px solid rgba(255,255,255,.30);
+        border-radius: 18px;
+        background: rgba(190,189,185,.88);
+        box-shadow: var(--shadow-soft);
+        backdrop-filter: blur(18px);
+      }
+      .mobile-header strong { font-size: 14px; }
+      .menu-button { width: 42px; height: 42px; border-radius: 14px; color: #eee; background: #2c2d30; box-shadow: 4px 5px 9px rgba(55,56,53,.28); }
+      .topbar { align-items: center; }
+      .student-badge { display: none; }
+      .page-heading h2 { font-size: 29px; }
+      .welcome { grid-template-columns: 1fr; padding: 25px; }
+      .welcome-seal { display: none; }
+      .stat-strip { grid-template-columns: 1fr; }
+      .stat { border-right: 0; border-bottom: 1px solid var(--line); }
+      .stat:last-child { border-bottom: 0; }
+      .tool-row { grid-template-columns: 42px minmax(0,1fr) auto; padding: 13px 14px; }
+      .field-grid, .result-grid { grid-template-columns: 1fr; }
+      .field.full, .result-card.full { grid-column: auto; }
+      .form-panel, .result-panel { padding: 18px; }
+      .form-actions { align-items: stretch; flex-direction: column; }
+      .primary-button { width: 100%; }
+      .mobile-nav-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 90;
+        display: block;
+        padding: 18px;
+        background: rgba(50,51,49,.42);
+        backdrop-filter: blur(11px);
+        opacity: 0;
+        pointer-events: none;
+        transition: .24s ease;
+      }
+      .mobile-nav-overlay.open { opacity: 1; pointer-events: auto; }
+      .mobile-drawer {
+        width: min(330px, 88vw);
+        height: 100%;
+        padding: 22px;
+        border-radius: 27px;
+        background: #bdbcb8;
+        box-shadow: 16px 20px 40px rgba(40,41,39,.32), inset 0 1px rgba(255,255,255,.38);
+        transform: translateX(-105%);
+        transition: .32s cubic-bezier(.2,.8,.2,1);
+      }
+      .mobile-nav-overlay.open .mobile-drawer { transform: none; }
+      .drawer-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
+      .drawer-head h3 { margin: 0; font-size: 18px; }
+      .drawer-close { width: 39px; height: 39px; border-radius: 13px; background: #c9c8c4; box-shadow: var(--shadow-soft); }
+      .mobile-drawer .side-nav button { margin-bottom: 6px; }
+      .toast { right: 16px; bottom: 16px; left: 16px; max-width: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="icon-rail" aria-label="快捷导航">
+      <div class="brand-mark">剪</div>
+      <div class="rail-line"></div>
+      <nav class="rail-nav" id="railNav"></nav>
+      <div class="rail-spacer"></div>
+      <button class="rail-button rail-settings" type="button" data-toast="第一版暂不开放设置功能">
+        <span class="icon">设</span><span class="tooltip">设置</span>
+      </button>
+    </aside>
+
+    <aside class="side-panel">
+      <div class="window-dots" aria-hidden="true"><i></i><i></i><i></i></div>
+      <div class="brand-copy">
+        <p class="eyebrow">Editing Toolkit</p>
+        <h1>剪辑接单百宝箱</h1>
+        <p>剪辑小白接单、对标拆解、素材辅助与作品集包装工具箱。</p>
+      </div>
+      <div class="side-section">
+        <p class="side-label">学员工具</p>
+        <nav class="side-nav" id="sideNav"></nav>
+      </div>
+      <div class="side-note">
+        <strong>剪辑课学员专属增值工具箱</strong>
+        帮助你从「会剪」到「会接单、会报价、会沟通、会交付」。
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="mobile-header">
+        <strong>剪辑接单百宝箱</strong>
+        <button class="menu-button" id="menuButton" type="button" aria-label="打开导航">☰</button>
+      </header>
+
+      <div class="topbar">
+        <div class="page-heading">
+          <h2 id="pageTitle">首页</h2>
+          <p id="pageSubtitle">剪辑课学员专属增值工具箱 · 所有结果均为第一版模拟演示</p>
+        </div>
+        <div class="student-badge"><i>课</i><span>学员工具后台</span></div>
+      </div>
+
+      <section class="view active" id="view-home">
+        <div class="welcome surface">
+          <div>
+            <p class="eyebrow">Welcome / 课程增值工具</p>
+            <h3>欢迎使用剪辑接单百宝箱</h3>
+            <p>这是一套给剪辑课学员使用的增值工具，帮助你完成接单报价、客户沟通、修改意见整理、对标拆解、字体参考、字幕优化和作品集包装。</p>
+          </div>
+          <div class="welcome-seal" aria-label="8个内置工具"></div>
+        </div>
+
+        <div class="stat-strip surface">
+          <div class="stat"><small>已内置工具</small><strong>12 个</strong></div>
+          <div class="stat"><small>适用场景</small><strong>接单 / 报价 / 作品集 / 对标 / 素材</strong></div>
+          <div class="stat"><small>推荐阶段</small><strong>学完基础剪辑后</strong></div>
+          <div class="stat"><small>核心目标</small><strong>从会剪到会接单</strong></div>
+        </div>
+
+        <div class="section-head">
+          <div><h3>工具入口</h3><p>按你的当前任务选择工具</p></div>
+          <p>模拟版 · 直接体验完整流程</p>
+        </div>
+        <div class="tool-list surface" id="homeToolList"></div>
+      </section>
+
+      <section class="view" id="view-quote"></section>
+      <section class="view" id="view-talk"></section>
+      <section class="view" id="view-revision"></section>
+      <section class="view" id="view-portfolio"></section>
+      <section class="view" id="view-material"></section>
+      <section class="view" id="view-benchmark"></section>
+      <section class="view" id="view-subtitle"></section>
+  
+      <section class="view" id="view-fontguide"></section>
+      <section class="view" id="view-music"></section>
+      <section class="view" id="view-sfx"></section>
+      <section class="view" id="view-organize"></section>
+  </main>
+  </div>
+
+  <div class="mobile-nav-overlay" id="mobileOverlay">
+    <div class="mobile-drawer">
+      <div class="drawer-head"><h3>选择工具</h3><button class="drawer-close" id="drawerClose" type="button">×</button></div>
+      <nav class="side-nav" id="mobileNav"></nav>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"><i>✓</i><span></span></div>
+
+  <script>
+    const tools = [
+      { id: "home", name: "首页", short: "首", title: "首页", desc: "查看工具概览与使用入口", subtitle: "剪辑课学员专属增值工具箱 · 所有结果均为第一版模拟演示" },
+      { id: "quote", name: "接单工具", short: "价", title: "接单报价助手", desc: "快速生成报价参考、交付清单和确认问题", subtitle: "根据客户类型、视频需求和交付条件生成报价参考" },
+      { id: "talk", name: "沟通话术", short: "聊", title: "客户沟通话术助手", desc: "面对压价、催稿和加需求时更从容", subtitle: "把客户原话整理成温和、专业与强边界三种回复" },
+      { id: "revision", name: "修改整理", short: "改", title: "修改意见整理助手", desc: "把零散反馈变成可执行修改清单", subtitle: "整理时间点、修改类型、优先级与二次确认事项" },
+      { id: "portfolio", name: "作品集工具", short: "集", title: "作品集包装助手", desc: "把剪过的视频包装成能接单的案例", subtitle: "生成作品集标题、案例介绍与多平台发布文案" },
+      { id: "material", name: "素材工具", short: "材", title: "素材辅助工具", desc: "字体参考与图片视频混合制作方案", subtitle: "识别风格、整理素材，并生成作品集制作方案" },
+      { id: "benchmark", name: "对标拆解", short: "拆", title: "对标链接拆解助手", desc: "拆解爆款视频结构与可迁移方法", subtitle: "只做内容拆解，不下载、不爬取、不违规解析" },
+      { id: "subtitle", name: "字幕优化", short: "字", title: "字幕文案优化助手", desc: "让普通口播更适合短视频观看", subtitle: "优化字幕表达、断句、封面大字与强调关键词" },
+      { id: "fontguide", name: "字体速查", short: "体", title: "剪映字体速查助手", desc: "根据视频风格推荐剪映内置字体搭配", subtitle: "查找适合你视频风格的剪映字体、字号与排版方案" },
+      { id: "music", name: "BGM搜歌", short: "曲", title: "BGM搜歌助手", desc: "根据视频情绪和节奏推荐背景音乐", subtitle: "按风格/情绪/节奏搜歌，推荐剪映曲库和免版权音乐来源" },
+      { id: "sfx", name: "音效特效", short: "听", title: "剪映音效特效速查", desc: "快速找到适合的音效和转场特效", subtitle: "按场景查找剪映音效库和特效，含节奏卡点音效指南" },
+      { id: "organize", name: "素材整理", short: "夹", title: "素材库整理助手", desc: "自动生成项目文件夹结构和命名规范", subtitle: "告别乱糟糟的素材库，一键生成分类清晰的文件夹方案" }
+    ];
+
+    const el = (selector, root = document) => root.querySelector(selector);
+    const all = (selector, root = document) => [...root.querySelectorAll(selector)];
+
+    function navMarkup() {
+      return tools.map((tool, index) => `
+        <button type="button" data-view="${tool.id}" class="${index === 0 ? "active" : ""}">
+          <span class="nav-symbol">${tool.short}</span>
+          <span class="nav-name">${tool.name}</span>
+          <span class="nav-arrow">›</span>
+        </button>`).join("");
+    }
+
+    el("#sideNav").innerHTML = navMarkup();
+    el("#mobileNav").innerHTML = navMarkup();
+    el("#railNav").innerHTML = tools.map((tool, index) => `
+      <button class="rail-button ${index === 0 ? "active" : ""}" type="button" data-view="${tool.id}">
+        <span class="icon">${tool.short}</span><span class="tooltip">${tool.name}</span>
+      </button>`).join("");
+
+    el("#homeToolList").innerHTML = tools.slice(1).map((tool, index) => `
+      <article class="tool-row">
+        <div class="tool-number">${String(index + 1).padStart(2, "0")}</div>
+        <div><h4>${tool.title}</h4><p>${tool.desc}</p></div>
+        <button class="round-button" type="button" data-view="${tool.id}" aria-label="进入${tool.title}">→</button>
+      </article>`).join("") + `
+      <article class="tool-row">
+        <div class="tool-number">08</div>
+        <div><h4>图片 / 视频混合制作助手</h4><p>上传素材并生成作品集展示视频的制作方案</p></div>
+        <button class="round-button" type="button" data-view="material" data-tab="mix" aria-label="进入混合制作助手">→</button>
+      </article>`;
+
+    const choice = (name, values, checked = 0) => `<div class="choice-row">${values.map((value, i) => `
+      <label class="choice"><input type="radio" name="${name}" value="${value}" ${i === checked ? "checked" : ""}><span>${value}</span></label>`).join("")}</div>`;
+
+    const resultShell = (id, label) => `
+      <div class="result-panel surface">
+        <div class="panel-title"><h3>生成结果</h3><span>模拟结果</span></div>
+        <div id="${id}">
+          <div class="empty-result">
+            <div><div class="empty-icon">结果</div><strong>等待生成</strong><p>填写左侧信息并点击「${label}」，这里会显示结构化模拟结果。</p></div>
+          </div>
+        </div>
+      </div>`;
+
+    el("#view-quote").innerHTML = `
+      <div class="tool-layout">
+        <form class="form-panel surface" id="quoteForm">
+          <div class="panel-title"><h3>填写客户需求</h3><span>约 1 分钟</span></div>
+          <div class="field-grid">
+            <div class="field"><label>客户类型</label><select class="control" name="client"><option>个人博主</option><option>商家账号</option><option>课程博主</option><option>探店账号</option><option>本地商家</option><option>其他</option></select></div>
+            <div class="field"><label>视频类型</label><select class="control" name="video"><option>口播</option><option>vlog</option><option>探店</option><option>带货</option><option>课程切片</option><option>广告片</option><option>混剪</option></select></div>
+            <div class="field"><label>视频时长</label><input class="control" name="duration" placeholder="例如：60 秒" value="60 秒"></div>
+            <div class="field"><label>是否需要包装</label>${choice("package", ["是", "否"])}</div>
+            <div class="field full"><label>客户要求</label><textarea class="control" name="request" placeholder="例如：需要字幕、花字、简单调色，参考同赛道博主节奏">需要字幕、花字、简单调色，希望整体节奏紧凑，有 1 个参考视频。</textarea></div>
+            <div class="field"><label>是否需要脚本协助</label>${choice("script", ["是", "否"], 1)}</div>
+            <div class="field"><label>是否加急</label>${choice("urgent", ["是", "否"], 1)}</div>
+          </div>
+          <div class="form-actions"><span class="form-tip">报价仅作课程练习参考，正式报价前请确认客户预算与修改次数。</span><button class="primary-button" type="submit">生成报价建议</button></div>
+        </form>
+        ${resultShell("quoteResult", "生成报价建议")}
+      </div>`;
+
+    el("#view-talk").innerHTML = `
+      <div class="tool-layout">
+        <form class="form-panel surface" id="talkForm">
+          <div class="panel-title"><h3>输入沟通场景</h3><span>三种边界强度</span></div>
+          <div class="field-grid">
+            <div class="field full"><label>当前沟通场景</label><select class="control" name="scene"><option>初次咨询</option><option selected>客户压价</option><option>客户催稿</option><option>客户反复修改</option><option>客户需求不清楚</option><option>客户临时加需求</option></select></div>
+            <div class="field full"><label>客户原话</label><textarea class="control" name="words" placeholder="粘贴客户发来的原话">别人 100 元就能做，你这边能不能便宜一点？后面还有很多视频。</textarea></div>
+            <div class="field full"><label>我的目标</label>${choice("goal", ["想成交", "想涨价", "想拒绝", "想解释", "想确认需求"], 1)}</div>
+          </div>
+          <div class="form-actions"><span class="form-tip">建议根据客户关系选择语气，不要一次发送全部版本。</span><button class="primary-button" type="submit">生成回复话术</button></div>
+        </form>
+        ${resultShell("talkResult", "生成回复话术")}
+      </div>`;
+
+    el("#view-revision").innerHTML = `
+      <div class="tool-layout">
+        <form class="form-panel surface" id="revisionForm">
+          <div class="panel-title"><h3>粘贴客户修改意见</h3><span>自动整理</span></div>
+          <div class="field-grid">
+            <div class="field full"><label>客户修改意见</label><textarea class="control" name="feedback" style="min-height:190px" placeholder="支持粘贴零散聊天记录">开头那个停顿删掉；第 12 秒字幕太小；中间产品特写换成我后面发的素材；结尾电话再放大一点，音乐声音也小一点。</textarea></div>
+            <div class="field"><label>视频总时长</label><input class="control" name="duration" value="1 分 10 秒"></div>
+            <div class="field"><label>是否需要回复客户</label>${choice("reply", ["是", "否"])}</div>
+          </div>
+          <div class="form-actions"><span class="form-tip">整理后仍需核对时间点，避免对客户模糊描述过度推断。</span><button class="primary-button" type="submit">整理修改清单</button></div>
+        </form>
+        ${resultShell("revisionResult", "整理修改清单")}
+      </div>`;
+
+    el("#view-portfolio").innerHTML = `
+      <div class="tool-layout">
+        <form class="form-panel surface" id="portfolioForm">
+          <div class="panel-title"><h3>填写案例信息</h3><span>多平台文案</span></div>
+          <div class="field-grid">
+            <div class="field"><label>案例类型</label><select class="control" name="type"><option>口播</option><option>vlog</option><option selected>探店</option><option>带货</option><option>课程</option><option>广告</option><option>混剪</option></select></div>
+            <div class="field"><label>客户行业</label><input class="control" name="industry" value="本地餐饮"></div>
+            <div class="field full"><label>这个案例做了什么</label><textarea class="control" name="work">负责素材筛选、节奏重组、字幕包装、产品特写和门店氛围调色。</textarea></div>
+            <div class="field full"><label>亮点描述</label><textarea class="control" name="highlight">前三秒直接展示招牌产品，信息密度高但画面不乱，整体节奏适合本地生活账号。</textarea></div>
+            <div class="field"><label>是否有数据结果</label><input class="control" name="data" placeholder="没有可填写：暂无公开数据" value="完播率比往期提升 18%"></div>
+            <div class="field"><label>想发布的平台</label><select class="control" name="platform"><option>小红书</option><option>抖音</option><option>朋友圈</option><option>简历</option><option>接单页</option></select></div>
+          </div>
+          <div class="form-actions"><span class="form-tip">数据结果请使用真实数据，没有数据也可以突出服务过程和交付价值。</span><button class="primary-button" type="submit">生成作品集文案</button></div>
+        </form>
+        ${resultShell("portfolioResult", "生成作品集文案")}
+      </div>`;
+
+    el("#view-material").innerHTML = `
+      <div class="surface" style="padding:10px;margin-bottom:18px">
+        <div class="choice-row" id="materialTabs">
+          <label class="choice"><input type="radio" name="materialTab" value="font" checked><span>封面 / 字幕字体识别</span></label>
+          <label class="choice"><input type="radio" name="materialTab" value="mix"><span>图片 / 视频混合制作</span></label>
+        </div>
+      </div>
+      <div id="materialFont">
+        <div class="tool-layout">
+          <form class="form-panel surface" id="fontForm">
+            <div class="panel-title"><h3>上传截图并描述风格</h3><span>模拟识别</span></div>
+            <div class="upload-zone" data-upload="image">
+              <input type="file" accept=".jpg,.jpeg,.png,.webp,image/*">
+              <div class="upload-copy"><div class="upload-symbol">＋</div><strong>拖拽或点击上传截图</strong><p>支持 JPG / PNG / WEBP，第一版只做本地预览</p></div>
+              <img class="preview-image" alt="上传图片预览">
+            </div>
+            <div class="field-grid" style="margin-top:17px">
+              <div class="field full"><label>输入截图中的文字</label><input class="control" name="text" value="剪辑小白如何开始接单"></div>
+              <div class="field"><label>选择用途</label><select class="control" name="use"><option>封面大字</option><option>视频字幕</option><option>标题字</option><option>海报字</option></select></div>
+              <div class="field"><label>选择风格</label><select class="control" name="style"><option>干净高级</option><option>可爱活泼</option><option>商业感</option><option>情绪感</option><option>教程感</option></select></div>
+            </div>
+            <div class="form-actions"><span class="form-tip">第一版不接真实 OCR 与字体库，结果用于排版方向参考。</span><button class="primary-button" type="submit">开始识别字体</button></div>
+          </form>
+          ${resultShell("fontResult", "开始识别字体")}
+        </div>
+      </div>
+      <div id="materialMix" hidden>
+        <div class="tool-layout">
+          <form class="form-panel surface" id="mixForm">
+            <div class="panel-title"><h3>上传图片或视频素材</h3><span>制作方案</span></div>
+            <div class="upload-zone" data-upload="files">
+              <input type="file" multiple accept="image/*,video/*">
+              <div class="upload-copy"><div class="upload-symbol">＋</div><strong>拖拽或点击上传素材</strong><p>支持常见图片与视频格式，仅显示文件名，不上传服务器</p></div>
+            </div>
+            <div class="file-list"></div>
+            <div class="field-grid" style="margin-top:17px">
+              <div class="field"><label>制作类型</label><select class="control" name="type"><option>作品集展示</option><option>客户案例包装</option><option>小红书封面图</option><option>接单介绍页</option><option>朋友圈展示</option></select></div>
+              <div class="field"><label>选择风格</label><select class="control" name="style"><option>干净高级</option><option>小红书感</option><option>商单感</option><option>教程感</option><option>情绪感</option></select></div>
+              <div class="field"><label>选择画幅</label>${choice("ratio", ["9:16", "16:9", "1:1"])}</div>
+              <div class="field full"><label>想表达的卖点</label><textarea class="control" name="selling">突出我会做节奏、字幕包装、调色和商单案例整理，适合口播与本地生活账号。</textarea></div>
+            </div>
+            <div class="form-actions"><span class="form-tip">第一版不做真实合成与导出，只生成剪映制作方案。</span><button class="primary-button" type="submit">生成制作方案</button></div>
+          </form>
+          ${resultShell("mixResult", "生成制作方案")}
+        </div>
+      </div>`;
+
+    el("#view-benchmark").innerHTML = `
+      <div class="tool-layout">
+        <form class="form-panel surface" id="benchmarkForm">
+          <div class="panel-title"><h3>补充对标内容</h3><span>合规拆解</span></div>
+          <div class="field-grid">
+            <div class="field full"><label>粘贴对标链接</label><input class="control" name="link" placeholder="https://..." value="https://example.com/video"></div>
+            <div class="field"><label>平台</label><select class="control" name="platform"><option>抖音</option><option selected>小红书</option><option>B站</option><option>视频号</option><option>其他</option></select></div>
+            <div class="field"><label>我想学习的方向</label><select class="control" name="direction"><option>开头</option><option>节奏</option><option>字幕</option><option>封面</option><option>选题</option><option>结构</option><option>转场</option><option>BGM</option></select></div>
+            <div class="field full"><label>爆款标题</label><input class="control" name="title" value="剪辑小白第一个月，是怎么接到第一单的？"></div>
+            <div class="field full"><label>视频内容描述</label><textarea class="control" name="description">真人口播分享接单经历，开头展示收款截图，中段讲三步方法，结尾引导观众评论自己的阶段。</textarea></div>
+            <div class="field full"><label>热评内容</label><textarea class="control" name="comments">「没有作品集怎么办？」「客户去哪里找？」「报价多少比较合适？」</textarea></div>
+          </div>
+          <div class="form-actions"><span class="form-tip">不下载视频、不抓取数据，所有分析均基于你主动填写的内容。</span><button class="primary-button" type="submit">开始拆解</button></div>
+        </form>
+        ${resultShell("benchmarkResult", "开始拆解")}
+      </div>`;
+
+    el("#view-subtitle").innerHTML = `
+      <div class="tool-layout">
+        <form class="form-panel surface" id="subtitleForm">
+          <div class="panel-title"><h3>粘贴原始口播文案</h3><span>短视频表达</span></div>
+          <div class="field-grid">
+            <div class="field full"><label>原始口播文案</label><textarea class="control" name="content" style="min-height:190px">大家好，今天想和大家分享一下，我最近在学习剪辑的时候发现，其实很多新手不是不会用软件，而是不知道应该做什么作品，也不知道怎么拿作品去接单。</textarea></div>
+            <div class="field"><label>视频类型</label><select class="control" name="type"><option selected>口播</option><option>探店</option><option>vlog</option><option>带货</option><option>教程</option><option>课程</option><option>情绪表达</option></select></div>
+            <div class="field"><label>想要风格</label><select class="control" name="style"><option>自然口语</option><option selected>干净专业</option><option>情绪强一点</option><option>小红书感</option><option>成交感</option></select></div>
+            <div class="field full"><label>是否需要封面标题</label>${choice("cover", ["是", "否"])}</div>
+          </div>
+          <div class="form-actions"><span class="form-tip">优化会减少口头废话，但不会改变原文核心意思。</span><button class="primary-button" type="submit">优化字幕文案</button></div>
+        </form>
+        ${resultShell("subtitleResult", "优化字幕文案")}
+      </div>`;
+
+    
+
+      el("#view-fontguide").innerHTML = `
+      <div class="tool-layout">
+        <form class="form-panel surface" id="fontguideForm">
+          <div class="panel-title"><h3>选择视频风格</h3><span>剪映字体速查</span></div>
+          <div class="field-grid">
+            <div class="field"><label>视频类型</label><select class="control" name="type"><option>口播/知识</option><option>vlog/生活</option><option>探店/美食</option><option>带货/种草</option><option>课程/教程</option><option>情绪/故事</option><option>综艺/搞笑</option></select></div>
+            <div class="field"><label>使用位置</label><select class="control" name="position"><option>封面标题</option><option>视频字幕</option><option>重点花字</option><option>人名条/标签</option><option>结尾引流</option></select></div>
+            <div class="field"><label>风格感觉</label><select class="control" name="style"><option>干净高级</option><option>可爱活泼</option><option>商业质感</option><option>网感综艺</option><option>文艺情绪</option><option>科技简约</option></select></div>
+            <div class="field full"><label>📎 粘贴视频/截图链接（可选）</label><input class="control" name="link" placeholder="贴一个你想参考字体的视频链接，帮你判断字体方向"></div>
+            <div class="field"><label>是否商用</label>${choice("license", ["是，商用单", "否，个人练习"], 1)}</div>
+          </div>
+          <div class="form-actions"><span class="form-tip">字体建议基于剪映当前内置字体库，实际字体随版本更新变化。</span><button class="primary-button" type="submit">查询字体方案</button></div>
+        </form>
+        ${resultShell("fontguideResult", "查询字体方案")}
+      </div>`;
+      el("#view-music").innerHTML = `
+      <div class="tool-layout">
+        <form class="form-panel surface" id="musicForm">
+          <div class="panel-title"><h3>描述视频情绪</h3><span>BGM搜歌</span></div>
+          <div class="field-grid">
+            <div class="field"><label>视频类型</label><select class="control" name="type"><option>口播/知识</option><option>vlog/生活</option><option>探店/美食</option><option>带货/种草</option><option>情绪/故事</option><option>混剪/卡点</option><option>综艺/搞笑</option></select></div>
+            <div class="field"><label>情绪/氛围</label><select class="control" name="mood"><option>温暖治愈</option><option>积极向上</option><option>紧张悬疑</option><option>轻松愉快</option><option>伤感情绪</option><option>酷炫潮流</option><option>大气磅礴</option></select></div>
+            <div class="field"><label>节奏快慢</label><select class="control" name="tempo"><option>慢节奏（抒情）</option><option>中等节奏</option><option>快节奏（卡点）</option><option>由慢到快</option></select></div>
+            <div class="field"><label>有无歌词偏好</label>${choice("lyrics", ["纯音乐/轻音乐", "有歌词", "无所谓"], 2)}</div>
+            <div class="field full"><label>📎 粘贴视频链接（可选）</label><input class="control" name="link" placeholder="贴视频链接，帮你判断BGM风格和节奏"></div>
+            <div class="field full"><label>参考BGM（可选）</label><input class="control" name="ref" placeholder="如果听过类似的，描述一下或写歌名"></div>
+          </div>
+          <div class="form-actions"><span class="form-tip">本工具推荐音乐风格和剪映曲库关键词，不提供商业MP3下载。商用请确认版权。</span><button class="primary-button" type="submit">搜歌推荐</button></div>
+        </form>
+        ${resultShell("musicResult", "搜歌推荐")}
+      </div>`;
+      el("#view-sfx").innerHTML = `
+      <div class="tool-layout">
+        <form class="form-panel surface" id="sfxForm">
+          <div class="panel-title"><h3>选择需要的效果</h3><span>剪映音效特效</span></div>
+          <div class="field-grid">
+            <div class="field"><label>视频类型</label><select class="control" name="type"><option>口播/知识</option><option>vlog/生活</option><option>探店/美食</option><option>带货/种草</option><option>综艺/搞笑</option><option>混剪/卡点</option></select></div>
+            <div class="field"><label>需要的音效类型</label><select class="control" name="sfxType"><option>转场音效（嗖、呼、唰）</option><option>提示音（叮、弹出、确认）</option><option>氛围音（环境、自然、城市）</option><option>动作音（脚步、开门、放东西）</option><option>卡点音效（鼓点、重音）</option><option>搞笑音效（滑倒、尴尬、惊讶）</option><option>综艺感（鼓掌、欢呼、笑声）</option></select></div>
+            <div class="field"><label>需要的特效类型</label><select class="control" name="vfxType"><option>转场特效</option><option>画面特效（发光/震动/模糊）</option><option>文字动画</option><option>贴纸/表情</option><option>分屏/画中画</option><option>不需要特效，只要音效</option></select></div>
+            <div class="field full"><label>📎 粘贴视频链接（可选）</label><input class="control" name="link" placeholder="贴视频链接，帮你拆解里面的音效和特效用法"></div>
+            <div class="field"><label>节奏风格</label><select class="control" name="rhythm"><option>干净克制</option><option>适中节奏</option><option>强节奏/综艺感</option></select></div>
+          </div>
+          <div class="form-actions"><span class="form-tip">音效和特效名称基于剪映当前版本，以剪映内实际显示为准。</span><button class="primary-button" type="submit">查找音效特效</button></div>
+        </form>
+        ${resultShell("sfxResult", "查找音效特效")}
+      </div>`;
+      el("#view-organize").innerHTML = `
+      <div class="tool-layout">
+        <form class="form-panel surface" id="organizeForm">
+          <div class="panel-title"><h3>选择你的素材类型</h3><span>自动整理方案</span></div>
+          <div class="field-grid">
+            <div class="field full"><label>你常做的视频类型</label><select class="control" name="videotype"><option>口播/知识</option><option>vlog/生活</option><option>探店/美食</option><option>带货/种草</option><option>多类型都做</option></select></div>
+            <div class="field"><label>素材存储位置</label><select class="control" name="location"><option>电脑本地硬盘</option><option>移动硬盘</option><option>NAS/云盘</option><option>混合存储</option></select></div>
+            <div class="field"><label>需要整理的素材</label>${choice("materials", ["视频素材+音乐+音效+图片+模板", "只要视频素材"], 0)}</div>
+            <div class="field"><label>项目命名偏好</label><select class="control" name="naming"><option>日期-客户名-项目名</option><option>客户名-项目名-版本号</option><option>项目编号-日期-类型</option></select></div>
+            <div class="field full"><label>📎 粘贴素材/资源链接（可选）</label><input class="control" name="link" placeholder="贴素材链接、网盘链接或资源页面，帮你分类整理"></div>
+            <div class="field"><label>是否需要备份方案</label>${choice("backup", ["是，需要", "否，暂不需要"])}</div>
+          </div>
+          <div class="form-actions"><span class="form-tip">文件夹结构建议基于实际剪辑工作流，可复制到本地直接使用。</span><button class="primary-button" type="submit">生成整理方案</button></div>
+        </form>
+        ${resultShell("organizeResult", "生成整理方案")}
+      </div>`;
+function resultCard(title, body, full = false) {
+      const content = Array.isArray(body)
+        ? `<ul>${body.map(item => `<li>${item}</li>`).join("")}</ul>`
+        : `<p>${body}</p>`;
+      return `<div class="result-card ${full ? "full" : ""}"><h5>${title}</h5>${content}</div>`;
+    }
+
+    function resultLayout(heroLabel, hero, cards) {
+      return `<div class="result-content">
+        <div class="result-hero"><small>${heroLabel}</small><h4>${hero}</h4></div>
+        <div class="result-grid">${cards.join("")}</div>
+        <div class="result-toolbar"><button class="secondary-button copy-result" type="button">复制结果</button></div>
+      </div>`;
+    }
+
+    function simulate(form, button, callback) {
+      button.classList.add("button-loading");
+      const original = button.textContent;
+      button.textContent = "正在生成";
+      setTimeout(() => {
+        button.classList.remove("button-loading");
+        button.textContent = original;
+        callback(new FormData(form));
+        showToast("模拟结果已生成，可以继续修改信息重新测试。");
+      }, 650);
+    }
+
+        el("#quoteForm").addEventListener("submit", event => {
+      event.preventDefault();
+      simulate(event.currentTarget, event.submitter, data => {
+        const client = data.get("client");
+        const video = data.get("video");
+        const durationRaw = data.get("duration");
+        const durationSec = parseInt(durationRaw) || 60;
+        const needPackage = data.get("package") === "是";
+        const needScript = data.get("script") === "是";
+        const isUrgent = data.get("urgent") === "是";
+        const isAd = video === "广告片";
+        const isComplex = video === "混剪" || video === "带货" || isAd;
+        const timeFactor = durationSec <= 30 ? 0.85 : durationSec <= 90 ? 1.0 : durationSec <= 180 ? 1.3 : 1.6;
+        const baseBasic = Math.round((isComplex ? 250 : 180) * timeFactor / 10) * 10;
+        const pkgAdd = needPackage ? 0.25 : 0;
+        const scriptAdd = needScript ? 0.15 : 0;
+        const urgentAdd = isUrgent ? 0.35 : 0;
+        const basicPrice = Math.round(baseBasic * (1 + pkgAdd * 0.3 + scriptAdd * 0.3 + urgentAdd) / 10) * 10;
+        const standardPrice = Math.round(baseBasic * 2.0 * (1 + pkgAdd + scriptAdd * 0.5 + urgentAdd) / 10) * 10;
+        const premiumPrice = Math.round(baseBasic * 3.2 * (1 + pkgAdd + scriptAdd + urgentAdd) / 10) * 10;
+        const priceLabel = basicPrice + " - " + premiumPrice + " 元";
+        const reasons = [client + "的" + video + "视频，时长约" + durationSec + "秒"];
+        if (needPackage) reasons.push("需要字幕花字包装");
+        if (needScript) reasons.push("需要脚本协助");
+        if (isUrgent) reasons.push("⚠️ 加急交付（建议加收 30-50%）");
+        if (durationSec > 120) reasons.push("时长较长，素材筛选和节奏设计工作量增加");
+        if (isComplex) reasons.push("内容复杂度较高，需要更多结构设计");
+        const dStandard = ["成片 1 条", "结构优化（钩子+节奏+信息层级）", "重点花字/关键词强调", "基础调色", "音乐音效匹配", "2 轮修改", needPackage ? "封面制作" : null].filter(Boolean);
+
+        // AI 小琳风格：报价不只是报数字，是报价值
+        const valueLabel = isComplex ? "账号质感改造" : (needPackage ? "内容包装升级" : "基础剪辑整理");
+        const minPrice = Math.min(basicPrice, standardPrice, premiumPrice);
+        const maxPrice = Math.max(basicPrice, standardPrice, premiumPrice);
+
+        el("#quoteResult").innerHTML = resultLayout("建议报价区间", priceLabel, [
+          resultCard("💡 先判断再报价", "不要拿到需求直接报。" + client + "的" + video + "视频，时长约" + durationSec + "秒——这属于" + valueLabel + "类项目，不是简单代剪。报价前先确认：客户账号阶段、视频用途（涨粉/种草/成交）、是否需要内容判断、是否能作为作品集案例。"),
+          resultCard("🟢 基础：" + basicPrice + " 元 | 🟡 标准：" + standardPrice + " 元 | 🔴 深度：" + premiumPrice + " 元", "基于 8 个因素综合计算。基础档 = 纯拼接+字幕；标准档 = 结构优化+花字+调色；深度档 = 风格设计+全包装+脚本协助。"),
+          resultCard("标准档包含什么", dStandard),
+          resultCard("⚠️ 报价前必须先拿到", ["客户账号主页或想剪的视频", "1个参考账号/视频（他喜欢的风格）", "视频用途（涨粉、种草、成交、建人设）", "素材是否已准备好", "交付时间要求"], true),
+          resultCard("📞 AI 小琳式报价话术", "我看了一下你的需求——这是" + valueLabel + "类项目，不只是顺素材剪完，我会帮你重排开头、节奏、重点和包装，让视频更像成熟博主内容。\n\n根据你目前的情况，建议在 " + priceLabel + " 之间。\n\n具体取决于选基础/标准/深度哪个档位和最终素材量。你先确认范围和交期，我给你出详细交付清单。", true),
+          resultCard("🤫 报价后铁律", "1. 报完闭嘴，等客户先回——先说话的人输\n2. 客户说贵 ≠ 真的贵，先诊断不直接降\n3. 降价格必须同时降范围，交付内容不变价格不变"),
+          resultCard("📅 跟进节奏", ["当天：发送书面交付清单", "第1天：确认有没有疑问", "第3天：补发一个类似案例", "第7天：确认项目方向是否有变", "第14天：最后跟进（排期提醒）", "14天后：停止。不追。等他找你。"], true)
+        ]);
+      });
+    });
+
+    el("#talkForm").addEventListener("submit", event => {
+      event.preventDefault();
+      simulate(event.currentTarget, event.submitter, data => {
+        const scene = data.get("scene");
+        const goal = data.get("goal");
+        const words = data.get("words") || "";
+
+        // AI 小琳判断：先根据客户原话判断客户类型
+        const wordsLower = words.toLowerCase();
+        const isPriceOnly = words.length < 20 && (words.includes("钱") || words.includes("价") || words.includes("多少"));
+        const isBargain = words.includes("便宜") || words.includes("贵") || words.includes("优惠") || words.includes("打折") || words.includes("少点");
+        const isVague = words.includes("好看") || words.includes("高级") || words.includes("感觉") || words.includes("随便") || words.includes("看着办");
+        const isUrgent = words.includes("急") || words.includes("快") || words.includes("马上") || words.includes("今天") || words.includes("明天");
+
+        // ---- AI 小琳风格：场景数据库 ----
+        const db = {
+          初次咨询: {
+            judgment: `先别报价。对方还没说需求、没发账号、没给参考——这时候报任何价格都是给自己挖坑。`,
+            reality: `客户一上来只问价格，大概率是低预算试探型。这种人不是在找剪辑师，是在比价。先要资料，不给就筛掉，不浪费时间。`,
+            script: `你好，在报价之前我先看一下你的账号和需求。你发一下：
+1. 账号主页或想剪的视频
+2. 一个你觉得做得好的参考账号
+3. 这条视频主要用来干什么（涨粉/种草/成交）
+
+这些看完我才能判断适不适合做、大概什么范围。不然我随便报个数对你不负责。`,
+            action: `等他发资料。不发 = 不是真客户。发了再看下一步。`,
+            fallback: `如果他不发资料只追问"到底多少钱"——直接说"不同需求价格差很多，没有信息我没法报"。他再不发的，直接结束对话。`,
+            tips: [`第一句话绝不报价`, `先判断客户类型：低预算试探 / 有内容但不会剪 / 想升级质感 / 长期运营`, `不发账号和参考的客户，90% 不会成交`]
+          },
+          客户压价: {
+            judgment: `他说贵不一定真觉得贵——可能是在试探底价，可能在跟别人比，也可能根本没看到你的价值。先诊断再回应，别直接降价。`,
+            reality: `压价分几种：
+1. 真的预算不够 → 降范围
+2. 在跟别人比价 → 拆差异
+3. 在试探你底价 → 不降，给确定感
+4. 没看到价值 → 先让他看懂你解决什么问题
+
+90% 的情况是第 3 或第 4 种。你一降他就知道你还能再降。`,
+            script: goal === "想拒绝"
+              ? `理解。当前价格是按交付内容核算的，如果预算不匹配也完全理解。建议你找更匹配你预算的剪辑师，以后有合适的项目再联系。`
+              : goal === "想解释"
+              ? `我先说一下这个价格包含什么：不只是剪顺，而是重排开头、节奏、重点和包装——让视频更像成熟博主内容，不是普通代剪。如果你只需要基础拼接，有更便宜的选择。`
+              : `这个价格不只是剪一条视频，是帮你做账号质感改造——开头、节奏、重点提炼、字幕包装统一。如果预算有限，可以先去掉包装降一档，核心的结构和节奏优化保留。你看要调整范围还是按当前方案走？`,
+            action: goal === "想拒绝" ? `结束这单。不匹配的客户消耗比成交更贵。` : `给他两个选择：降范围保留核心 / 维持原方案。不给第三个选项。`,
+            fallback: `他如果说"那我再想想"——回"好的，方向和预算确定了随时找我。排期按确认顺序来。"然后停止跟进。不要追。`,
+            tips: [`不主动降价——客户没开口要折扣之前，你一分钱都不让`, `降价格必须同时降范围——交付内容不变 = 价格不变`, `"以后还有很多单" = 先付这一单的钱`, `报完价闭嘴，先说话的人输`]
+          },
+          客户催稿: {
+            judgment: `催稿可以理解，但急单是加价理由，不是被压价的理由。他急是他那边的问题，不是你免费加班的原因。`,
+            reality: `加急 = 你要插队、压缩其他人的排期、可能还要加班。这些都有成本。不收加急费等于你自己承担他的时间管理问题。正常排期不额外收费，加急就必须加价。`,
+            script: goal === "想成交"
+              ? `理解你比较急。加急需要调整排期，费用上浮30%，预计48小时内出初稿。如果时间允许正常排期（约5天），费用不变。你确认哪个方案？`
+              : `加急交付可以安排，加收30%急单费（插队影响其他项目）。正常排期不加费用。不接受先赶出来看看然后按正常价结——排期一旦调整就不能恢复。你确认一下走哪个方案。`,
+            action: `让他二选一：加急加价 / 正常不加价。不给第三个选项。`,
+            fallback: `他如果说"那算了，不用加急，正常做就好"——确认正常排期时间点，写入交付清单。他如果说"先按正常的来但我还是希望你快点"——不承诺，只说"尽快但不保证，正常交期是X天"。`,
+            tips: [`急单必须收加急费，不收等于告诉客户你的时间不值钱`, `明确到几点几分交付，不要模糊`, `不接受"先赶出来看看"——这就是在试探能不能白嫖加急`]
+          },
+          客户反复修改: {
+            judgment: `修改超出约定轮数，不是你做得不好，是客户没有一次给齐意见。或者他根本不确定自己要什么。继续改下去只会越改越亏。`,
+            reality: `约定范围内的小改（错字、局部音量）免费。超出范围的修改（结构调整、风格变化、素材替换）按次计费。不接受"再改最后一次"——这句话永远不是最后一次。`,
+            script: goal === "想成交"
+              ? `这一轮已经在约定范围内改完了。如果再调整需要按新增计费。或者先把这版定稿交付，后续有新的想法再开优化单。你定哪个方向？`
+              : `当前已超出约定修改轮数。后续修改按次计费（X元/轮）。建议先定稿这一版，新需求开追加单。不接受"再改最后一次"的无限循环。`,
+            action: `让他一次性给齐所有剩余意见。给齐 = 算最后一轮。零散追加 = 每轮单独计费。`,
+            fallback: `他如果说"那算了就这样吧"——确认定稿，发终版。不要因为他说算了就觉得不好意思。约定就是约定。`,
+            tips: [`每次修改要求客户一次性给齐所有意见`, `区分小改（免费）和大改（计费）`, `超过3轮修改 = 客户需求本身有问题，重新评估`, `不接受"再改最后一次"`]
+          },
+          客户需求不清楚: {
+            judgment: `客户说"怎么好看怎么来""你看着办""我也不知道要什么风格"——这三句话翻译过来就是：怎么做他都不会满意。不能直接开工。`,
+            reality: `客户说不清需求只有两种情况：
+1. 他真的不懂 → 需要你帮他缩小选项
+2. 他想让你先做出来再挑 → 这是白嫖思维
+
+不管哪种，你都得先锁定方向再开工。不然改到第5版他还会说"感觉不对"。`,
+            script: goal === "想确认需求"
+              ? `好的，我先帮你缩小范围：
+你更喜欢哪种感觉？
+A. 干净克制（少即是多，大博主感）
+B. 网感热闹（花字音效，综艺感）
+C. 商业质感（品牌感，适合接广告）
+
+另外发1-2个你觉得做得好的视频给我参考。`
+              : `目前信息不够我还不能开工。至少需要你确认：
+1. 发1个参考视频（你觉得做得好的）
+2. 这条视频主要用来干嘛
+3. 有没有绝对不能用的元素
+
+方向不锁定，改起来成本比剪辑本身还高。你先把这几个确认一下。`,
+            action: `不发参考不开工。不确认方向不报价。`,
+            fallback: `他如果说"你先做着，做着做着就有感觉了"——回"我建议先花半小时锁定方向，不然后面改5版的时间成本远远超过这半小时"。他如果还不肯——不接。`,
+            tips: [`"怎么好看怎么来" = 怎么做都不会满意`, `必须先锁定参考和方向再开工`, `模糊需求报价只给区间，不给死价`, `不确认方向就开工 = 必然返工`]
+          },
+          客户临时加需求: {
+            judgment: `确认范围后加需求——不是他临时想到的，是他一开始就没说完。或者他在测试你的边界。不管哪种，必须加钱、加时间、写确认。`,
+            reality: `新增需求 = 不在原确认范围 = 重新计费。这不是你较真，是保护双方预期。这次不确认就免费做了，下次他还会这么干。三次以上新增需求 = 这个客户需求管理体系有问题，重新评估要不要继续合作。`,
+            script: goal === "想拒绝"
+              ? `这个需求不在原范围内。如果要加，费用增加X元，交期顺延Y天。或者你先把原定内容确认交付，这个作为追加单处理。你定哪个？`
+              : `这个内容不在原确认范围内，属于新增需求。我可以继续处理——费用增加X元，交期顺延1天。我补一份变更确认给你，你回复确认后我就开始做。`,
+            action: `发变更确认单。他回复"确认"之前不动手。`,
+            fallback: `他如果说"就一点点东西还要加钱啊"——回"不在范围内的我都单独确认，这样对双方都清楚。如果你觉得不划算，可以先不做这个新增。"`,
+            tips: [`每次新增需求都要书面变更确认`, `不确认不启动——保护双方预期`, `小新增（加行字幕）= 免费赠送`, `中新增（封面、多一版）= 按次计费`, `大新增（新版本、新平台）= 重新报价`, `三次以上新增 = 客户本身有问题，重新评估`]
+          }
+        };
+
+        const info = db[scene] || db["客户压价"];
+
+        // Goal-based adjustments
+        const goalLabels = {
+          "想成交": "当前策略：推进成交，守住底线，给客户两个明确选项",
+          "想涨价": "当前策略：强调价值差异，让客户理解为什么值这个价",
+          "想拒绝": "当前策略：设定清晰边界，允许客户自然退出",
+          "想解释": "当前策略：先帮客户理解决策逻辑，不急着要答复",
+          "想确认需求": "当前策略：先追问锁定方向，不急着报价格或推进度"
+        };
+
+        const wordsPreview = words.length > 60 ? words.substring(0, 60) + "..." : words;
+        const clientType = isPriceOnly ? "低预算试探型" : isBargain ? "价格敏感型" : isVague ? "需求模糊型" : isUrgent ? "急单型" : "待判断";
+
+        el("#talkResult").innerHTML = resultLayout(
+          "场景：" + scene + " | 目标：" + goal,
+          "客户类型判断：" + clientType + " | " + (goalLabels[goal] || ""),
+          [
+            resultCard("AI 小琳式判断", info.judgment, true),
+            resultCard("现实判断", info.reality, true),
+            resultCard("回复话术（可直接发）", info.script, true),
+            resultCard("最优先动作", info.action),
+            resultCard("如果不行怎么办", info.fallback),
+            resultCard("⚠️ 核心原则", info.tips)
+          ]
+        );
+      });
+    });
+
+el("#revisionForm").addEventListener("submit", event => {
+      event.preventDefault();
+      simulate(event.currentTarget, event.submitter, () => {
+        el("#revisionResult").innerHTML = `<div class="result-content">
+          <div class="result-hero"><small>整理完成</small><h4>共识别 5 项修改</h4></div>
+          <div class="result-table-wrap"><table class="result-table">
+            <thead><tr><th>时间点</th><th>修改内容</th><th>类型</th><th>优先级</th><th>二次确认</th></tr></thead>
+            <tbody>
+              <tr><td>00:00</td><td>删除开头停顿</td><td>节奏</td><td><span class="priority">高</span></td><td>否</td></tr>
+              <tr><td>00:12</td><td>放大字幕字号</td><td>字幕</td><td><span class="priority">中</span></td><td>否</td></tr>
+              <tr><td>中段</td><td>替换产品特写素材</td><td>素材</td><td><span class="priority">高</span></td><td>是，待客户发素材</td></tr>
+              <tr><td>结尾</td><td>放大联系电话</td><td>包装</td><td><span class="priority">中</span></td><td>否</td></tr>
+              <tr><td>全片</td><td>降低背景音乐音量</td><td>声音</td><td><span class="priority">中</span></td><td>否</td></tr>
+            </tbody>
+          </table></div>
+          <div class="result-grid" style="margin-top:12px">${resultCard("给客户的回复话术", "收到，本轮共整理出 5 项修改。其中产品特写替换需要您补发对应素材，其余修改我会按清单处理。素材收到后我再同步新的交付时间。", true)}</div>
+          <div class="result-toolbar"><button class="secondary-button copy-result" type="button">复制清单</button></div>
+        </div>`;
+      });
+    });
+
+    el("#portfolioForm").addEventListener("submit", event => {
+      event.preventDefault();
+      simulate(event.currentTarget, event.submitter, data => {
+        const type = data.get("type");
+        el("#portfolioResult").innerHTML = resultLayout("作品集标题", `本地餐饮${type}案例｜从素材整理到成片包装`, [
+          resultCard("案例介绍", `${data.get("work")} 通过重新设计前三秒信息、调整素材顺序和统一字幕视觉，让案例更适合短视频平台观看。`, true),
+          resultCard("我的服务亮点", ["能从客户目标反推剪辑重点", "不仅剪顺，还会处理信息层级", "交付前主动检查字幕、声音和画幅"]),
+          resultCard("展示给客户的话术", "这是我为本地餐饮账号制作的案例，重点处理了前三秒产品展示、字幕信息和门店氛围。如果您的账号也需要稳定更新同类内容，我可以按统一模板长期协作。"),
+          resultCard("小红书发布版", "剪辑作品集更新｜这次做的是本地餐饮探店案例。相比堆转场，我更关注前三秒有没有吸引力、产品特写是否清楚，以及字幕会不会抢画面。", true),
+          resultCard("朋友圈发布版", "更新一条本地餐饮剪辑案例：素材整理、节奏重组、字幕包装、基础调色均由我完成。目前可承接口播、探店和本地生活类短视频剪辑。"),
+          resultCard("简历 / 接单页展示版", `项目类型：${type}短视频｜负责内容：素材筛选、结构调整、字幕包装、声音处理与调色｜结果：${data.get("data")}`)
+        ]);
+      });
+    });
+
+    el("#fontForm").addEventListener("submit", event => {
+      event.preventDefault();
+      simulate(event.currentTarget, event.submitter, data => {
+        el("#fontResult").innerHTML = resultLayout("模拟识别结果", "现代无衬线粗体 · 相似度 82%", [
+          resultCard("可能相似字体", "思源黑体 Heavy / 阿里巴巴普惠体 Bold / HarmonyOS Sans SC Black"),
+          resultCard("剪映可替代字体", "优先尝试：得意黑、雅月体、系统黑体加粗。具体字体名称会随剪映版本变化。"),
+          resultCard("适合的视频类型", `<span class="result-tag">${data.get("use")}</span><span class="result-tag">教程口播</span><span class="result-tag">干货封面</span>`, true),
+          resultCard("字幕 / 封面排版建议", ["两行以内，每行 8-12 个字", "关键词可放大 15%-20%", "文字与背景保持明显明暗对比", "不要同时使用超过两种字重"]),
+          resultCard("是否适合新手模仿", "适合。字体本身克制，重点在字号层级、字间距和留白，不依赖复杂特效。"),
+          resultCard("注意事项", "模拟结果不能替代字体授权判断；商用前请确认字体许可证。")
+        ]);
+      });
+    });
+
+    el("#mixForm").addEventListener("submit", event => {
+      event.preventDefault();
+      simulate(event.currentTarget, event.submitter, data => {
+        el("#mixResult").innerHTML = resultLayout("推荐方案", `${data.get("type")} · ${data.get("style")} · ${data.get("ratio")}`, [
+          resultCard("推荐画面结构", ["0-3 秒：最强案例画面 + 服务定位", "3-10 秒：展示原素材与处理后对比", "10-22 秒：按能力拆分代表片段", "结尾：服务范围与联系方式"]),
+          resultCard("开头文案", "不是只会剪顺，我会把素材整理成客户看得懂、愿意下单的作品。"),
+          resultCard("展示顺序", "先放最成熟案例，再放字幕包装和节奏对比，最后补充服务范围与合作方式。", true),
+          resultCard("字幕建议", "统一左对齐或居中布局；主标题 1 个字重，解释信息降低 20% 对比度。"),
+          resultCard("BGM 氛围建议", "选择节奏清晰、不过度抢戏的轻电子或简约律动音乐，卡点以段落转换为主。"),
+          resultCard("适合发布的平台", "小红书、抖音、朋友圈、接单介绍页"),
+          resultCard("后续用剪映怎么做", ["先建立统一画幅与安全区", "按案例建复合片段", "统一字幕样式后批量应用", "最后做音乐节奏和音量检查"], true)
+        ]);
+      });
+    });
+
+    el("#benchmarkForm").addEventListener("submit", event => {
+      event.preventDefault();
+      simulate(event.currentTarget, event.submitter, data => {
+        el("#benchmarkResult").innerHTML = resultLayout("拆解结论", `${data.get("platform")} · ${data.get("direction")}方向`, [
+          resultCard("前 3 秒钩子", "先展示接单结果，再抛出「剪辑小白如何拿到第一单」的具体问题，结果前置降低观众理解成本。"),
+          resultCard("内容结构", ["结果展示：证明内容值得看", "经历共鸣：说明自己也从零开始", "三步方法：给观众可执行路径", "互动收口：引导评论当前阶段"]),
+          resultCard("剪辑节奏", "开头 3 秒高信息密度；方法段落每 4-6 秒切一次视觉层级；观点间用停顿和字幕变化，不依赖大量转场。"),
+          resultCard("字幕特点", "短句、关键词放大、数字突出。字幕服务理解，不与人物表情和关键画面抢空间。"),
+          resultCard("封面标题特点", "人群明确 + 结果具体 + 保留过程悬念，观众一眼知道内容和自己是否相关。"),
+          resultCard("评论区未满足需求", ["缺少从零准备作品集的方法", "缺少具体报价范围", "缺少寻找第一批客户的渠道"]),
+          resultCard("适合学员模仿", "模仿结果前置、问题拆分和短句字幕；用自己的真实案例替换收款截图与经历。", true),
+          resultCard("可迁移的作品集案例", "可以制作一条「从原素材到接单级成片」的前后对比案例，同时展示剪辑思路。"),
+          resultCard("不建议模仿", "不复制原作者措辞、封面和个人经历；不使用虚假收入数据；不要堆叠与内容无关的转场。")
+        ]);
+      });
+    });
+
+    el("#subtitleForm").addEventListener("submit", event => {
+      event.preventDefault();
+      simulate(event.currentTarget, event.submitter, data => {
+        el("#subtitleResult").innerHTML = resultLayout("优化完成", `${data.get("type")} · ${data.get("style")}`, [
+          resultCard("优化后的字幕版", "很多剪辑新手，卡住的不是软件。\n而是学完之后，不知道该做什么作品。\n更不知道，怎么拿作品去接单。\n\n所以第一步，不是继续学更多功能。\n而是先做一套客户看得懂的作品集。", true),
+          resultCard("可做封面大字的句子", "剪辑新手接不到单，可能不是技术问题"),
+          resultCard("建议强调的关键词", `<span class="result-tag">不是软件</span><span class="result-tag">做什么作品</span><span class="result-tag">拿作品接单</span><span class="result-tag">客户看得懂</span>`),
+          resultCard("字幕断句建议", ["每行控制在 8-14 个字", "转折词单独成句", "结论句停留时间略长", "重点句前后留 0.2-0.4 秒呼吸"]),
+          resultCard("不建议保留的废话", "「大家好」「今天想和大家分享一下」「我最近在学习的时候发现」可直接删除或压缩。", true)
+        ]);
+      });
+    });
+
+    function switchMaterialTab(tab) {
+      const isFont = tab === "font";
+      el("#materialFont").hidden = !isFont;
+      el("#materialMix").hidden = isFont;
+      const input = el(`#materialTabs input[value="${tab}"]`);
+      if (input) input.checked = true;
+    }
+
+    el("#materialTabs").addEventListener("change", event => switchMaterialTab(event.target.value));
+
+    function switchView(id, options = {}) {
+      const tool = tools.find(item => item.id === id) || tools[0];
+      all(".view").forEach(view => view.classList.toggle("active", view.id === `view-${id}`));
+      all("[data-view]").forEach(button => button.classList.toggle("active", button.dataset.view === id));
+      el("#pageTitle").textContent = tool.title;
+      el("#pageSubtitle").textContent = tool.subtitle;
+      
+
+    el("#fontguideForm").addEventListener("submit", event => {
+      event.preventDefault();
+      simulate(event.currentTarget, event.submitter, data => {
+        const style = data.get("style"); const position = data.get("position"); const link = data.get("link") || "";
+        const fontDB = {
+          "干净高级": { cn: ["思源黑体 Bold", "阿里巴巴普惠体 M", "HarmonyOS Sans SC"], tip: "克制风格优先选无衬线字体，字重不超过2种，关键信息加大15-20%。" },
+          "可爱活泼": { cn: ["得意黑", "站酷快乐体", "沐瑶软笔手写体"], tip: "圆体/手写体为主，颜色可以鲜艳，字数不超过2行。" },
+          "商业质感": { cn: ["思源宋体 Bold", "站酷高端黑", "造字工房力黑"], tip: "衬线字体显质感，适合品牌/广告；字间距略微拉开5-10%。" },
+          "网感综艺": { cn: ["优设标题黑", "庞门正道标题体", "锐字真言体"], tip: "粗+大+撞色=网感；花字加描边和投影，配合音效节奏出现。" },
+          "文艺情绪": { cn: ["思源宋体 Light", "方正静蕾简体", "杨任东竹石体"], tip: "细字重+留白+慢节奏；字幕字号比常规小一号，保持呼吸感。" },
+          "科技简约": { cn: ["优设标题黑", "站酷酷黑", "HarmonyOS Sans SC"], tip: "几何感强的无衬线字体，线条干净；配合冷色调画面。" }
+        };
+        const info = fontDB[style] || fontDB["干净高级"];
+        const posTips = { "封面标题": "封面字要大（字号>=画面高度1/8），2行以内每行<=10字。", "视频字幕": "字幕字号适中（画面高度1/15-1/12），居中对齐或左下对齐。", "重点花字": "花字可加大到正常字幕1.5-2倍，每屏不超过2个。", "人名条/标签": "人名条字号偏小（画面高度1/20-1/15），放在人物旁边。", "结尾引流": "结尾引流用中等字号，放在画面中央偏下，不要挡住主体。" };
+        el("#fontguideResult").innerHTML = resultLayout("推荐字体", style + " / " + position, [
+          resultCard("中文推荐", info.cn.join("、")),
+          resultCard("剪映内搜索", info.cn.slice(0,2).join("、") + " / 在剪映文字-字体中直接搜索"),
+          resultCard("排版建议", info.tip),
+          resultCard(position + "专属建议", posTips[position] || ""),
+          resultCard("📎 链接参考提示", link ? "你贴了链接：分析目标视频的风格倾向。如果视频偏干净克制→选无衬线字体；偏综艺热闹→选粗体撞色；偏文艺情绪→选衬线/手写体。具体推荐见上方。" : "没贴链接。建议贴一个参考视频链接，我能帮你判断字体方向。")
+        ]);
+      });
+    });
+    el("#musicForm").addEventListener("submit", event => {
+      event.preventDefault();
+      simulate(event.currentTarget, event.submitter, data => {
+        const mood = data.get("mood"); const tempo = data.get("tempo"); const lyrics = data.get("lyrics"); const link = data.get("link") || "";
+        const moodDB = {
+          "温暖治愈": { style: "轻钢琴 / 木吉他 / Ukulele", keywords: ["治愈", "温暖", "钢琴", "轻音乐", "早晨", "阳光"], bpm: "60-90 BPM" },
+          "积极向上": { style: "流行摇滚 / 电子流行 / 励志管弦", keywords: ["励志", "向上", "活力", "前进", "奋斗", "正能量"], bpm: "100-140 BPM" },
+          "紧张悬疑": { style: "环境电子 / 弦乐紧张 / 低音脉冲", keywords: ["悬疑", "紧张", "氛围", "暗黑", "压迫感"], bpm: "60-100 BPM" },
+          "轻松愉快": { style: "放克 / City Pop / 轻电子 / Bossa Nova", keywords: ["轻松", "愉快", "活泼", "旅行", "周末", "俏皮"], bpm: "90-130 BPM" },
+          "伤感情绪": { style: "钢琴独奏 / 弦乐 / 氛围后摇", keywords: ["伤感", "情绪", "钢琴", "回忆", "孤独", "思念"], bpm: "50-80 BPM" },
+          "酷炫潮流": { style: "Trap / Hip-Hop Beat / Future Bass", keywords: ["潮流", "酷", "Trap", "卡点", "Beat", "街头"], bpm: "120-160 BPM" },
+          "大气磅礴": { style: "史诗管弦 / Hybrid Orchestra / 电影配乐", keywords: ["大气", "磅礴", "史诗", "管弦", "电影感", "震撼"], bpm: "80-120 BPM" }
+        };
+        const info = moodDB[mood] || moodDB["温暖治愈"];
+        const lyricTip = lyrics === "纯音乐/轻音乐" ? "纯音乐" : lyrics === "有歌词" ? "有歌词版" : "纯音乐/有歌词均可";
+        el("#musicResult").innerHTML = resultLayout("推荐音乐方向", mood + " / " + tempo, [
+          resultCard("风格建议", info.style + " / " + lyricTip + " / " + info.bpm),
+          resultCard("剪映曲库搜索关键词", info.keywords.join("、")),
+          resultCard("免版权音乐来源（免费商用）", ["剪映内置曲库（已授权）", "YouTube Audio Library", "Pixabay Music (pixabay.com/music)", "Uppbeat (uppbeat.io)", "Mixkit (mixkit.co/free-stock-music)"], true),
+          resultCard("商用注意", "剪映内置音乐限剪映发布渠道使用。独立商用/广告请使用已购授权音乐。以上免版权来源大多免费商用，使用前请逐个确认具体曲目授权。" ),
+          resultCard("📎 链接分析", link ? "你贴了视频链接。可以先打开视频感受：它的BGM是快还是慢？有歌词还是纯音乐？情绪是温暖/紧张/活泼？根据你的感受匹配上方的推荐方案。如果不确定，录屏截取一段用听歌识曲。" : "没贴链接。建议贴一个想参考BGM风格的视频链接，帮你分析该用什么音乐。")
+        ]);
+      });
+    });
+    el("#sfxForm").addEventListener("submit", event => {
+      event.preventDefault();
+      simulate(event.currentTarget, event.submitter, data => {
+        const sfxType = data.get("sfxType"); const vfxType = data.get("vfxType"); const rhythm = data.get("rhythm"); const link = data.get("link") || "";
+        const sfxDB = {
+          "转场音效（嗖、呼、唰）": { sfx: "Whoosh / Swoosh / Swish / 疾风 / 快速移动", search: "转场/嗖/呼/风", tip: "时长0.3-0.8秒，配合画面切换。比BGM低3-6dB。" },
+          "提示音（叮、弹出、确认）": { sfx: "Ding / Pop / Notification / Bell / Chime", search: "提示/叮/弹出/铃铛", tip: "短促0.1-0.3秒，用于强化文字。每10秒最多1-2次。" },
+          "氛围音（环境、自然、城市）": { sfx: "Ambient / Nature / City / Rain / Fire", search: "环境/自然/雨/风/城市", tip: "调低音量(-12~-18dB)垫在底轨。需要时渐入渐出。" },
+          "动作音（脚步、开门、放东西）": { sfx: "Footstep / Door Open / Drop / Pick Up", search: "脚步/开门/放下/拿起/翻页", tip: "与画面动作对齐，音量适中。过度使用会显刻意。" },
+          "卡点音效（鼓点、重音）": { sfx: "Kick / Snare / Hit / Impact / Boom / Riser", search: "鼓/重音/Hit/Impact/上升", tip: "对齐BGM鼓点，每隔1-2个重拍放一个，留白也是节奏。" },
+          "搞笑音效（滑倒、尴尬、惊讶）": { sfx: "Slip / Fail / Surprise / Boing / Wah-wah", search: "搞笑/滑倒/尴尬/惊讶/卡通", tip: "点到为止，同效果不重复超2次。最好笑的是节奏不是音效。" },
+          "综艺感（鼓掌、欢呼、笑声）": { sfx: "Applause / Cheer / Laugh / Crowd", search: "鼓掌/欢呼/笑声/综艺", tip: "配合花字和贴纸一起用。2-3种叠出综艺感，注意层次。" }
+        };
+        const vfxDB = {
+          "转场特效": { vfx: "叠化 / 闪白 / 模糊转场 / 滑动 / 放大转场", search: "转场/叠化/滑动/放大", tip: "风格统一，一个视频不超过3种转场类型。" },
+          "画面特效（发光/震动/模糊）": { vfx: "发光 / 边缘发光 / 震动 / 径向模糊 / 毛刺", search: "发光/震动/模糊/故障", tip: "特效服务内容不炫技。重点信息加轻微发光，不叠加超过2个特效。" },
+          "文字动画": { vfx: "打字机 / 逐字出现 / 弹跳 / 翻转 / 滑入", search: "文字动画/弹入/打字机", tip: "封面字和花字用动画，普通字幕不加。速度0.3-0.6秒。" },
+          "贴纸/表情": { vfx: "Emoji / 箭头 / 对话框 / 爱心 / 点赞", search: "贴纸/表情/箭头/装饰", tip: "每屏不超过2个。不挡住主体和字幕。" },
+          "分屏/画中画": { vfx: "两分屏 / 三分屏 / 画中画 / 蒙版遮罩", search: "分屏/画中画/蒙版", tip: "适合对比和教学。每个区域清晰可见。" },
+          "不需要特效，只要音效": { vfx: "无特效", search: "", tip: "好的剪辑往往特效最少。留白和节奏 > 特效堆积。" }
+        };
+        const s = sfxDB[sfxType] || sfxDB["转场音效（嗖、呼、唰）"];
+        const v = vfxDB[vfxType] || vfxDB["转场特效"];
+        const rm = rhythm === "干净克制" ? "克制风格：少即是多。转场只用1-2种，音效每30秒最多1-2次。参考大博主：往往特效最少。" : rhythm === "强节奏/综艺感" ? "综艺感：音效+花字+贴纸+快切叠加。每段高潮后留1-2秒安静形成起伏。" : "适中节奏最通用。每视频选1-2个记忆点的音效，不要每处都加。";
+        el("#sfxResult").innerHTML = resultLayout("音效特效推荐", sfxType, [
+          resultCard("推荐音效", s.sfx), resultCard("剪映音效库搜索", "音频-音效中搜索：" + s.search),
+          resultCard("音效使用技巧", s.tip), resultCard("推荐特效", v.vfx),
+          resultCard("剪映特效搜索", v.search ? "特效中搜索：" + v.search : "不需要特效"),
+          resultCard("特效使用技巧", v.tip), resultCard("📎 链接参考", link ? "你贴了视频链接。可以打开观察：转场用的什么类型（叠化/滑动/闪白）？音效出现在哪些位置（转场/卡点/重点文字）？特效是克制还是堆叠？记录下来就是你的音效参考库。" : "没贴链接。建议贴一个参考视频，帮你拆解里面的音效和特效用法。")
+        ]);
+      });
+    });
+            el("#organizeForm").addEventListener("submit", event => {
+      event.preventDefault();
+      simulate(event.currentTarget, event.submitter, data => {
+        const naming = data.get("naming"); const needBackup = data.get("backup"); const location = data.get("location"); const link = data.get("link") || "";
+        const scheme = naming === "日期-客户名-项目名" ? "20260626_客户名_项目名" : naming === "客户名-项目名-版本号" ? "客户名_项目名_v1" : "001_20260626_口播";
+        const locLabel = location.indexOf("移动") !== -1 ? "移动硬盘" : "电脑";
+        const cards = [
+          resultCard("根目录结构", "剪辑项目/\n  |-- 01_进行中/     正在做的项目\n  |-- 02_已交付/     完成归档\n  |-- 03_素材库/     通用素材\n  |-- 04_模板/       常用预设\n  |-- 05_音乐音效/   BGM和SFX\n  |-- 06_作品集导出/ 最终成片", true),
+          resultCard("单项目文件夹 (" + scheme + ")", scheme + "/\n  |-- 01_客户原始素材/  不动原片\n  |-- 02_筛选后素材/\n  |-- 03_参考对标/\n  |-- 04_项目文件/      剪映工程\n  |-- 05_导出/          各版成片\n  |-- 06_交付文档/      报价/变更/说明\n  |-- README.txt        项目笔记", true),
+          resultCard("素材库分类", "03_素材库/\n  |-- 视频素材/（空镜/转场/特效）\n  |-- 图片素材/（背景/贴纸/封面模板）\n  |-- 音乐BGM/（治愈/励志/情绪）\n  |-- 音效SFX/（转场/提示音/氛围）", true),
+          resultCard("命名规范", ["项目：" + scheme, "成片：" + scheme + "_成片_日期.mp4", "修改版：" + scheme + "_V2_修改说明.mp4", "素材保持原名（方便回溯）", "不用空格用下划线，日期YYYYMMDD"], true),
+          needBackup === "是，需要" ? resultCard("备份方案", ["每周五备份到" + locLabel, "重要项目交付后立即备份", "云盘只同步05_导出和06_交付文档", "3个月前项目移到02_已交付/年份/归档"]) : "",
+          resultCard("马上可以做", ["1. 在" + locLabel + "上建好根目录", "2. 把现有素材拖入对应文件夹", "3. 正在做的项目按模板创建", "4. 以后每个新项目都按这个结构", "养成习惯 > 找工具 -- 这个结构够用一年"]),
+          resultCard("📎 链接素材整理", link ? "你贴了素材链接。建议按来源分类：在03_素材库下新建一个文件夹用链接来源命名，把从该链接下载的素材统一放进去。链接本身保存到README.txt的素材来源记录里，方便以后回溯。" : "没贴链接。下次可以贴素材链接、网盘链接或资源页面，帮你规划素材分类和存放位置。")
+        ];
+        el("#organizeResult").innerHTML = resultLayout("文件夹结构方案", naming, cards.filter(Boolean));
+      });
+    });el("#mobileOverlay").classList.remove("open");
+      document.body.style.overflow = "";
+      if (id === "material" && options.tab) switchMaterialTab(options.tab);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    document.addEventListener("click", event => {
+      const nav = event.target.closest("[data-view]");
+      if (nav) switchView(nav.dataset.view, { tab: nav.dataset.tab });
+      const toastTrigger = event.target.closest("[data-toast]");
+      if (toastTrigger) showToast(toastTrigger.dataset.toast);
+      const copy = event.target.closest(".copy-result");
+      if (copy) {
+        const text = copy.closest(".result-content").innerText.replace("复制结果", "").replace("复制清单", "");
+        navigator.clipboard?.writeText(text).then(() => showToast("结果已复制到剪贴板。")).catch(() => showToast("当前浏览器未开放复制权限。"));
+      }
+    });
+
+    all(".upload-zone").forEach(zone => {
+      const input = el("input[type=file]", zone);
+      ["dragenter", "dragover"].forEach(type => zone.addEventListener(type, event => { event.preventDefault(); zone.classList.add("dragging"); }));
+      ["dragleave", "drop"].forEach(type => zone.addEventListener(type, event => { event.preventDefault(); zone.classList.remove("dragging"); }));
+      zone.addEventListener("drop", event => handleFiles(zone, event.dataTransfer.files));
+      input.addEventListener("change", () => handleFiles(zone, input.files));
+    });
+
+    function handleFiles(zone, files) {
+      if (!files?.length) return;
+      if (zone.dataset.upload === "image") {
+        const file = files[0];
+        if (!file.type.startsWith("image/")) return showToast("请选择 JPG、PNG 或 WEBP 图片。");
+        const image = el(".preview-image", zone);
+        image.src = URL.createObjectURL(file);
+        image.style.display = "block";
+        el(".upload-copy", zone).style.display = "none";
+        showToast(`已读取图片：${file.name}`);
+      } else {
+        const list = zone.nextElementSibling;
+        list.innerHTML = [...files].map(file => `<div class="file-item"><span>${file.name}</span><span>${formatBytes(file.size)}</span></div>`).join("");
+        showToast(`已读取 ${files.length} 个素材文件。`);
+      }
+    }
+
+    function formatBytes(bytes) {
+      if (bytes < 1024) return `${bytes} B`;
+      if (bytes < 1048576) return `${(bytes / 1024).toFixed(1)} KB`;
+      return `${(bytes / 1048576).toFixed(1)} MB`;
+    }
+
+    let toastTimer;
+    function showToast(message) {
+      const toast = el("#toast");
+      el("span", toast).textContent = message;
+      toast.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove("show"), 2600);
+    }
+
+    el("#menuButton").addEventListener("click", () => {
+      el("#mobileOverlay").classList.add("open");
+      document.body.style.overflow = "hidden";
+    });
+    el("#drawerClose").addEventListener("click", () => {
+      el("#mobileOverlay").classList.remove("open");
+      document.body.style.overflow = "";
+    });
+    el("#mobileOverlay").addEventListener("click", event => {
+      if (event.target === event.currentTarget) {
+        event.currentTarget.classList.remove("open");
+        document.body.style.overflow = "";
+      }
+    });
+  </script>
+  <!-- PWA Service Worker -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').then(reg => {
+          console.log('SW registered:', reg.scope);
+        }).catch(err => {
+          console.log('SW registration failed:', err);
+        });
+      });
+    }
+  </script>
+</body>
+</html>
