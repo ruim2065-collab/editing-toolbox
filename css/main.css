@@ -220,42 +220,6 @@ button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-
 .brand-copy h1 { margin: 0; font-size: 20px; line-height: 1.35; letter-spacing: -.02em; }
 .brand-copy p { margin: 8px 0 0; color: var(--muted); font-size: 12px; line-height: 1.7; }
 
-/* ---- Sidebar Search ---- */
-.side-label-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 8px 0 0;
-}
-.search-toggle {
-  display: grid;
-  place-items: center;
-  width: 28px; height: 28px;
-  border-radius: 8px;
-  font-size: 13px;
-  background: rgba(255,255,255,.10);
-  transition: .18s ease;
-  opacity: .6;
-}
-.search-toggle:hover { opacity: 1; background: rgba(255,255,255,.18); }
-.search-toggle.active { opacity: 1; background: rgba(255,255,255,.22); box-shadow: var(--shadow-inset); }
-.side-search {
-  padding: 8px 8px 10px;
-}
-.side-search input {
-  width: 100%;
-  min-height: 36px;
-  padding: 0 12px;
-  border: 1px solid rgba(255,255,255,.22);
-  border-radius: 12px;
-  font-size: 12px;
-  background: rgba(255,255,255,.10);
-  box-shadow: var(--shadow-inset);
-  transition: .18s ease;
-}
-.side-search input:focus { background: rgba(255,255,255,.18); border-color: rgba(93,140,176,.40); }
-.side-search input::placeholder { color: var(--muted); }
-
 .side-section { padding: 20px 0 0; }
 .side-label { margin: 0 8px 10px; color: #747570; font-size: 12px; }
 .side-nav { display: flex; flex-direction: column; gap: 7px; }

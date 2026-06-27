@@ -90,42 +90,6 @@ export function switchView(id, options = {}) {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-// ---- Sidebar Search ----
-function initSearch() {
-  const searchInput = el("#sideSearch");
-  const searchWrap = el("#sideSearchWrap");
-  const searchToggle = el("#searchToggle");
-  if (!searchInput || !searchToggle) return;
-
-  // Toggle search visibility
-  searchToggle.addEventListener("click", () => {
-    const isOpen = !searchWrap.hidden;
-    searchWrap.hidden = isOpen;
-    searchToggle.classList.toggle("active", !isOpen);
-    if (!isOpen) {
-      searchInput.focus();
-    } else {
-      searchInput.value = "";
-      // Show all items
-      all(".side-nav button[data-view]").forEach(btn => btn.classList.remove("hidden"));
-    }
-  });
-
-  searchInput.addEventListener("input", () => {
-    const query = searchInput.value.toLowerCase().trim();
-    const navButtons = all(".side-nav button[data-view]");
-    navButtons.forEach(btn => {
-      const toolId = btn.dataset.view;
-      const tool = tools.find(t => t.id === toolId);
-      if (!tool) return;
-      const match = !query ||
-        tool.name.toLowerCase().includes(query) ||
-        tool.desc.toLowerCase().includes(query) ||
-        (tool.tags || []).some(tag => tag.toLowerCase().includes(query));
-      btn.classList.toggle("hidden", !match);
-    });
-  });
-}
 
 // ---- Keyboard Shortcuts ----
 function initKeyboard() {
@@ -385,7 +349,6 @@ export function initApp() {
   renderNavigation();
   renderHomeList();
   updateStats();
-  initSearch();
   initKeyboard();
   initHistoryPanel();
   initUploadZones();
