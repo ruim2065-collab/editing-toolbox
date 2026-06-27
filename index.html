@@ -3,6 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- SW核弹：强制清掉所有旧版本Service Worker -->
+  <script>
+  (function killOldSW(){
+    if(!('serviceWorker' in navigator)) return;
+    var KILLED = false;
+    navigator.serviceWorker.getRegistrations().then(function(regs){
+      regs.forEach(function(r){ r.unregister(); KILLED = true; });
+      if(KILLED){
+        caches.keys().then(function(keys){ keys.forEach(function(k){ caches.delete(k); }); });
+        setTimeout(function(){ location.reload(); }, 300);
+      }
+    });
+  })();
+  </script>
   <meta name="description" content="剪辑接单百宝箱——剪辑课程学员专属接单、沟通、素材与作品集工具箱，13合1，支持 AI 智能生成与离线使用。" />
   <title>剪辑接单百宝箱 v2.1</title>
   <!-- PWA -->
@@ -2911,16 +2925,6 @@ initContract();
     });
   }, true);
 
-  // PWA
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('sw.js?v=5').then(reg => {
-        console.log('SW registered:', reg.scope);
-      }).catch(err => {
-        console.log('SW registration failed:', err);
-      });
-    });
-  }
 </script>
 </body>
 </html>
