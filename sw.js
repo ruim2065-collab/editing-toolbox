@@ -1,5 +1,5 @@
 // Service Worker for 剪辑接单百宝箱 PWA
-const CACHE_NAME = 'toolbox-v3';
+const CACHE_NAME = 'toolbox-v4';
 const ASSETS = [
   './',
   './index.html',
@@ -39,6 +39,19 @@ self.addEventListener('fetch', event => {
   // Skip chrome-extension and other non-http(s) requests
   const url = new URL(event.request.url);
   if (!url.protocol.startsWith('http')) return;
+
+  if (event.request.mode === 'navigate' || url.pathname.endsWith('/index.html')) {
+    event.respondWith(
+      fetch(event.request).then(response => {
+        if (response && response.status === 200) {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put('./index.html', clone));
+        }
+        return response;
+      }).catch(() => caches.match('./index.html'))
+    );
+    return;
+  }
 
   event.respondWith(
     caches.match(event.request).then(cached => {
