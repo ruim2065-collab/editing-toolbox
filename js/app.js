@@ -93,7 +93,24 @@ export function switchView(id, options = {}) {
 // ---- Sidebar Search ----
 function initSearch() {
   const searchInput = el("#sideSearch");
-  if (!searchInput) return;
+  const searchWrap = el("#sideSearchWrap");
+  const searchToggle = el("#searchToggle");
+  if (!searchInput || !searchToggle) return;
+
+  // Toggle search visibility
+  searchToggle.addEventListener("click", () => {
+    const isOpen = !searchWrap.hidden;
+    searchWrap.hidden = isOpen;
+    searchToggle.classList.toggle("active", !isOpen);
+    if (!isOpen) {
+      searchInput.focus();
+    } else {
+      searchInput.value = "";
+      // Show all items
+      all(".side-nav button[data-view]").forEach(btn => btn.classList.remove("hidden"));
+    }
+  });
+
   searchInput.addEventListener("input", () => {
     const query = searchInput.value.toLowerCase().trim();
     const navButtons = all(".side-nav button[data-view]");
