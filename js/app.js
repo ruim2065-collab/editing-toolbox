@@ -22,35 +22,6 @@ export const tools = [
   { id: "contract", name: "合同模板", short: "约", title: "接单合同模板生成器", desc: "生成剪辑接单确认书与简易合同", subtitle: "保护双方权益，交付内容、修改次数、付款方式一目了然", tags: ["合同","法律","确认"] }
 ];
 
-// ---- Navigation ----
-function navMarkup() {
-  return tools.map((tool, index) => `
-    <button type="button" data-view="${tool.id}" class="${index === 0 ? "active" : ""}">
-      <span class="nav-symbol">${tool.short}</span>
-      <span class="nav-name">${tool.name}</span>
-      <span class="nav-arrow">›</span>
-    </button>`).join("");
-}
-
-function renderNavigation() {
-  el("#sideNav").innerHTML = navMarkup();
-  el("#mobileNav").innerHTML = navMarkup();
-  el("#railNav").innerHTML = tools.map((tool, index) => `
-    <button class="rail-button ${index === 0 ? "active" : ""}" type="button" data-view="${tool.id}">
-      <span class="icon">${tool.short}</span><span class="tooltip">${tool.name}</span>
-    </button>`).join("");
-}
-
-// ---- Home Tool List ----
-function renderHomeList() {
-  el("#homeToolList").innerHTML = tools.slice(1).map((tool, index) => `
-    <article class="tool-row">
-      <div class="tool-number">${String(index + 1).padStart(2, "0")}</div>
-      <div><h4>${tool.title}</h4><p>${tool.desc}</p></div>
-      <button class="round-button" type="button" data-view="${tool.id}" aria-label="进入${tool.title}">→</button>
-    </article>`).join("");
-}
-
 // ---- Update Stats ----
 function updateStats() {
   const stats = getStats();
@@ -346,8 +317,6 @@ function initBottomTabBar() {
 
 // ---- Init ----
 export function initApp() {
-  renderNavigation();
-  renderHomeList();
   updateStats();
   initKeyboard();
   initHistoryPanel();

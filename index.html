@@ -39,7 +39,21 @@
   <div class="icon-rail">
     <div class="brand-mark">箱</div>
     <div class="rail-line"></div>
-    <nav class="rail-nav" id="railNav"></nav>
+    <nav class="rail-nav" id="railNav">
+      <button class="rail-button active" type="button" data-view="home"><span class="icon">首</span><span class="tooltip">首页</span></button>
+      <button class="rail-button" type="button" data-view="quote"><span class="icon">价</span><span class="tooltip">接单工具</span></button>
+      <button class="rail-button" type="button" data-view="talk"><span class="icon">聊</span><span class="tooltip">沟通话术</span></button>
+      <button class="rail-button" type="button" data-view="revision"><span class="icon">改</span><span class="tooltip">修改整理</span></button>
+      <button class="rail-button" type="button" data-view="portfolio"><span class="icon">集</span><span class="tooltip">作品集工具</span></button>
+      <button class="rail-button" type="button" data-view="material"><span class="icon">材</span><span class="tooltip">素材工具</span></button>
+      <button class="rail-button" type="button" data-view="benchmark"><span class="icon">拆</span><span class="tooltip">对标拆解</span></button>
+      <button class="rail-button" type="button" data-view="subtitle"><span class="icon">字</span><span class="tooltip">字幕优化</span></button>
+      <button class="rail-button" type="button" data-view="fontguide"><span class="icon">体</span><span class="tooltip">字体速查</span></button>
+      <button class="rail-button" type="button" data-view="music"><span class="icon">曲</span><span class="tooltip">BGM搜歌</span></button>
+      <button class="rail-button" type="button" data-view="sfx"><span class="icon">听</span><span class="tooltip">音效特效</span></button>
+      <button class="rail-button" type="button" data-view="organize"><span class="icon">夹</span><span class="tooltip">素材整理</span></button>
+      <button class="rail-button" type="button" data-view="contract"><span class="icon">约</span><span class="tooltip">合同模板</span></button>
+    </nav>
     <div class="rail-spacer"></div>
     <button class="theme-toggle rail-settings" id="themeToggle" type="button" aria-label="切换主题" title="切换深色/浅色模式">🌙</button>
   </div>
@@ -56,7 +70,21 @@
     </div>
     <div class="side-section">
       <p class="side-label">全部工具</p>
-      <nav class="side-nav" id="sideNav"></nav>
+      <nav class="side-nav" id="sideNav">
+        <button type="button" data-view="home" class="active"><span class="nav-symbol">首</span><span class="nav-name">首页</span><span class="nav-arrow">›</span></button>
+        <button type="button" data-view="quote"><span class="nav-symbol">价</span><span class="nav-name">接单工具</span><span class="nav-arrow">›</span></button>
+        <button type="button" data-view="talk"><span class="nav-symbol">聊</span><span class="nav-name">沟通话术</span><span class="nav-arrow">›</span></button>
+        <button type="button" data-view="revision"><span class="nav-symbol">改</span><span class="nav-name">修改整理</span><span class="nav-arrow">›</span></button>
+        <button type="button" data-view="portfolio"><span class="nav-symbol">集</span><span class="nav-name">作品集工具</span><span class="nav-arrow">›</span></button>
+        <button type="button" data-view="material"><span class="nav-symbol">材</span><span class="nav-name">素材工具</span><span class="nav-arrow">›</span></button>
+        <button type="button" data-view="benchmark"><span class="nav-symbol">拆</span><span class="nav-name">对标拆解</span><span class="nav-arrow">›</span></button>
+        <button type="button" data-view="subtitle"><span class="nav-symbol">字</span><span class="nav-name">字幕优化</span><span class="nav-arrow">›</span></button>
+        <button type="button" data-view="fontguide"><span class="nav-symbol">体</span><span class="nav-name">字体速查</span><span class="nav-arrow">›</span></button>
+        <button type="button" data-view="music"><span class="nav-symbol">曲</span><span class="nav-name">BGM搜歌</span><span class="nav-arrow">›</span></button>
+        <button type="button" data-view="sfx"><span class="nav-symbol">听</span><span class="nav-name">音效特效</span><span class="nav-arrow">›</span></button>
+        <button type="button" data-view="organize"><span class="nav-symbol">夹</span><span class="nav-name">素材整理</span><span class="nav-arrow">›</span></button>
+        <button type="button" data-view="contract"><span class="nav-symbol">约</span><span class="nav-name">合同模板</span><span class="nav-arrow">›</span></button>
+      </nav>
     </div>
     <div class="side-note">
       <strong>快捷键</strong>
@@ -107,7 +135,20 @@
         <div><h3>工具入口</h3><p>按你的当前任务选择工具</p></div>
         <p>模拟版 · 直接体验完整流程</p>
       </div>
-      <div class="tool-list surface" id="homeToolList"></div>
+      <div class="tool-list surface" id="homeToolList">
+        <article class="tool-row"><div class="tool-number">01</div><div><h4>接单报价助手</h4><p>快速生成报价参考、交付清单和确认问题</p></div><button class="round-button" type="button" data-view="quote" aria-label="进入接单报价助手">→</button></article>
+        <article class="tool-row"><div class="tool-number">02</div><div><h4>客户沟通话术助手</h4><p>面对压价、催稿和加需求时更从容</p></div><button class="round-button" type="button" data-view="talk" aria-label="进入客户沟通话术助手">→</button></article>
+        <article class="tool-row"><div class="tool-number">03</div><div><h4>修改意见整理助手</h4><p>把零散反馈变成可执行修改清单</p></div><button class="round-button" type="button" data-view="revision" aria-label="进入修改意见整理助手">→</button></article>
+        <article class="tool-row"><div class="tool-number">04</div><div><h4>作品集包装助手</h4><p>把剪过的视频包装成能接单的案例</p></div><button class="round-button" type="button" data-view="portfolio" aria-label="进入作品集包装助手">→</button></article>
+        <article class="tool-row"><div class="tool-number">05</div><div><h4>素材辅助工具</h4><p>字体参考与图片视频混合制作方案</p></div><button class="round-button" type="button" data-view="material" aria-label="进入素材辅助工具">→</button></article>
+        <article class="tool-row"><div class="tool-number">06</div><div><h4>对标链接拆解助手</h4><p>拆解爆款视频结构与可迁移方法</p></div><button class="round-button" type="button" data-view="benchmark" aria-label="进入对标链接拆解助手">→</button></article>
+        <article class="tool-row"><div class="tool-number">07</div><div><h4>字幕文案优化助手</h4><p>让普通口播更适合短视频观看</p></div><button class="round-button" type="button" data-view="subtitle" aria-label="进入字幕文案优化助手">→</button></article>
+        <article class="tool-row"><div class="tool-number">08</div><div><h4>剪映字体速查助手</h4><p>根据视频风格推荐剪映内置字体搭配</p></div><button class="round-button" type="button" data-view="fontguide" aria-label="进入剪映字体速查助手">→</button></article>
+        <article class="tool-row"><div class="tool-number">09</div><div><h4>BGM搜歌助手</h4><p>根据视频情绪和节奏推荐背景音乐</p></div><button class="round-button" type="button" data-view="music" aria-label="进入BGM搜歌助手">→</button></article>
+        <article class="tool-row"><div class="tool-number">10</div><div><h4>剪映音效特效速查</h4><p>快速找到适合的音效和转场特效</p></div><button class="round-button" type="button" data-view="sfx" aria-label="进入剪映音效特效速查">→</button></article>
+        <article class="tool-row"><div class="tool-number">11</div><div><h4>素材库整理助手</h4><p>自动生成项目文件夹结构和命名规范</p></div><button class="round-button" type="button" data-view="organize" aria-label="进入素材库整理助手">→</button></article>
+        <article class="tool-row"><div class="tool-number">12</div><div><h4>接单合同模板生成器</h4><p>生成剪辑接单确认书与简易合同</p></div><button class="round-button" type="button" data-view="contract" aria-label="进入接单合同模板生成器">→</button></article>
+      </div>
     </section>
 
     <!-- Tool Views -->
@@ -130,7 +171,21 @@
 <div class="mobile-nav-overlay" id="mobileOverlay">
   <div class="mobile-drawer">
     <div class="drawer-head"><h3>选择工具</h3><button class="drawer-close" id="drawerClose" type="button">×</button></div>
-    <nav class="side-nav" id="mobileNav"></nav>
+    <nav class="side-nav" id="mobileNav">
+      <button type="button" data-view="home" class="active"><span class="nav-symbol">首</span><span class="nav-name">首页</span><span class="nav-arrow">›</span></button>
+      <button type="button" data-view="quote"><span class="nav-symbol">价</span><span class="nav-name">接单工具</span><span class="nav-arrow">›</span></button>
+      <button type="button" data-view="talk"><span class="nav-symbol">聊</span><span class="nav-name">沟通话术</span><span class="nav-arrow">›</span></button>
+      <button type="button" data-view="revision"><span class="nav-symbol">改</span><span class="nav-name">修改整理</span><span class="nav-arrow">›</span></button>
+      <button type="button" data-view="portfolio"><span class="nav-symbol">集</span><span class="nav-name">作品集工具</span><span class="nav-arrow">›</span></button>
+      <button type="button" data-view="material"><span class="nav-symbol">材</span><span class="nav-name">素材工具</span><span class="nav-arrow">›</span></button>
+      <button type="button" data-view="benchmark"><span class="nav-symbol">拆</span><span class="nav-name">对标拆解</span><span class="nav-arrow">›</span></button>
+      <button type="button" data-view="subtitle"><span class="nav-symbol">字</span><span class="nav-name">字幕优化</span><span class="nav-arrow">›</span></button>
+      <button type="button" data-view="fontguide"><span class="nav-symbol">体</span><span class="nav-name">字体速查</span><span class="nav-arrow">›</span></button>
+      <button type="button" data-view="music"><span class="nav-symbol">曲</span><span class="nav-name">BGM搜歌</span><span class="nav-arrow">›</span></button>
+      <button type="button" data-view="sfx"><span class="nav-symbol">听</span><span class="nav-name">音效特效</span><span class="nav-arrow">›</span></button>
+      <button type="button" data-view="organize"><span class="nav-symbol">夹</span><span class="nav-name">素材整理</span><span class="nav-arrow">›</span></button>
+      <button type="button" data-view="contract"><span class="nav-symbol">约</span><span class="nav-name">合同模板</span><span class="nav-arrow">›</span></button>
+    </nav>
   </div>
 </div>
 
