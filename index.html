@@ -13,7 +13,931 @@
   <meta name="apple-mobile-web-app-title" content="百宝箱" />
   <link rel="apple-touch-icon" href="icon-192.png" />
   <!-- Stylesheet -->
-  <link rel="stylesheet" href="css/main.css" />
+  <style>
+/* ============================================================
+   剪辑接单百宝箱 v2.1 — 主样式表
+   设计：新拟态银灰双层侧栏
+   ============================================================ */
+
+:root {
+  --bg: #aaa9a5;
+  --shell: #b8b7b3;
+  --panel: #c3c2be;
+  --panel-light: #cecdc9;
+  --panel-dark: #a3a29e;
+  --ink: #171817;
+  --muted: #686965;
+  --line: rgba(54, 55, 53, .16);
+  --light-line: rgba(255, 255, 255, .42);
+  --rail: #222326;
+  --accent: #333539;
+  --focus: #5d8cb0;
+  --danger: #b85d5d;
+  --success: #5d8b6e;
+  --radius-xl: 30px;
+  --radius-lg: 22px;
+  --radius-md: 16px;
+  --shadow-shell: 18px 24px 48px rgba(41, 42, 40, .22), -10px -10px 28px rgba(255, 255, 255, .20);
+  --shadow-raised: 7px 8px 14px rgba(61, 62, 59, .25), -5px -5px 11px rgba(255, 255, 255, .50), inset 0 1px 1px rgba(255,255,255,.55);
+  --shadow-soft: 4px 5px 10px rgba(61, 62, 59, .18), -3px -3px 8px rgba(255, 255, 255, .38);
+  --shadow-inset: inset 3px 4px 8px rgba(61, 62, 59, .20), inset -3px -3px 7px rgba(255, 255, 255, .46);
+  --transition-fast: .17s ease;
+  --transition-normal: .22s ease;
+}
+
+/* ---- Dark Mode ---- */
+[data-theme="dark"] {
+  --bg: #1e1f1c;
+  --shell: #2a2b28;
+  --panel: #30312e;
+  --panel-light: #383935;
+  --panel-dark: #252623;
+  --ink: #e8e8e4;
+  --muted: #9a9b95;
+  --line: rgba(255, 255, 255, .10);
+  --light-line: rgba(255, 255, 255, .06);
+  --rail: #141514;
+  --accent: #4a4b4e;
+  --focus: #7bafd4;
+  --shadow-shell: 18px 24px 48px rgba(0,0,0,.38), -10px -10px 28px rgba(255,255,255,.04);
+  --shadow-raised: 7px 8px 14px rgba(0,0,0,.32), -5px -5px 11px rgba(255,255,255,.04), inset 0 1px 1px rgba(255,255,255,.06);
+  --shadow-soft: 4px 5px 10px rgba(0,0,0,.24), -3px -3px 8px rgba(255,255,255,.04);
+  --shadow-inset: inset 3px 4px 8px rgba(0,0,0,.28), inset -3px -3px 7px rgba(255,255,255,.04);
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  color: var(--ink);
+  font-family: "Microsoft YaHei UI", "PingFang SC", "Noto Sans SC", system-ui, sans-serif;
+  background:
+    radial-gradient(circle at 13% 5%, rgba(255,255,255,.22), transparent 28%),
+    radial-gradient(circle at 92% 95%, rgba(59,60,58,.14), transparent 36%),
+    linear-gradient(135deg, #b9b8b4 0%, var(--bg) 48%, #9e9d99 100%);
+  transition: background .4s ease, color .3s ease;
+}
+[data-theme="dark"] body {
+  background:
+    radial-gradient(circle at 13% 5%, rgba(255,255,255,.04), transparent 28%),
+    radial-gradient(circle at 92% 95%, rgba(0,0,0,.20), transparent 36%),
+    linear-gradient(135deg, #2c2d2a 0%, var(--bg) 48%, #1a1b18 100%);
+}
+
+button, input, textarea, select { font: inherit; color: inherit; }
+button { border: 0; cursor: pointer; }
+button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
+  outline: 2px solid rgba(93, 140, 176, .66);
+  outline-offset: 3px;
+}
+
+/* ---- App Shell ---- */
+.app-shell {
+  display: grid;
+  grid-template-columns: 76px 252px minmax(0, 1fr);
+  min-height: calc(100vh - 40px);
+  margin: 20px;
+  border: 1px solid rgba(255,255,255,.28);
+  border-radius: 34px;
+  background: rgba(185, 184, 180, .80);
+  box-shadow: var(--shadow-shell), inset 0 1px rgba(255,255,255,.42);
+  overflow: hidden;
+  backdrop-filter: blur(18px) saturate(90%);
+}
+[data-theme="dark"] .app-shell {
+  background: rgba(40, 41, 38, .85);
+  border-color: rgba(255,255,255,.08);
+}
+
+/* ---- Icon Rail (最左侧) ---- */
+.icon-rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 18px 10px;
+  background: linear-gradient(180deg, #292a2d, #202124 68%, #292a2d);
+  border-right: 1px solid rgba(255,255,255,.12);
+  box-shadow: 10px 0 24px rgba(42,43,41,.20), inset -1px 0 rgba(0,0,0,.36);
+  z-index: 5;
+}
+[data-theme="dark"] .icon-rail {
+  background: linear-gradient(180deg, #1a1b18, #101110 68%, #1a1b18);
+}
+
+.brand-mark {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  margin-bottom: 24px;
+  border-radius: 17px;
+  color: #f1f1ee;
+  font-size: 21px;
+  font-weight: 300;
+  background: linear-gradient(145deg, #333438, #1c1d20);
+  box-shadow: 6px 7px 13px rgba(0,0,0,.34), -3px -3px 8px rgba(255,255,255,.09), inset 0 1px rgba(255,255,255,.13);
+}
+
+.rail-line { width: 32px; height: 1px; background: rgba(255,255,255,.14); margin-bottom: 15px; }
+.rail-nav { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+.rail-button {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  margin: auto;
+  border-radius: 15px;
+  color: rgba(255,255,255,.72);
+  background: transparent;
+  transition: .22s ease;
+}
+.rail-button:hover { color: #fff; background: rgba(255,255,255,.08); }
+.rail-button.active {
+  color: #fff;
+  background: linear-gradient(145deg, #3d3e42, #2d2e31);
+  box-shadow: 4px 5px 9px rgba(0,0,0,.30), -2px -2px 6px rgba(255,255,255,.08), inset 0 1px rgba(255,255,255,.16);
+}
+.rail-button .icon { font-size: 17px; font-weight: 700; letter-spacing: -.08em; }
+.rail-button .tooltip {
+  position: absolute;
+  left: 58px;
+  top: 50%;
+  transform: translateY(-50%) translateX(-4px);
+  padding: 7px 10px;
+  color: #f5f5f3;
+  white-space: nowrap;
+  font-size: 12px;
+  border-radius: 9px;
+  background: #242528;
+  opacity: 0;
+  pointer-events: none;
+  transition: .18s ease;
+  box-shadow: 0 8px 18px rgba(0,0,0,.22);
+  z-index: 20;
+}
+.rail-button:hover .tooltip { opacity: 1; transform: translateY(-50%); }
+.rail-spacer { flex: 1; }
+.rail-settings { margin-top: 18px; }
+
+/* ---- Theme Toggle ---- */
+.theme-toggle {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  margin-top: 10px;
+  border-radius: 12px;
+  color: rgba(255,255,255,.65);
+  font-size: 16px;
+  background: transparent;
+  transition: .22s ease;
+}
+.theme-toggle:hover { color: #fff; background: rgba(255,255,255,.08); }
+
+/* ---- Side Panel ---- */
+.side-panel {
+  display: flex;
+  flex-direction: column;
+  padding: 24px 18px 20px;
+  border-right: 1px solid rgba(70,71,68,.15);
+  background:
+    linear-gradient(145deg, rgba(255,255,255,.18), transparent 42%),
+    rgba(190, 189, 185, .72);
+  box-shadow: inset -1px 0 rgba(255,255,255,.30);
+}
+[data-theme="dark"] .side-panel {
+  background:
+    linear-gradient(145deg, rgba(255,255,255,.04), transparent 42%),
+    rgba(48, 49, 46, .80);
+  border-right-color: rgba(255,255,255,.06);
+}
+
+.window-dots { display: flex; gap: 9px; margin: 2px 0 25px 4px; }
+.window-dots i {
+  width: 11px; height: 11px; border-radius: 50%;
+  box-shadow: inset 1px 1px 2px rgba(255,255,255,.8), 1px 2px 4px rgba(59,60,57,.24);
+}
+.window-dots i:nth-child(1) { background: #b98c98; }
+.window-dots i:nth-child(2) { background: #b7aa78; }
+.window-dots i:nth-child(3) { background: #82aaa0; }
+
+.brand-copy { padding: 0 7px 22px; border-bottom: 1px solid var(--line); }
+.eyebrow {
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+.brand-copy h1 { margin: 0; font-size: 20px; line-height: 1.35; letter-spacing: -.02em; }
+.brand-copy p { margin: 8px 0 0; color: var(--muted); font-size: 12px; line-height: 1.7; }
+
+.side-section { padding: 20px 0 0; }
+.side-label { margin: 0 8px 10px; color: #747570; font-size: 12px; }
+.side-nav { display: flex; flex-direction: column; gap: 7px; }
+.side-nav button {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  width: 100%;
+  min-height: 44px;
+  padding: 0 14px;
+  text-align: left;
+  border-radius: 14px;
+  background: transparent;
+  transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+}
+.side-nav button:hover { background: rgba(255,255,255,.14); }
+.side-nav button.active {
+  background:
+    linear-gradient(110deg, rgba(255,255,255,.36), rgba(199,211,208,.25) 64%, rgba(255,255,255,.12)),
+    #c1c1bd;
+  border: 1px solid rgba(255,255,255,.44);
+  box-shadow: var(--shadow-soft), inset 0 1px 1px rgba(255,255,255,.65);
+}
+[data-theme="dark"] .side-nav button.active {
+  background: linear-gradient(110deg, rgba(255,255,255,.10), rgba(100,120,115,.15) 64%, rgba(255,255,255,.04)), #3a3b38;
+  border-color: rgba(255,255,255,.15);
+}
+.side-nav button:active { transform: translateY(1px); box-shadow: var(--shadow-inset); }
+.side-nav button.hidden { display: none; }
+.nav-symbol {
+  display: grid; place-items: center;
+  width: 25px; height: 25px;
+  color: #343532;
+  font-size: 12px;
+  font-weight: 800;
+  border-radius: 8px;
+  background: rgba(255,255,255,.17);
+  box-shadow: inset 0 1px rgba(255,255,255,.35);
+  flex: 0 0 auto;
+}
+.nav-name { font-size: 14px; font-weight: 650; }
+.nav-arrow { margin-left: auto; color: #797a76; font-size: 14px; }
+
+.side-note {
+  margin-top: auto;
+  padding: 15px;
+  border: 1px solid rgba(255,255,255,.27);
+  border-radius: 18px;
+  color: #4e4f4c;
+  font-size: 12px;
+  line-height: 1.65;
+  background: rgba(255,255,255,.11);
+  box-shadow: inset 0 1px rgba(255,255,255,.28);
+}
+.side-note strong { display: block; margin-bottom: 4px; color: var(--ink); font-size: 13px; }
+
+/* ---- Main Content ---- */
+.main {
+  min-width: 0;
+  padding: 28px;
+  background:
+    radial-gradient(circle at 88% 5%, rgba(255,255,255,.22), transparent 29%),
+    linear-gradient(150deg, rgba(205,204,200,.90), rgba(174,173,169,.94));
+  overflow-x: hidden;
+}
+[data-theme="dark"] .main {
+  background:
+    radial-gradient(circle at 88% 5%, rgba(255,255,255,.03), transparent 29%),
+    linear-gradient(150deg, rgba(55,54,52,.92), rgba(40,39,37,.94));
+}
+
+.mobile-header { display: none; }
+.topbar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+.page-heading h2 { margin: 2px 0 7px; font-size: clamp(27px, 3vw, 42px); letter-spacing: -.055em; font-weight: 720; }
+.page-heading p { margin: 0; color: #5f605c; font-size: 14px; line-height: 1.7; }
+[data-theme="dark"] .page-heading p { color: #9a9b95; }
+.student-badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px 10px 10px;
+  border-radius: 17px;
+  background: #c8c7c3;
+  box-shadow: var(--shadow-raised);
+  white-space: nowrap;
+}
+[data-theme="dark"] .student-badge { background: #3d3e3b; }
+.student-badge i {
+  display: grid; place-items: center;
+  width: 32px; height: 32px;
+  border-radius: 11px;
+  color: #eee;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 800;
+  background: #2f3033;
+  box-shadow: 3px 4px 7px rgba(50,51,49,.28);
+}
+.student-badge span { font-size: 12px; font-weight: 650; }
+
+/* ---- View Switching ---- */
+.view { display: none; animation: viewIn .38s cubic-bezier(.2,.8,.2,1); }
+.view.active { display: block; }
+@keyframes viewIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+/* ---- Surface / Card ---- */
+.surface {
+  border: 1px solid rgba(255,255,255,.31);
+  border-radius: var(--radius-xl);
+  background:
+    linear-gradient(145deg, rgba(255,255,255,.18), transparent 44%),
+    rgba(194,193,189,.72);
+  box-shadow: 10px 13px 28px rgba(65,66,63,.18), -6px -6px 18px rgba(255,255,255,.18), inset 0 1px rgba(255,255,255,.38);
+}
+[data-theme="dark"] .surface {
+  background: linear-gradient(145deg, rgba(255,255,255,.04), transparent 44%), rgba(52,53,50,.78);
+  border-color: rgba(255,255,255,.10);
+}
+
+/* ---- Welcome ---- */
+.welcome {
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 28px;
+  align-items: center;
+  padding: 34px;
+  margin-bottom: 18px;
+}
+.welcome::after {
+  content: "";
+  position: absolute;
+  right: -80px; top: -120px;
+  width: 280px; height: 280px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(228,229,226,.46), rgba(171,181,179,.10) 48%, transparent 70%);
+  pointer-events: none;
+}
+.welcome h3 { margin: 0 0 13px; font-size: clamp(23px, 2.5vw, 35px); letter-spacing: -.04em; }
+.welcome p { max-width: 740px; margin: 0; color: #5b5c58; font-size: 14px; line-height: 1.85; }
+[data-theme="dark"] .welcome p { color: #a5a6a0; }
+.welcome-seal {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 110px;
+  height: 110px;
+  border-radius: 28px;
+  color: #4b4c49;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .1em;
+  background: linear-gradient(145deg, #cfceca, #bab9b5);
+  box-shadow: var(--shadow-raised);
+}
+.welcome-seal::before { content: "v2.1"; font-size: 16px; }
+.welcome-seal::after { content: "学员专属"; margin-top: 4px; }
+[data-theme="dark"] .welcome-seal {
+  background: linear-gradient(145deg, #4a4b48, #3a3b38);
+  color: #c5c6c0;
+}
+
+/* ---- Stat Strip ---- */
+.stat-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  margin-bottom: 24px;
+  overflow: hidden;
+}
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 20px 24px;
+  border-right: 1px solid var(--line);
+}
+.stat:last-child { border-right: 0; }
+.stat small { color: #6c6d69; font-size: 11px; text-transform: uppercase; letter-spacing: .06em; }
+.stat strong { font-size: 16px; font-weight: 720; letter-spacing: -.03em; }
+
+/* ---- Section Head ---- */
+.section-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 28px 0 14px;
+}
+.section-head h3 { margin: 0 0 5px; font-size: 20px; }
+.section-head p { margin: 0; color: #6e6f6a; font-size: 12px; }
+
+/* ---- Tool List ---- */
+.tool-list { overflow: hidden; }
+.tool-row {
+  display: grid;
+  grid-template-columns: 52px minmax(0,1fr) auto;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 22px;
+  border-bottom: 1px solid var(--line);
+  transition: background .18s ease;
+}
+.tool-row:last-child { border-bottom: 0; }
+.tool-row:hover { background: rgba(255,255,255,.10); }
+.tool-number {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 13px;
+  color: #5b5c58;
+  font-size: 13px;
+  font-weight: 800;
+  background: rgba(190,189,185,.55);
+  box-shadow: var(--shadow-inset);
+}
+.tool-row h4 { margin: 0 0 5px; font-size: 15px; }
+.tool-row p { margin: 0; color: #676864; font-size: 12px; line-height: 1.55; }
+
+.round-button {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  color: #4a4b48;
+  font-size: 18px;
+  font-weight: 700;
+  background: linear-gradient(145deg, #cfceca, #bcbbb7);
+  box-shadow: var(--shadow-soft);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.round-button:hover { transform: scale(1.05); box-shadow: var(--shadow-raised); }
+.round-button:active { transform: scale(.97); box-shadow: var(--shadow-inset); }
+
+/* ---- Primary Button ---- */
+.primary-button {
+  min-height: 42px;
+  padding: 0 22px;
+  border-radius: 13px;
+  color: #f3f3f0;
+  font-weight: 700;
+  background: linear-gradient(145deg, #4a4b4e, #303135);
+  box-shadow: var(--shadow-soft);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.primary-button:hover { transform: translateY(-1px); box-shadow: var(--shadow-raised); }
+.primary-button:active { transform: translateY(1px); box-shadow: var(--shadow-inset); }
+
+.secondary-button {
+  min-height: 38px;
+  padding: 0 16px;
+  border-radius: 11px;
+  color: #454643;
+  font-size: 12px;
+  font-weight: 650;
+  background: linear-gradient(145deg, #cbc9c5, #b7b6b2);
+  box-shadow: var(--shadow-soft);
+  transition: .18s ease;
+}
+.secondary-button:hover { background: #c6c5c0; }
+
+.export-button {
+  min-height: 38px;
+  padding: 0 16px;
+  border-radius: 11px;
+  color: #f3f3f0;
+  font-size: 12px;
+  font-weight: 650;
+  background: linear-gradient(145deg, #5d8b6e, #4a7a5a);
+  box-shadow: var(--shadow-soft);
+  transition: .18s ease;
+}
+.export-button:hover { background: #5d9b6e; }
+
+.button-loading { pointer-events: none; opacity: .78; }
+.button-loading::after {
+  content: "";
+  display: inline-block;
+  width: 12px; height: 12px;
+  margin-left: 9px;
+  border: 2px solid rgba(255,255,255,.32);
+  border-top-color: #fff;
+  border-radius: 50%;
+  vertical-align: -2px;
+  animation: spin .7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ---- Tool Layout (Form + Result) ---- */
+.tool-layout { display: grid; grid-template-columns: minmax(0, .95fr) minmax(360px, 1.05fr); gap: 18px; align-items: start; }
+.form-panel, .result-panel { padding: 25px; }
+.result-panel { position: sticky; top: 20px; min-height: 500px; }
+.panel-title { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 21px; }
+.panel-title h3 { margin: 0; font-size: 18px; }
+.panel-title span {
+  padding: 7px 10px;
+  color: #676864;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 999px;
+  background: rgba(255,255,255,.13);
+  border: 1px solid rgba(255,255,255,.25);
+}
+
+/* ---- Form Fields ---- */
+.field-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.field { min-width: 0; }
+.field.full { grid-column: 1 / -1; }
+.field label { display: block; margin: 0 0 8px 4px; color: #4c4d4a; font-size: 12px; font-weight: 700; }
+[data-theme="dark"] .field label { color: #b0b1ab; }
+.control {
+  width: 100%;
+  min-height: 47px;
+  padding: 0 16px;
+  border: 1px solid rgba(255,255,255,.28);
+  border-radius: 16px;
+  background: rgba(197,196,192,.80);
+  box-shadow: var(--shadow-inset);
+  transition: border-color .18s ease, background .18s ease;
+}
+[data-theme="dark"] .control {
+  background: rgba(55,56,53,.85);
+  color: #e0e1dc;
+  border-color: rgba(255,255,255,.10);
+}
+textarea.control { min-height: 112px; padding-top: 14px; line-height: 1.65; resize: vertical; }
+.control::placeholder { color: #82837e; }
+.control:focus { background: rgba(204,203,199,.90); border-color: rgba(93,140,176,.45); }
+[data-theme="dark"] .control:focus { background: rgba(60,61,58,.92); }
+select.control { appearance: none; background-image: linear-gradient(45deg, transparent 50%, #555 50%), linear-gradient(135deg, #555 50%, transparent 50%); background-position: calc(100% - 18px) 20px, calc(100% - 13px) 20px; background-size: 5px 5px; background-repeat: no-repeat; }
+
+/* ---- Choice Buttons ---- */
+.choice-row { display: flex; flex-wrap: wrap; gap: 9px; }
+.choice { position: relative; }
+.choice input { position: absolute; opacity: 0; pointer-events: none; }
+.choice span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 39px;
+  padding: 0 14px;
+  border: 1px solid rgba(255,255,255,.31);
+  border-radius: 13px;
+  font-size: 12px;
+  background: linear-gradient(145deg, #cbc9c5, #b7b6b2);
+  box-shadow: var(--shadow-soft);
+  cursor: pointer;
+  transition: .17s ease;
+}
+.choice input:checked + span {
+  color: #f3f3f0;
+  background: linear-gradient(145deg, #4a4b4e, #303135);
+  box-shadow: 4px 5px 9px rgba(54,55,52,.28), inset 0 1px rgba(255,255,255,.12);
+}
+.choice input:focus-visible + span { outline: 2px solid var(--focus); outline-offset: 3px; }
+
+/* ---- Form Actions ---- */
+.form-actions { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-top: 22px; padding-top: 20px; border-top: 1px solid var(--line); }
+.form-tip { color: #777873; font-size: 11px; line-height: 1.5; }
+
+/* ---- Empty Result ---- */
+.empty-result {
+  display: grid;
+  place-items: center;
+  min-height: 390px;
+  padding: 30px;
+  text-align: center;
+  color: #6c6d68;
+  border: 1px dashed rgba(70,71,68,.24);
+  border-radius: 22px;
+  background: rgba(255,255,255,.06);
+}
+.empty-result .empty-icon {
+  display: grid; place-items: center;
+  width: 72px; height: 72px;
+  margin: 0 auto 17px;
+  border-radius: 24px;
+  color: #4d4e4b;
+  font-weight: 800;
+  background: #c6c5c1;
+  box-shadow: var(--shadow-raised);
+}
+.empty-result strong { display: block; margin-bottom: 8px; color: #3d3e3b; }
+.empty-result p { max-width: 320px; margin: 0; font-size: 12px; line-height: 1.7; }
+
+/* ---- Result Content ---- */
+.result-content { animation: resultIn .35s ease; }
+@keyframes resultIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+.result-hero {
+  padding: 22px;
+  margin-bottom: 13px;
+  border-radius: 20px;
+  color: #f3f3f0;
+  background: linear-gradient(145deg, #444548, #2e2f32);
+  box-shadow: 7px 9px 17px rgba(55,56,53,.28), inset 0 1px rgba(255,255,255,.12);
+}
+.result-hero small { color: rgba(255,255,255,.62); }
+.result-hero h4 { margin: 8px 0 0; font-size: 24px; }
+.result-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.result-card {
+  padding: 17px;
+  border: 1px solid rgba(255,255,255,.25);
+  border-radius: 18px;
+  background: rgba(204,203,199,.46);
+  box-shadow: 3px 4px 9px rgba(62,63,60,.10), inset 0 1px rgba(255,255,255,.25);
+}
+[data-theme="dark"] .result-card { background: rgba(55,56,53,.55); border-color: rgba(255,255,255,.08); }
+.result-card.full { grid-column: 1 / -1; }
+.result-card h5 { margin: 0 0 9px; font-size: 13px; }
+.result-card p, .result-card li { color: #555652; font-size: 12px; line-height: 1.7; }
+[data-theme="dark"] .result-card p, [data-theme="dark"] .result-card li { color: #b5b6b0; }
+.result-card p { margin: 0; white-space: pre-line; }
+.result-card ul { margin: 0; padding-left: 18px; }
+.result-tag {
+  display: inline-flex;
+  margin: 0 5px 6px 0;
+  padding: 6px 9px;
+  border-radius: 9px;
+  color: #454643;
+  font-size: 10px;
+  font-weight: 700;
+  background: #c7c6c2;
+  box-shadow: var(--shadow-soft);
+}
+.result-toolbar { display: flex; justify-content: flex-end; gap: 9px; margin-top: 14px; }
+
+/* ---- Upload Zone ---- */
+.upload-zone {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 210px;
+  padding: 28px;
+  text-align: center;
+  border: 1.5px dashed rgba(55,56,53,.34);
+  border-radius: 22px;
+  background: rgba(255,255,255,.07);
+  transition: .2s ease;
+  overflow: hidden;
+}
+.upload-zone:hover, .upload-zone.dragging { background: rgba(255,255,255,.15); border-color: rgba(55,56,53,.52); }
+.upload-zone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.upload-zone .upload-symbol {
+  display: grid; place-items: center;
+  width: 58px; height: 58px;
+  margin: 0 auto 14px;
+  border-radius: 19px;
+  font-size: 22px;
+  background: #c9c8c4;
+  box-shadow: var(--shadow-raised);
+}
+.upload-zone strong { display: block; margin-bottom: 6px; font-size: 14px; }
+.upload-zone p { margin: 0; color: #73746f; font-size: 11px; line-height: 1.6; }
+.preview-image { display: none; width: 100%; max-height: 230px; object-fit: cover; border-radius: 17px; box-shadow: var(--shadow-soft); }
+.file-list { display: grid; gap: 8px; margin-top: 12px; }
+.file-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 11px 13px;
+  border-radius: 13px;
+  font-size: 11px;
+  background: rgba(255,255,255,.11);
+  border: 1px solid rgba(255,255,255,.20);
+}
+.file-item span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ---- Result Table ---- */
+.result-table-wrap { overflow-x: auto; border-radius: 16px; border: 1px solid var(--line); }
+.result-table { width: 100%; min-width: 620px; border-collapse: collapse; font-size: 11px; }
+.result-table th, .result-table td { padding: 12px 13px; text-align: left; border-bottom: 1px solid var(--line); }
+.result-table th { color: #555652; background: rgba(255,255,255,.12); }
+.result-table tr:last-child td { border-bottom: 0; }
+.priority { display: inline-flex; padding: 5px 8px; border-radius: 8px; background: #bbb9b5; box-shadow: var(--shadow-soft); }
+
+/* ---- Mobile Nav Overlay ---- */
+.mobile-nav-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(24,25,23,.55);
+  backdrop-filter: blur(6px);
+}
+.mobile-nav-overlay.open { display: block; }
+.mobile-drawer {
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  width: 280px;
+  padding: 24px;
+  background: #c7c6c2;
+  box-shadow: 14px 0 32px rgba(0,0,0,.18);
+  overflow-y: auto;
+}
+[data-theme="dark"] .mobile-drawer { background: #353633; }
+.drawer-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.drawer-head h3 { margin: 0; font-size: 17px; }
+.drawer-close {
+  display: grid; place-items: center;
+  width: 36px; height: 36px;
+  border-radius: 12px;
+  font-size: 18px;
+  background: rgba(255,255,255,.12);
+}
+
+/* ---- Toast ---- */
+.toast {
+  position: fixed;
+  right: 28px;
+  bottom: 28px;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 330px;
+  padding: 14px 17px;
+  border: 1px solid rgba(255,255,255,.30);
+  border-radius: 17px;
+  color: #2f302e;
+  background: #c9c8c4;
+  box-shadow: var(--shadow-raised);
+  opacity: 0;
+  transform: translateY(16px);
+  pointer-events: none;
+  transition: .25s ease;
+}
+.toast.show { opacity: 1; transform: none; }
+.toast i { display: grid; place-items: center; width: 26px; height: 26px; color: #eee; font-style: normal; border-radius: 50%; background: #35363a; }
+.toast span { font-size: 12px; line-height: 1.5; }
+
+/* ---- Bottom TabBar (Mobile) ---- */
+.bottom-tabbar {
+  display: none;
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  z-index: 40;
+  background: rgba(200,199,195,.94);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(255,255,255,.28);
+  box-shadow: 0 -4px 16px rgba(0,0,0,.08);
+}
+[data-theme="dark"] .bottom-tabbar { background: rgba(40,41,38,.94); border-top-color: rgba(255,255,255,.06); }
+.bottom-tabbar-inner {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 60px;
+  max-width: 500px;
+  margin: 0 auto;
+}
+.bottom-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 4px 12px;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 10px;
+  transition: .18s ease;
+}
+.bottom-tab .tab-icon { font-size: 18px; font-weight: 700; }
+.bottom-tab.active { color: var(--ink); background: rgba(255,255,255,.18); }
+
+/* ---- Guided Tour ---- */
+.tour-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(0,0,0,.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.tour-card {
+  max-width: 380px;
+  width: 90%;
+  padding: 30px;
+  border-radius: 24px;
+  text-align: center;
+  background: #cecdc9;
+  box-shadow: 0 20px 50px rgba(0,0,0,.30);
+}
+[data-theme="dark"] .tour-card { background: #3d3e3b; }
+.tour-step-icon {
+  display: grid; place-items: center;
+  width: 64px; height: 64px;
+  margin: 0 auto 18px;
+  border-radius: 20px;
+  font-size: 28px;
+  background: linear-gradient(145deg, #444548, #2e2f32);
+  color: #f3f3f0;
+  box-shadow: var(--shadow-raised);
+}
+.tour-card h3 { margin: 0 0 8px; font-size: 20px; }
+.tour-card p { margin: 0 0 20px; color: #5f605c; font-size: 13px; line-height: 1.7; }
+.tour-dots { display: flex; justify-content: center; gap: 8px; margin-bottom: 18px; }
+.tour-dot { width: 8px; height: 8px; border-radius: 50%; background: #b0b1ab; transition: .2s ease; }
+.tour-dot.active { background: #3d3e3b; width: 24px; border-radius: 4px; }
+.tour-actions { display: flex; gap: 10px; justify-content: center; }
+
+/* ---- History Panel ---- */
+.history-toggle {
+  position: fixed;
+  right: 20px;
+  bottom: 100px;
+  z-index: 90;
+  width: 48px; height: 48px;
+  border-radius: 16px;
+  color: #f3f3f0;
+  font-size: 20px;
+  background: linear-gradient(145deg, #444548, #2e2f32);
+  box-shadow: var(--shadow-raised);
+}
+.history-panel {
+  position: fixed;
+  right: 20px;
+  top: 20px;
+  bottom: 160px;
+  z-index: 90;
+  width: 340px;
+  padding: 20px;
+  border-radius: 22px;
+  background: #cecdc9;
+  box-shadow: 0 16px 40px rgba(0,0,0,.20);
+  overflow-y: auto;
+  display: none;
+}
+.history-panel.open { display: block; }
+[data-theme="dark"] .history-panel { background: #3d3e3b; }
+.history-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.history-head h4 { margin: 0; font-size: 16px; }
+.history-item {
+  padding: 12px;
+  margin-bottom: 8px;
+  border-radius: 14px;
+  background: rgba(255,255,255,.10);
+  border: 1px solid rgba(255,255,255,.18);
+  cursor: pointer;
+  transition: .15s ease;
+}
+.history-item:hover { background: rgba(255,255,255,.18); }
+.history-item .tool-name { font-size: 11px; color: var(--muted); }
+.history-item .preview { font-size: 12px; margin: 4px 0; line-height: 1.5; }
+.history-item .time { font-size: 10px; color: var(--muted); }
+
+/* ---- Responsive ---- */
+@media (max-width: 1080px) {
+  .app-shell { grid-template-columns: 68px 218px minmax(0, 1fr); margin: 10px; min-height: calc(100vh - 20px); }
+  .main { padding: 22px; }
+  .tool-layout { grid-template-columns: 1fr; }
+  .result-panel { position: static; }
+  .stat-strip { grid-template-columns: repeat(2, 1fr); }
+  .stat:nth-child(2) { border-right: 0; }
+  .stat:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+}
+
+@media (max-width: 760px) {
+  .app-shell { grid-template-columns: 1fr; margin: 0; border-radius: 0; min-height: 100vh; }
+  .icon-rail, .side-panel { display: none; }
+  .mobile-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-bottom: 18px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid var(--line);
+  }
+  .mobile-header button {
+    display: grid;
+    place-items: center;
+    width: 42px; height: 42px;
+    border-radius: 14px;
+    font-size: 20px;
+    background: rgba(255,255,255,.09);
+    box-shadow: var(--shadow-soft);
+  }
+  .main { padding: 16px; }
+  .welcome { grid-template-columns: 1fr; }
+  .welcome-seal { display: none; }
+  .tool-row { grid-template-columns: 42px minmax(0,1fr) auto; padding: 13px 14px; }
+  .result-grid { grid-template-columns: 1fr; }
+  .topbar { flex-direction: column; }
+  .field-grid { grid-template-columns: 1fr; }
+  .form-actions { flex-direction: column; align-items: flex-start; }
+  .bottom-tabbar { display: block; }
+  body { padding-bottom: 70px; }
+  .history-panel { right: 4px; left: 4px; width: auto; }
+  .history-toggle { right: 12px; bottom: 80px; }
+}
+
+</style>
   <!-- Open Graph -->
   <meta property="og:title" content="剪辑接单百宝箱" />
   <meta property="og:description" content="13合1剪辑学员工具箱：报价、话术、修改、作品集、字体、音乐、音效、合同……从会剪到会接单。" />
@@ -190,7 +1114,14 @@
 </div>
 
 <!-- Bottom TabBar (Mobile) -->
-<div class="bottom-tabbar" id="bottomTabBar"></div>
+<div class="bottom-tabbar" id="bottomTabBar">
+  <div class="bottom-tabbar-inner">
+    <button class="bottom-tab active" data-view="home"><span class="tab-icon">首</span>首页</button>
+    <button class="bottom-tab" data-view="quote"><span class="tab-icon">价</span>接单工具</button>
+    <button class="bottom-tab" data-view="talk"><span class="tab-icon">聊</span>沟通话术</button>
+    <button class="bottom-tab" data-view="portfolio"><span class="tab-icon">集</span>作品集工具</button>
+  </div>
+</div>
 
 <!-- Toast -->
 <div class="toast" id="toast"><i>✓</i><span></span></div>
@@ -206,35 +1137,1693 @@
 </div>
 
 <!-- ES Module Entry -->
-<script type="module">
-  import { initApp } from "./js/app.js";
-  import { initQuote } from "./js/tools/quote.js";
-  import { initTalk } from "./js/tools/talk.js";
-  import { initRevision } from "./js/tools/revision.js";
-  import { initPortfolio } from "./js/tools/portfolio.js";
-  import { initMaterial } from "./js/tools/material.js";
-  import { initBenchmark } from "./js/tools/benchmark.js";
-  import { initSubtitle } from "./js/tools/subtitle.js";
-  import { initFontguide } from "./js/tools/fontguide.js";
-  import { initMusic } from "./js/tools/music.js";
-  import { initSfx } from "./js/tools/sfx.js";
-  import { initOrganize } from "./js/tools/organize.js";
-  import { initContract } from "./js/tools/contract.js";
+<script>
+// ===== DATA =====
+/* ============================================================
+   话术场景数据库 — AI 小琳风格
+   ============================================================ */
 
-  // Init all
-  initApp();
-  initQuote();
-  initTalk();
-  initRevision();
-  initPortfolio();
-  initMaterial();
-  initBenchmark();
-  initSubtitle();
-  initFontguide();
-  initMusic();
-  initSfx();
-  initOrganize();
-  initContract();
+const talkDB = {
+  初次咨询: {
+    judgment: `先别报价。对方还没说需求、没发账号、没给参考——这时候报任何价格都是给自己挖坑。`,
+    reality: `客户一上来只问价格，大概率是低预算试探型。这种人不是在找剪辑师，是在比价。先要资料，不给就筛掉，不浪费时间。`,
+    script: `你好，在报价之前我先看一下你的账号和需求。你发一下：
+1. 账号主页或想剪的视频
+2. 一个你觉得做得好的参考账号
+3. 这条视频主要用来干什么（涨粉/种草/成交）
+
+这些看完我才能判断适不适合做、大概什么范围。不然我随便报个数对你不负责。`,
+    action: `等他发资料。不发 = 不是真客户。发了再看下一步。`,
+    fallback: `如果他不发资料只追问"到底多少钱"——直接说"不同需求价格差很多，没有信息我没法报"。他再不发的，直接结束对话。`,
+    tips: [`第一句话绝不报价`, `先判断客户类型：低预算试探 / 有内容但不会剪 / 想升级质感 / 长期运营`, `不发账号和参考的客户，90% 不会成交`]
+  },
+  客户压价: {
+    judgment: `他说贵不一定真觉得贵——可能是在试探底价，可能在跟别人比，也可能根本没看到你的价值。先诊断再回应，别直接降价。`,
+    reality: `压价分几种：
+1. 真的预算不够 → 降范围
+2. 在跟别人比价 → 拆差异
+3. 在试探你底价 → 不降，给确定感
+4. 没看到价值 → 先让他看懂你解决什么问题
+
+90% 的情况是第 3 或第 4 种。你一降他就知道你还能再降。`,
+    script: `这个价格不只是剪一条视频，是帮你做账号质感改造——开头、节奏、重点提炼、字幕包装统一。如果预算有限，可以先去掉包装降一档，核心的结构和节奏优化保留。你看要调整范围还是按当前方案走？`,
+    action: `给他两个选择：降范围保留核心 / 维持原方案。不给第三个选项。`,
+    fallback: `他如果说"那我再想想"——回"好的，方向和预算确定了随时找我。排期按确认顺序来。"然后停止跟进。不要追。`,
+    tips: [`不主动降价——客户没开口要折扣之前，你一分钱都不让`, `降价格必须同时降范围——交付内容不变 = 价格不变`, `"以后还有很多单" = 先付这一单的钱`, `报完价闭嘴，先说话的人输`]
+  },
+  客户催稿: {
+    judgment: `催稿可以理解，但急单是加价理由，不是被压价的理由。他急是他那边的问题，不是你免费加班的原因。`,
+    reality: `加急 = 你要插队、压缩其他人的排期、可能还要加班。这些都有成本。不收加急费等于你自己承担他的时间管理问题。正常排期不额外收费，加急就必须加价。`,
+    script: `理解你比较急。加急需要调整排期，费用上浮30%，预计48小时内出初稿。如果时间允许正常排期（约5天），费用不变。你确认哪个方案？`,
+    action: `让他二选一：加急加价 / 正常不加价。不给第三个选项。`,
+    fallback: `他如果说"那算了，不用加急，正常做就好"——确认正常排期时间点，写入交付清单。他如果说"先按正常的来但我还是希望你快点"——不承诺，只说"尽快但不保证，正常交期是X天"。`,
+    tips: [`急单必须收加急费，不收等于告诉客户你的时间不值钱`, `明确到几点几分交付，不要模糊`, `不接受"先赶出来看看"——这就是在试探能不能白嫖加急`]
+  },
+  客户反复修改: {
+    judgment: `修改超出约定轮数，不是你做得不好，是客户没有一次给齐意见。或者他根本不确定自己要什么。继续改下去只会越改越亏。`,
+    reality: `约定范围内的小改（错字、局部音量）免费。超出范围的修改（结构调整、风格变化、素材替换）按次计费。不接受"再改最后一次"——这句话永远不是最后一次。`,
+    script: `当前已超出约定修改轮数。后续修改按次计费（X元/轮）。建议先定稿这一版，新需求开追加单。不接受"再改最后一次"的无限循环。`,
+    action: `让他一次性给齐所有剩余意见。给齐 = 算最后一轮。零散追加 = 每轮单独计费。`,
+    fallback: `他如果说"那算了就这样吧"——确认定稿，发终版。不要因为他说算了就觉得不好意思。约定就是约定。`,
+    tips: [`每次修改要求客户一次性给齐所有意见`, `区分小改（免费）和大改（计费）`, `超过3轮修改 = 客户需求本身有问题，重新评估`, `不接受"再改最后一次"`]
+  },
+  客户需求不清楚: {
+    judgment: `客户说"怎么好看怎么来""你看着办""我也不知道要什么风格"——这三句话翻译过来就是：怎么做他都不会满意。不能直接开工。`,
+    reality: `客户说不清需求只有两种情况：
+1. 他真的不懂 → 需要你帮他缩小选项
+2. 他想让你先做出来再挑 → 这是白嫖思维
+
+不管哪种，你都得先锁定方向再开工。不然改到第5版他还会说"感觉不对"。`,
+    script: `好的，我先帮你缩小范围：
+你更喜欢哪种感觉？
+A. 干净克制（少即是多，大博主感）
+B. 网感热闹（花字音效，综艺感）
+C. 商业质感（品牌感，适合接广告）
+
+另外发1-2个你觉得做得好的视频给我参考。`,
+    action: `不发参考不开工。不确认方向不报价。`,
+    fallback: `他如果说"你先做着，做着做着就有感觉了"——回"我建议先花半小时锁定方向，不然后面改5版的时间成本远远超过这半小时"。他如果还不肯——不接。`,
+    tips: [`"怎么好看怎么来" = 怎么做都不会满意`, `必须先锁定参考和方向再开工`, `模糊需求报价只给区间，不给死价`, `不确认方向就开工 = 必然返工`]
+  },
+  客户临时加需求: {
+    judgment: `确认范围后加需求——不是他临时想到的，是他一开始就没说完。或者他在测试你的边界。不管哪种，必须加钱、加时间、写确认。`,
+    reality: `新增需求 = 不在原确认范围 = 重新计费。这不是你较真，是保护双方预期。这次不确认就免费做了，下次他还会这么干。三次以上新增需求 = 这个客户需求管理体系有问题，重新评估要不要继续合作。`,
+    script: `这个内容不在原确认范围内，属于新增需求。我可以继续处理——费用增加X元，交期顺延1天。我补一份变更确认给你，你回复确认后我就开始做。`,
+    action: `发变更确认单。他回复"确认"之前不动手。`,
+    fallback: `他如果说"就一点点东西还要加钱啊"——回"不在范围内的我都单独确认，这样对双方都清楚。如果你觉得不划算，可以先不做这个新增。"`,
+    tips: [`每次新增需求都要书面变更确认`, `不确认不启动——保护双方预期`, `小新增（加行字幕）= 免费赠送`, `中新增（封面、多一版）= 按次计费`, `大新增（新版本、新平台）= 重新报价`, `三次以上新增 = 客户本身有问题，重新评估`]
+  }
+};
+
+const goalLabels = {
+  "想成交": "当前策略：推进成交，守住底线，给客户两个明确选项",
+  "想涨价": "当前策略：强调价值差异，让客户理解为什么值这个价",
+  "想拒绝": "当前策略：设定清晰边界，允许客户自然退出",
+  "想解释": "当前策略：先帮客户理解决策逻辑，不急着要答复",
+  "想确认需求": "当前策略：先追问锁定方向，不急着报价格或推进度"
+};
+
+/* ============================================================
+   字体数据库 — 剪映字体速查
+   ============================================================ */
+
+const fontDB = {
+  "干净高级": {
+    cn: ["思源黑体 Bold", "阿里巴巴普惠体 M", "HarmonyOS Sans SC"],
+    tip: "克制风格优先选无衬线字体，字重不超过2种，关键信息加大15-20%。"
+  },
+  "可爱活泼": {
+    cn: ["得意黑", "站酷快乐体", "沐瑶软笔手写体"],
+    tip: "圆体/手写体为主，颜色可以鲜艳，字数不超过2行。"
+  },
+  "商业质感": {
+    cn: ["思源宋体 Bold", "站酷高端黑", "造字工房力黑"],
+    tip: "衬线字体显质感，适合品牌/广告；字间距略微拉开5-10%。"
+  },
+  "网感综艺": {
+    cn: ["优设标题黑", "庞门正道标题体", "锐字真言体"],
+    tip: "粗+大+撞色=网感；花字加描边和投影，配合音效节奏出现。"
+  },
+  "文艺情绪": {
+    cn: ["思源宋体 Light", "方正静蕾简体", "杨任东竹石体"],
+    tip: "细字重+留白+慢节奏；字幕字号比常规小一号，保持呼吸感。"
+  },
+  "科技简约": {
+    cn: ["优设标题黑", "站酷酷黑", "HarmonyOS Sans SC"],
+    tip: "几何感强的无衬线字体，线条干净；配合冷色调画面。"
+  }
+};
+
+const positionTips = {
+  "封面标题": "封面字要大（字号>=画面高度1/8），2行以内每行<=10字。",
+  "视频字幕": "字幕字号适中（画面高度1/15-1/12），居中对齐或左下对齐。",
+  "重点花字": "花字可加大到正常字幕1.5-2倍，每屏不超过2个。",
+  "人名条/标签": "人名条字号偏小（画面高度1/20-1/15），放在人物旁边。",
+  "结尾引流": "结尾引流用中等字号，放在画面中央偏下，不要挡住主体。"
+};
+
+/* ============================================================
+   音乐数据库 — BGM 搜歌
+   ============================================================ */
+
+const moodDB = {
+  "温暖治愈": {
+    style: "轻钢琴 / 木吉他 / Ukulele",
+    keywords: ["治愈", "温暖", "钢琴", "轻音乐", "早晨", "阳光"],
+    bpm: "60-90 BPM"
+  },
+  "积极向上": {
+    style: "流行摇滚 / 电子流行 / 励志管弦",
+    keywords: ["励志", "向上", "活力", "前进", "奋斗", "正能量"],
+    bpm: "100-140 BPM"
+  },
+  "紧张悬疑": {
+    style: "环境电子 / 弦乐紧张 / 低音脉冲",
+    keywords: ["悬疑", "紧张", "氛围", "暗黑", "压迫感"],
+    bpm: "60-100 BPM"
+  },
+  "轻松愉快": {
+    style: "放克 / City Pop / 轻电子 / Bossa Nova",
+    keywords: ["轻松", "愉快", "活泼", "旅行", "周末", "俏皮"],
+    bpm: "90-130 BPM"
+  },
+  "伤感情绪": {
+    style: "钢琴独奏 / 弦乐 / 氛围后摇",
+    keywords: ["伤感", "情绪", "钢琴", "回忆", "孤独", "思念"],
+    bpm: "50-80 BPM"
+  },
+  "酷炫潮流": {
+    style: "Trap / Hip-Hop Beat / Future Bass",
+    keywords: ["潮流", "酷", "Trap", "卡点", "Beat", "街头"],
+    bpm: "120-160 BPM"
+  },
+  "大气磅礴": {
+    style: "史诗管弦 / Hybrid Orchestra / 电影配乐",
+    keywords: ["大气", "磅礴", "史诗", "管弦", "电影感", "震撼"],
+    bpm: "80-120 BPM"
+  }
+};
+
+/* ============================================================
+   音效特效数据库 — 剪映音效特效速查
+   ============================================================ */
+
+const sfxDB = {
+  "转场音效（嗖、呼、唰）": {
+    sfx: "Whoosh / Swoosh / Swish / 疾风 / 快速移动",
+    search: "转场/嗖/呼/风",
+    tip: "时长0.3-0.8秒，配合画面切换。比BGM低3-6dB。"
+  },
+  "提示音（叮、弹出、确认）": {
+    sfx: "Ding / Pop / Notification / Bell / Chime",
+    search: "提示/叮/弹出/铃铛",
+    tip: "短促0.1-0.3秒，用于强化文字。每10秒最多1-2次。"
+  },
+  "氛围音（环境、自然、城市）": {
+    sfx: "Ambient / Nature / City / Rain / Fire",
+    search: "环境/自然/雨/风/城市",
+    tip: "调低音量(-12~-18dB)垫在底轨。需要时渐入渐出。"
+  },
+  "动作音（脚步、开门、放东西）": {
+    sfx: "Footstep / Door Open / Drop / Pick Up",
+    search: "脚步/开门/放下/拿起/翻页",
+    tip: "与画面动作对齐，音量适中。过度使用会显刻意。"
+  },
+  "卡点音效（鼓点、重音）": {
+    sfx: "Kick / Snare / Hit / Impact / Boom / Riser",
+    search: "鼓/重音/Hit/Impact/上升",
+    tip: "对齐BGM鼓点，每隔1-2个重拍放一个，留白也是节奏。"
+  },
+  "搞笑音效（滑倒、尴尬、惊讶）": {
+    sfx: "Slip / Fail / Surprise / Boing / Wah-wah",
+    search: "搞笑/滑倒/尴尬/惊讶/卡通",
+    tip: "点到为止，同效果不重复超2次。最好笑的是节奏不是音效。"
+  },
+  "综艺感（鼓掌、欢呼、笑声）": {
+    sfx: "Applause / Cheer / Laugh / Crowd",
+    search: "鼓掌/欢呼/笑声/综艺",
+    tip: "配合花字和贴纸一起用。2-3种叠出综艺感，注意层次。"
+  }
+};
+
+const vfxDB = {
+  "转场特效": {
+    vfx: "叠化 / 闪白 / 模糊转场 / 滑动 / 放大转场",
+    search: "转场/叠化/滑动/放大",
+    tip: "风格统一，一个视频不超过3种转场类型。"
+  },
+  "画面特效（发光/震动/模糊）": {
+    vfx: "发光 / 边缘发光 / 震动 / 径向模糊 / 毛刺",
+    search: "发光/震动/模糊/故障",
+    tip: "特效服务内容不炫技。重点信息加轻微发光，不叠加超过2个特效。"
+  },
+  "文字动画": {
+    vfx: "打字机 / 逐字出现 / 弹跳 / 翻转 / 滑入",
+    search: "文字动画/弹入/打字机",
+    tip: "封面字和花字用动画，普通字幕不加。速度0.3-0.6秒。"
+  },
+  "贴纸/表情": {
+    vfx: "Emoji / 箭头 / 对话框 / 爱心 / 点赞",
+    search: "贴纸/表情/箭头/装饰",
+    tip: "每屏不超过2个。不挡住主体和字幕。"
+  },
+  "分屏/画中画": {
+    vfx: "两分屏 / 三分屏 / 画中画 / 蒙版遮罩",
+    search: "分屏/画中画/蒙版",
+    tip: "适合对比和教学。每个区域清晰可见。"
+  },
+  "不需要特效，只要音效": {
+    vfx: "无特效",
+    search: "",
+    tip: "好的剪辑往往特效最少。留白和节奏 > 特效堆积。"
+  }
+};
+
+function getRhythmTip(rhythm) {
+  if (rhythm === "干净克制") return "克制风格：少即是多。转场只用1-2种，音效每30秒最多1-2次。参考大博主：往往特效最少。";
+  if (rhythm === "强节奏/综艺感") return "综艺感：音效+花字+贴纸+快切叠加。每段高潮后留1-2秒安静形成起伏。";
+  return "适中节奏最通用。每视频选1-2个记忆点的音效，不要每处都加。";
+}
+
+// ===== UTILITIES =====
+/* ============================================================
+   剪辑接单百宝箱 — 工具函数
+   ============================================================ */
+
+// ---- DOM helpers ----
+function el(selector, root = document) {
+  return root.querySelector(selector);
+}
+
+function all(selector, root = document) {
+  return [...root.querySelectorAll(selector)];
+}
+
+// ---- Toast ----
+let toastTimer;
+function showToast(message) {
+  const toast = el("#toast");
+  el("span", toast).textContent = message;
+  toast.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove("show"), 2600);
+}
+
+// ---- Choice helper ----
+function choice(name, values, checked = 0) {
+  return `<div class="choice-row">${values.map((value, i) => `
+    <label class="choice"><input type="radio" name="${name}" value="${value}" ${i === checked ? "checked" : ""}><span>${value}</span></label>`).join("")}</div>`;
+}
+
+// ---- Result shells ----
+function resultShell(id, label) {
+  return `
+    <div class="result-panel surface">
+      <div class="panel-title"><h3>生成结果</h3><span>模拟结果</span></div>
+      <div id="${id}">
+        <div class="empty-result">
+          <div><div class="empty-icon">结果</div><strong>等待生成</strong><p>填写左侧信息并点击「${label}」，这里会显示结构化模拟结果。</p></div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function resultCard(title, body, full = false) {
+  const content = Array.isArray(body)
+    ? `<ul>${body.map(item => `<li>${item}</li>`).join("")}</ul>`
+    : `<p>${body}</p>`;
+  return `<div class="result-card ${full ? "full" : ""}"><h5>${title}</h5>${content}</div>`;
+}
+
+function resultLayout(heroLabel, hero, cards) {
+  return `<div class="result-content">
+    <div class="result-hero"><small>${heroLabel}</small><h4>${hero}</h4></div>
+    <div class="result-grid">${cards.join("")}</div>
+    <div class="result-toolbar">
+      <button class="secondary-button copy-result" type="button">复制结果</button>
+      <button class="export-button export-pdf" type="button">导出 PDF</button>
+    </div>
+  </div>`;
+}
+
+// ---- Simulate (with optional AI) ----
+function simulate(form, button, callback, useAI = false) {
+  button.classList.add("button-loading");
+  const original = button.textContent;
+  button.textContent = useAI ? "AI 思考中" : "正在生成";
+  const delay = useAI ? 1500 : 650;
+
+  if (useAI && window._aiGenerate) {
+    // Use real AI API
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+    window._aiGenerate(data, callback, button, original);
+  } else {
+    setTimeout(() => {
+      button.classList.remove("button-loading");
+      button.textContent = original;
+      callback(new FormData(form));
+      showToast("结果已生成，可以继续修改信息重新测试。");
+    }, delay);
+  }
+}
+
+// ---- File helpers ----
+function formatBytes(bytes) {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1048576) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / 1048576).toFixed(1)} MB`;
+}
+
+// ---- PDF Export ----
+function exportToPdf(element) {
+  const content = element.closest(".result-content");
+  if (!content) return showToast("没有可导出的结果。");
+
+  const toolName = el("#pageTitle").textContent || "百宝箱";
+  const win = window.open("", "_blank", "width=800,height=600");
+  const styles = '';
+  win.document.write(`<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><title>${toolName} - 导出结果</title>
+<link rel="stylesheet" href="${styles}">
+<style>
+  body { padding: 30px; background: #aaa9a5; font-family: "Microsoft YaHei UI", "PingFang SC", sans-serif; }
+  .result-content { max-width: 700px; margin: 0 auto; }
+  @media print { body { background: #fff; padding: 0; } .result-toolbar { display: none; } }
+</style></head>
+<body><div class="result-content">${content.innerHTML}</div></body></html>`);
+  win.document.close();
+  setTimeout(() => win.print(), 500);
+}
+
+// ---- localStorage History ----
+const HISTORY_KEY = "toolbox_history";
+const MAX_HISTORY = 50;
+
+function saveToHistory(toolId, toolName, preview) {
+  try {
+    const history = JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
+    history.unshift({
+      toolId,
+      toolName,
+      preview: preview.substring(0, 120),
+      full: preview,
+      time: Date.now()
+    });
+    if (history.length > MAX_HISTORY) history.length = MAX_HISTORY;
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+  } catch (e) { /* quota exceeded, ignore */ }
+}
+
+function getHistory() {
+  try {
+    return JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
+  } catch (e) { return []; }
+}
+
+function clearHistory() {
+  localStorage.removeItem(HISTORY_KEY);
+}
+
+// ---- Stats (for home dashboard) ----
+const STATS_KEY = "toolbox_stats";
+
+function recordToolUsage(toolId) {
+  try {
+    const stats = JSON.parse(localStorage.getItem(STATS_KEY) || "{}");
+    stats[toolId] = (stats[toolId] || 0) + 1;
+    stats._total = (stats._total || 0) + 1;
+    stats._lastUsed = Date.now();
+    localStorage.setItem(STATS_KEY, JSON.stringify(stats));
+    return stats;
+  } catch (e) { return {}; }
+}
+
+function getStats() {
+  try {
+    return JSON.parse(localStorage.getItem(STATS_KEY) || "{}");
+  } catch (e) { return {}; }
+}
+
+// ---- Theme ----
+function initTheme() {
+  const saved = localStorage.getItem("toolbox_theme") || "light";
+  document.documentElement.setAttribute("data-theme", saved);
+  return saved;
+}
+
+function toggleTheme() {
+  const current = document.documentElement.getAttribute("data-theme") || "light";
+  const next = current === "dark" ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", next);
+  localStorage.setItem("toolbox_theme", next);
+  return next;
+}
+
+// ===== AI MODULE =====
+/* ============================================================
+   AI API 集成模块 (P2-2)
+   支持通过 Claude API 或兼容端点进行真实 AI 生成
+   配置：在 localStorage 中设置 toolbox_ai_key 和 toolbox_ai_endpoint
+   ============================================================ */
+
+// Default to using a configurable endpoint
+const DEFAULT_ENDPOINT = 'https://api.anthropic.com/v1/messages';
+const DEFAULT_MODEL = 'claude-sonnet-4-6';
+
+function getConfig() {
+  try {
+    return {
+      endpoint: localStorage.getItem('toolbox_ai_endpoint') || DEFAULT_ENDPOINT,
+      apiKey: localStorage.getItem('toolbox_ai_key') || '',
+      model: localStorage.getItem('toolbox_ai_model') || DEFAULT_MODEL,
+      enabled: localStorage.getItem('toolbox_ai_enabled') === 'true'
+    };
+  } catch (e) {
+    return { endpoint: DEFAULT_ENDPOINT, apiKey: '', model: DEFAULT_MODEL, enabled: false };
+  }
+}
+
+function isAIEnabled() {
+  return getConfig().enabled && getConfig().apiKey;
+}
+
+function configureAI({ endpoint, apiKey, model, enabled }) {
+  if (endpoint !== undefined) localStorage.setItem('toolbox_ai_endpoint', endpoint);
+  if (apiKey !== undefined) localStorage.setItem('toolbox_ai_key', apiKey);
+  if (model !== undefined) localStorage.setItem('toolbox_ai_model', model);
+  if (enabled !== undefined) localStorage.setItem('toolbox_ai_enabled', String(enabled));
+}
+
+/**
+ * Call the AI API with a system prompt and user message.
+ * Returns the generated text, or null on failure.
+ */
+async function aiGenerate(systemPrompt, userMessage, options = {}) {
+  const config = getConfig();
+  if (!config.enabled || !config.apiKey) {
+    console.warn('AI not configured. Set toolbox_ai_key in localStorage or use the settings.');
+    return null;
+  }
+
+  const { maxTokens = 2000, temperature = 0.7 } = options;
+
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 30000);
+
+    const response = await fetch(config.endpoint, {
+      method: 'POST',
+      signal: controller.signal,
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': config.apiKey,
+        'anthropic-version': '2023-06-01'
+      },
+      body: JSON.stringify({
+        model: config.model,
+        max_tokens: maxTokens,
+        temperature,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: userMessage }]
+      })
+    });
+    clearTimeout(timeout);
+
+    if (!response.ok) {
+      console.error('AI API error:', response.status, await response.text());
+      return null;
+    }
+
+    const data = await response.json();
+    // Anthropic format
+    if (data.content && data.content[0]) {
+      return data.content[0].text;
+    }
+    // OpenAI-compatible format
+    if (data.choices && data.choices[0]) {
+      return data.choices[0].message?.content || '';
+    }
+    return null;
+  } catch (err) {
+    console.error('AI generate failed:', err.message);
+    return null;
+  }
+}
+
+/**
+ * Build a tool-specific prompt for AI generation.
+ * Each tool can define its own system prompt template.
+ */
+function buildToolPrompt(toolId, formData) {
+  const data = typeof formData === 'object' && !(formData instanceof FormData)
+    ? formData
+    : Object.fromEntries(formData?.entries?.() || []);
+
+  const prompts = {
+    quote: {
+      system: `你是"AI 小琳"，短视频剪辑课助教。你帮剪辑学员做接单报价咨询。你的风格：直接、有边界感、教方法不只给答案。你强调报价不只是报数字，是报价值。你要先判断再报价。`,
+      user: `客户类型：${data.client || ''}，视频类型：${data.video || ''}，时长：${data.duration || ''}，是否需要包装：${data.package || ''}，是否需要脚本协助：${data.script || ''}，是否加急：${data.urgent || ''}，客户要求：${data.request || ''}。
+
+请生成：1. 报价区间；2. 标准档包含什么；3. 报价前必须先拿到的信息；4. AI小琳式报价话术；5. 报价后铁律；6. 跟进节奏。`
+    },
+    talk: {
+      system: `你是"AI 小琳"，短视频剪辑课助教。你帮剪辑学员处理客户沟通。你的风格：直接、有边界感、教方法不只给答案。`,
+      user: `沟通场景：${data.scene || ''}，客户原话：${data.words || ''}，我的目标：${data.goal || ''}。
+
+请生成：1. AI小琳式判断；2. 现实判断；3. 可直接发送的回复话术；4. 最优先动作；5. 如果不行怎么办；6. 核心原则。`
+    },
+    benchmark: {
+      system: `你是短视频剪辑课助教，请根据我手动补充的信息做对标拆解，不要假设你已经读取了平台原视频。`,
+      user: `平台：${data.platform || ''}，标题：${data.title || ''}，前3秒：${data.hook || ''}，内容描述：${data.description || ''}，字幕/画面风格：${data.visual || ''}，节奏/BGM：${data.rhythm || ''}，热评：${data.comments || ''}，我要迁移的动作：${data.transfer || ''}。
+
+请输出：1. 前3秒钩子拆解；2. 内容结构；3. 字幕/画面/节奏特点；4. 评论区需求；5. 可迁移动作；6. 不建议模仿的地方；7. 作品集样片方案。`
+    },
+    subtitle: {
+      system: `你是短视频剪辑课的字幕优化助教。你帮学员把口播文案优化成适合短视频字幕的表达。减少废话、优化断句、强调关键词。`,
+      user: `原始文案：${data.content || ''}，视频类型：${data.type || ''}，想要风格：${data.style || ''}，是否需要封面标题：${data.cover || ''}。
+
+请输出：1. 优化后的字幕版；2. 可做封面大字的句子；3. 建议强调的关键词；4. 字幕断句建议；5. 不建议保留的废话。`
+    }
+  };
+
+  return prompts[toolId] || null;
+}
+
+// Hook into simulate()
+window._aiGenerate = async function(formData, callback, button, originalText) {
+  // Detect which tool
+  const form = button.closest('form');
+  const view = form?.closest('.view');
+  let toolId = 'quote';
+  if (view) toolId = view.id.replace('view-', '');
+
+  const prompt = buildToolPrompt(toolId, formData);
+  if (!prompt) {
+    // Fallback: use original callback
+    button.classList.remove('button-loading');
+    button.textContent = originalText;
+    callback(formData);
+    return;
+  }
+
+  const result = await aiGenerate(prompt.system, prompt.user);
+  button.classList.remove('button-loading');
+  button.textContent = originalText;
+
+  if (result) {
+    // Pass the AI result through - for now fall back to simulated
+    // In a full implementation, each tool would parse the AI response
+    callback(formData);
+    showToast('✨ AI 生成完成（当前为模拟模式，可配置真实 API 密钥启用 AI 生成）');
+  } else {
+    callback(formData);
+    showToast('AI 暂不可用，使用模拟结果。');
+  }
+};
+
+// ===== APP CORE =====
+/* ============================================================
+   剪辑接单百宝箱 — 主应用逻辑
+   路由 / 导航 / 初始化
+   ============================================================ */
+
+
+// ---- Tool Registry ----
+const tools = [
+  { id: "home", name: "首页", short: "首", title: "首页", desc: "查看工具概览与使用入口", subtitle: "剪辑课学员专属增值工具箱 · 支持 AI 智能生成与离线使用", tags: ["概览","入口"] },
+  { id: "quote", name: "接单工具", short: "价", title: "接单报价助手", desc: "快速生成报价参考、交付清单和确认问题", subtitle: "根据客户类型、视频需求和交付条件生成报价参考", tags: ["报价","接单","客户"] },
+  { id: "talk", name: "沟通话术", short: "聊", title: "客户沟通话术助手", desc: "面对压价、催稿和加需求时更从容", subtitle: "把客户原话整理成温和、专业与强边界三种回复", tags: ["沟通","客户","话术"] },
+  { id: "revision", name: "修改整理", short: "改", title: "修改意见整理助手", desc: "把零散反馈变成可执行修改清单", subtitle: "整理时间点、修改类型、优先级与二次确认事项", tags: ["修改","整理"] },
+  { id: "portfolio", name: "作品集工具", short: "集", title: "作品集包装助手", desc: "把剪过的视频包装成能接单的案例", subtitle: "生成作品集标题、案例介绍与多平台发布文案", tags: ["作品集","包装","展示"] },
+  { id: "material", name: "素材工具", short: "材", title: "素材辅助工具", desc: "字体参考与图片视频混合制作方案", subtitle: "识别风格、整理素材，并生成作品集制作方案", tags: ["素材","字体","混合"] },
+  { id: "benchmark", name: "对标拆解", short: "拆", title: "对标链接拆解助手", desc: "拆解爆款视频结构与可迁移方法", subtitle: "只做内容拆解，不下载、不爬取、不违规解析", tags: ["对标","拆解","学习"] },
+  { id: "subtitle", name: "字幕优化", short: "字", title: "字幕文案优化助手", desc: "让普通口播更适合短视频观看", subtitle: "优化字幕表达、断句、封面大字与强调关键词", tags: ["字幕","文案","口播"] },
+  { id: "fontguide", name: "字体速查", short: "体", title: "剪映字体速查助手", desc: "根据视频风格推荐剪映内置字体搭配", subtitle: "查找适合你视频风格的剪映字体、字号与排版方案", tags: ["字体","剪映","排版"] },
+  { id: "music", name: "BGM搜歌", short: "曲", title: "BGM搜歌助手", desc: "根据视频情绪和节奏推荐背景音乐", subtitle: "按风格/情绪/节奏搜歌，推荐剪映曲库和免版权音乐来源", tags: ["音乐","BGM","情绪"] },
+  { id: "sfx", name: "音效特效", short: "听", title: "剪映音效特效速查", desc: "快速找到适合的音效和转场特效", subtitle: "按场景查找剪映音效库和特效，含节奏卡点音效指南", tags: ["音效","特效","剪映"] },
+  { id: "organize", name: "素材整理", short: "夹", title: "素材库整理助手", desc: "自动生成项目文件夹结构和命名规范", subtitle: "告别乱糟糟的素材库，一键生成分类清晰的文件夹方案", tags: ["整理","素材库","文件夹"] },
+  { id: "contract", name: "合同模板", short: "约", title: "接单合同模板生成器", desc: "生成剪辑接单确认书与简易合同", subtitle: "保护双方权益，交付内容、修改次数、付款方式一目了然", tags: ["合同","法律","确认"] }
+];
+
+// ---- Update Stats ----
+function updateStats() {
+  const stats = getStats();
+  const total = stats._total || 0;
+  const toolCount = tools.length;
+  const mostUsedId = Object.entries(stats)
+    .filter(([k]) => !k.startsWith("_"))
+    .sort(([,a], [,b]) => b - a)[0];
+  const mostUsedName = mostUsedId ? (tools.find(t => t.id === mostUsedId[0])?.name || "—") : "—";
+  const lastUsed = stats._lastUsed ? new Date(stats._lastUsed).toLocaleDateString("zh-CN") : "—";
+
+  el("#statToolCount").textContent = `${toolCount} 个`;
+  el("#statTotalRuns").textContent = `${total} 次`;
+  el("#statMostUsed").textContent = mostUsedName;
+  el("#statLastUsed").textContent = lastUsed;
+}
+
+// ---- View Switching ----
+function switchView(id, options = {}) {
+  const tool = tools.find(item => item.id === id) || tools[0];
+  all(".view").forEach(view => view.classList.toggle("active", view.id === `view-${id}`));
+  all("[data-view]").forEach(button => button.classList.toggle("active", button.dataset.view === id));
+  el("#pageTitle").textContent = tool.title;
+  el("#pageSubtitle").textContent = tool.subtitle;
+
+  // Record usage
+  if (id !== "home") recordToolUsage(id);
+
+  // Material tab
+  if (id === "material" && options.tab) {
+    if (typeof switchMaterialTab === "function") switchMaterialTab(options.tab);
+  }
+
+  // Mobile
+  el("#mobileOverlay").classList.remove("open");
+  document.body.style.overflow = "";
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+
+// ---- Keyboard Shortcuts ----
+function initKeyboard() {
+  document.addEventListener("keydown", (e) => {
+    // Ctrl/Cmd + 1~9 = switch tools
+    if ((e.ctrlKey || e.metaKey) && e.key >= "1" && e.key <= "9") {
+      e.preventDefault();
+      const idx = parseInt(e.key) - 1;
+      if (idx < tools.length && tools[idx].id !== "home") {
+        switchView(tools[idx].id);
+      }
+    }
+    // Ctrl/Cmd + 0 = home
+    if ((e.ctrlKey || e.metaKey) && e.key === "0") {
+      e.preventDefault();
+      switchView("home");
+    }
+    // Ctrl/Cmd + Enter = submit active form
+    if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+      const activeView = document.querySelector(".view.active");
+      const form = activeView?.querySelector("form");
+      if (form) {
+        e.preventDefault();
+        form.dispatchEvent(new Event("submit", { cancelable: true }));
+      }
+    }
+    // Escape = close modals
+    if (e.key === "Escape") {
+      el("#mobileOverlay")?.classList.remove("open");
+      el("#historyPanel")?.classList.remove("open");
+      el("#tourOverlay")?.remove();
+      document.body.style.overflow = "";
+    }
+  });
+}
+
+// ---- History Panel ----
+function initHistoryPanel() {
+  const panel = el("#historyPanel");
+  const toggleBtn = el("#historyToggle");
+  if (!panel || !toggleBtn) return;
+
+  toggleBtn.addEventListener("click", () => {
+    const isOpen = panel.classList.toggle("open");
+    if (isOpen) renderHistoryList();
+  });
+
+  el("#historyClear")?.addEventListener("click", () => {
+    clearHistory();
+    renderHistoryList();
+    showToast("历史记录已清空。");
+  });
+}
+
+function renderHistoryList() {
+  const list = el("#historyList");
+  const history = getHistory();
+  if (!history.length) {
+    list.innerHTML = '<div class="empty-result" style="min-height:120px"><p>暂无历史记录</p></div>';
+    return;
+  }
+  list.innerHTML = history.map((h, i) => `
+    <div class="history-item" data-idx="${i}">
+      <div class="tool-name">${h.toolName} · ${new Date(h.time).toLocaleString("zh-CN")}</div>
+      <div class="preview">${h.preview}</div>
+    </div>`).join("");
+
+  list.querySelectorAll(".history-item").forEach(item => {
+    item.addEventListener("click", () => {
+      const idx = parseInt(item.dataset.idx);
+      const entry = getHistory()[idx];
+      if (entry) {
+        switchView(entry.toolId);
+        el("#historyPanel").classList.remove("open");
+        showToast("已从历史记录进入「" + entry.toolName + "」");
+      }
+    });
+  });
+}
+
+// ---- File Upload ----
+function initUploadZones() {
+  all(".upload-zone").forEach(zone => {
+    const input = el("input[type=file]", zone);
+    ["dragenter", "dragover"].forEach(type =>
+      zone.addEventListener(type, e => { e.preventDefault(); zone.classList.add("dragging"); })
+    );
+    ["dragleave", "drop"].forEach(type =>
+      zone.addEventListener(type, e => { e.preventDefault(); zone.classList.remove("dragging"); })
+    );
+    zone.addEventListener("drop", e => handleFiles(zone, e.dataTransfer.files));
+    input?.addEventListener("change", () => handleFiles(zone, input.files));
+  });
+}
+
+function handleFiles(zone, files) {
+  if (!files?.length) return;
+  if (zone.dataset.upload === "image") {
+    const file = files[0];
+    if (!file.type.startsWith("image/")) return showToast("请选择 JPG、PNG 或 WEBP 图片。");
+    const image = el(".preview-image", zone);
+    image.src = URL.createObjectURL(file);
+    image.style.display = "block";
+    el(".upload-copy", zone).style.display = "none";
+    const form = zone.closest("form");
+    const screenshotInput = form?.querySelector('input[name="screenshot"]');
+    if (screenshotInput) screenshotInput.value = file.name;
+    showToast(`已读取图片：${file.name}`);
+  } else {
+    const list = zone.nextElementSibling;
+    if (list) {
+      list.innerHTML = [...files].map(file =>
+        `<div class="file-item"><span>${file.name}</span><span>${formatBytes(file.size)}</span></div>`
+      ).join("");
+    }
+    showToast(`已读取 ${files.length} 个素材文件。`);
+  }
+}
+
+// ---- Global Event Delegation ----
+function initGlobalEvents() {
+  document.addEventListener("click", event => {
+    // Navigation
+    const nav = event.target.closest("[data-view]");
+    if (nav) {
+      if (typeof switchMaterialTab === "function" && nav.dataset.tab) {
+        switchView(nav.dataset.view, { tab: nav.dataset.tab });
+      } else {
+        switchView(nav.dataset.view);
+      }
+    }
+
+    // Copy result
+    const copy = event.target.closest(".copy-result");
+    if (copy) {
+      const text = copy.closest(".result-content")?.innerText
+        .replace("复制结果", "").replace("复制清单", "").replace("导出 PDF", "") || "";
+      navigator.clipboard?.writeText(text)
+        .then(() => showToast("结果已复制到剪贴板。"))
+        .catch(() => showToast("当前浏览器未开放复制权限。"));
+    }
+
+    // Export PDF
+    const exportBtn = event.target.closest(".export-pdf");
+    if (exportBtn) {
+      exportToPdf(exportBtn);
+    }
+  });
+}
+
+// ---- Mobile ----
+function initMobile() {
+  el("#menuButton")?.addEventListener("click", () => {
+    el("#mobileOverlay").classList.add("open");
+    document.body.style.overflow = "hidden";
+  });
+  el("#drawerClose")?.addEventListener("click", () => {
+    el("#mobileOverlay").classList.remove("open");
+    document.body.style.overflow = "";
+  });
+  el("#mobileOverlay")?.addEventListener("click", event => {
+    if (event.target === event.currentTarget) {
+      event.currentTarget.classList.remove("open");
+      document.body.style.overflow = "";
+    }
+  });
+}
+
+// ---- Theme ----
+function initThemeToggle() {
+  const btn = el("#themeToggle");
+  if (!btn) return;
+  btn.addEventListener("click", () => {
+    const next = toggleTheme();
+    btn.textContent = next === "dark" ? "☀️" : "🌙";
+  });
+  const current = initTheme();
+  btn.textContent = current === "dark" ? "☀️" : "🌙";
+}
+
+// ---- Guided Tour ----
+function initTour() {
+  const seen = localStorage.getItem("toolbox_tour_seen");
+  if (seen) return;
+  if (window.innerWidth < 760) return; // Skip on mobile
+
+  const steps = [
+    { icon: "🎬", title: "欢迎使用百宝箱", desc: "这里是剪辑课学员的专属工具箱，帮你完成从接单报价到作品集包装的全流程。" },
+    { icon: "📋", title: "13 个实用工具", desc: "左侧是工具导航栏，点击即可切换。推荐从「接单报价助手」开始，按接单流程依次使用。" },
+    { icon: "⌨️", title: "快捷键支持", desc: "Ctrl+1~9 快速切换工具，Ctrl+Enter 提交表单，Esc 关闭弹窗。试试看！" }
+  ];
+
+  let step = 0;
+  const overlay = document.createElement("div");
+  overlay.className = "tour-overlay";
+  overlay.id = "tourOverlay";
+
+  function render() {
+    const s = steps[step];
+    overlay.innerHTML = `
+      <div class="tour-card">
+        <div class="tour-step-icon">${s.icon}</div>
+        <h3>${s.title}</h3>
+        <p>${s.desc}</p>
+        <div class="tour-dots">${steps.map((_, i) => `<div class="tour-dot ${i === step ? "active" : ""}"></div>`).join("")}</div>
+        <div class="tour-actions">
+          ${step > 0 ? '<button class="secondary-button tour-prev">上一步</button>' : ''}
+          <button class="primary-button tour-next">${step === steps.length - 1 ? "开始使用" : "下一步"}</button>
+        </div>
+      </div>`;
+    document.body.appendChild(overlay);
+
+    overlay.querySelector(".tour-next")?.addEventListener("click", () => {
+      if (step < steps.length - 1) {
+        step++;
+        render();
+      } else {
+        overlay.remove();
+        localStorage.setItem("toolbox_tour_seen", "1");
+        showToast("🎉 开始探索吧！试试点击左侧工具导航。");
+      }
+    });
+    overlay.querySelector(".tour-prev")?.addEventListener("click", () => {
+      if (step > 0) { step--; render(); }
+    });
+  }
+  render();
+}
+
+// ---- Bottom TabBar (Mobile) ----
+function initBottomTabBar() {
+  const bar = el("#bottomTabBar");
+  if (!bar) return;
+  // Quick access: home, quote, talk, portfolio
+  const tabs = ["home", "quote", "talk", "portfolio"];
+  bar.innerHTML = `
+    <div class="bottom-tabbar-inner">
+      ${tabs.map(id => {
+        const t = tools.find(x => x.id === id);
+        return `<button class="bottom-tab ${id === "home" ? "active" : ""}" data-view="${id}">
+          <span class="tab-icon">${t.short}</span>${t.name}
+        </button>`;
+      }).join("")}
+    </div>`;
+
+  bar.querySelectorAll(".bottom-tab").forEach(tab => {
+    tab.addEventListener("click", () => {
+      switchView(tab.dataset.view);
+      bar.querySelectorAll(".bottom-tab").forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
+    });
+  });
+}
+
+// ---- Init ----
+function initApp() {
+  updateStats();
+  initKeyboard();
+  initHistoryPanel();
+  initUploadZones();
+  initGlobalEvents();
+  initMobile();
+  initThemeToggle();
+  setTimeout(initTour, 800);
+}
+
+// ===== TOOLS =====
+/* 接单报价助手 */
+
+function initQuote() {
+  el("#view-quote").innerHTML = `
+    <div class="tool-layout">
+      <form class="form-panel surface" id="quoteForm">
+        <div class="panel-title"><h3>填写客户需求</h3><span>约 1 分钟</span></div>
+        <div class="field-grid">
+          <div class="field"><label>客户类型</label><select class="control" name="client"><option>个人博主</option><option>商家账号</option><option>课程博主</option><option>探店账号</option><option>本地商家</option><option>其他</option></select></div>
+          <div class="field"><label>视频类型</label><select class="control" name="video"><option>口播</option><option>vlog</option><option>探店</option><option>带货</option><option>课程切片</option><option>广告片</option><option>混剪</option></select></div>
+          <div class="field"><label>视频时长</label><input class="control" name="duration" placeholder="例如：60 秒" value="60 秒"></div>
+          <div class="field"><label>是否需要包装</label>${choice("package", ["是", "否"])}</div>
+          <div class="field full"><label>客户要求</label><textarea class="control" name="request" placeholder="例如：需要字幕、花字、简单调色，参考同赛道博主节奏">需要字幕、花字、简单调色，希望整体节奏紧凑，有 1 个参考视频。</textarea></div>
+          <div class="field"><label>是否需要脚本协助</label>${choice("script", ["是", "否"], 1)}</div>
+          <div class="field"><label>是否加急</label>${choice("urgent", ["是", "否"], 1)}</div>
+        </div>
+        <div class="form-actions"><span class="form-tip">报价仅作课程练习参考，正式报价前请确认客户预算与修改次数。</span><button class="primary-button" type="submit">生成报价建议</button></div>
+      </form>
+      ${resultShell("quoteResult", "生成报价建议")}
+    </div>`;
+
+  el("#quoteForm").addEventListener("submit", event => {
+    event.preventDefault();
+    simulate(event.currentTarget, event.submitter, data => {
+      const client = data.get("client");
+      const video = data.get("video");
+      const durationRaw = data.get("duration");
+      const durationSec = parseInt(durationRaw) || 60;
+      const needPackage = data.get("package") === "是";
+      const needScript = data.get("script") === "是";
+      const isUrgent = data.get("urgent") === "是";
+      const isAd = video === "广告片";
+      const isComplex = video === "混剪" || video === "带货" || isAd;
+      const timeFactor = durationSec <= 30 ? 0.85 : durationSec <= 90 ? 1.0 : durationSec <= 180 ? 1.3 : 1.6;
+      const baseBasic = Math.round((isComplex ? 250 : 180) * timeFactor / 10) * 10;
+      const pkgAdd = needPackage ? 0.25 : 0;
+      const scriptAdd = needScript ? 0.15 : 0;
+      const urgentAdd = isUrgent ? 0.35 : 0;
+      const basicPrice = Math.round(baseBasic * (1 + pkgAdd * 0.3 + scriptAdd * 0.3 + urgentAdd) / 10) * 10;
+      const standardPrice = Math.round(baseBasic * 2.0 * (1 + pkgAdd + scriptAdd * 0.5 + urgentAdd) / 10) * 10;
+      const premiumPrice = Math.round(baseBasic * 3.2 * (1 + pkgAdd + scriptAdd + urgentAdd) / 10) * 10;
+      const priceLabel = basicPrice + " - " + premiumPrice + " 元";
+      const valueLabel = isComplex ? "账号质感改造" : (needPackage ? "内容包装升级" : "基础剪辑整理");
+      const minPrice = Math.min(basicPrice, standardPrice, premiumPrice);
+      const maxPrice = Math.max(basicPrice, standardPrice, premiumPrice);
+      const dStandard = ["成片 1 条", "结构优化（钩子+节奏+信息层级）", "重点花字/关键词强调", "基础调色", "音乐音效匹配", "2 轮修改", needPackage ? "封面制作" : null].filter(Boolean);
+
+      const html = resultLayout("建议报价区间", priceLabel, [
+        resultCard("💡 先判断再报价", "不要拿到需求直接报。" + client + "的" + video + "视频，时长约" + durationSec + "秒——这属于" + valueLabel + "类项目，不是简单代剪。报价前先确认：客户账号阶段、视频用途（涨粉/种草/成交）、是否需要内容判断、是否能作为作品集案例。"),
+        resultCard("🟢 基础：" + basicPrice + " 元 | 🟡 标准：" + standardPrice + " 元 | 🔴 深度：" + premiumPrice + " 元", "基于 8 个因素综合计算。基础档 = 纯拼接+字幕；标准档 = 结构优化+花字+调色；深度档 = 风格设计+全包装+脚本协助。"),
+        resultCard("标准档包含什么", dStandard),
+        resultCard("⚠️ 报价前必须先拿到", ["客户账号主页或想剪的视频", "1个参考账号/视频（他喜欢的风格）", "视频用途（涨粉、种草、成交、建人设）", "素材是否已准备好", "交付时间要求"], true),
+        resultCard("📞 AI 小琳式报价话术", "我看了一下你的需求——这是" + valueLabel + "类项目，不只是顺素材剪完，我会帮你重排开头、节奏、重点和包装，让视频更像成熟博主内容。
+
+根据你目前的情况，建议在 " + priceLabel + " 之间。
+
+具体取决于选基础/标准/深度哪个档位和最终素材量。你先确认范围和交期，我给你出详细交付清单。", true),
+        resultCard("🤫 报价后铁律", "1. 报完闭嘴，等客户先回——先说话的人输
+2. 客户说贵 ≠ 真的贵，先诊断不直接降
+3. 降价格必须同时降范围，交付内容不变价格不变"),
+        resultCard("📅 跟进节奏", ["当天：发送书面交付清单", "第1天：确认有没有疑问", "第3天：补发一个类似案例", "第7天：确认项目方向是否有变", "第14天：最后跟进（排期提醒）", "14天后：停止。不追。等他找你。"], true)
+      ]);
+
+      el("#quoteResult").innerHTML = html;
+      saveToHistory("quote", "接单报价助手", "报价区间：" + priceLabel + " | " + client + "·" + video);
+    });
+  });
+}
+
+/* 客户沟通话术助手 */
+
+function initTalk() {
+  el("#view-talk").innerHTML = `
+    <div class="tool-layout">
+      <form class="form-panel surface" id="talkForm">
+        <div class="panel-title"><h3>输入沟通场景</h3><span>三种边界强度</span></div>
+        <div class="field-grid">
+          <div class="field full"><label>当前沟通场景</label><select class="control" name="scene"><option>初次咨询</option><option selected>客户压价</option><option>客户催稿</option><option>客户反复修改</option><option>客户需求不清楚</option><option>客户临时加需求</option></select></div>
+          <div class="field full"><label>客户原话</label><textarea class="control" name="words" placeholder="粘贴客户发来的原话">别人 100 元就能做，你这边能不能便宜一点？后面还有很多视频。</textarea></div>
+          <div class="field full"><label>我的目标</label>${choice("goal", ["想成交", "想涨价", "想拒绝", "想解释", "想确认需求"], 1)}</div>
+        </div>
+        <div class="form-actions"><span class="form-tip">建议根据客户关系选择语气，不要一次发送全部版本。</span><button class="primary-button" type="submit">生成回复话术</button></div>
+      </form>
+      ${resultShell("talkResult", "生成回复话术")}
+    </div>`;
+
+  el("#talkForm").addEventListener("submit", event => {
+    event.preventDefault();
+    simulate(event.currentTarget, event.submitter, data => {
+      const scene = data.get("scene");
+      const goal = data.get("goal");
+      const words = data.get("words") || "";
+      const info = talkDB[scene] || talkDB["客户压价"];
+
+      const wordsLower = words.toLowerCase();
+      const isPriceOnly = words.length < 20 && (words.includes("钱") || words.includes("价") || words.includes("多少"));
+      const isBargain = words.includes("便宜") || words.includes("贵") || words.includes("优惠");
+      const isVague = words.includes("好看") || words.includes("高级") || words.includes("感觉") || words.includes("随便");
+      const isUrgent = words.includes("急") || words.includes("快") || words.includes("马上");
+      const clientType = isPriceOnly ? "低预算试探型" : isBargain ? "价格敏感型" : isVague ? "需求模糊型" : isUrgent ? "急单型" : "待判断";
+
+      // Adjust script based on goal
+      let script = info.script;
+      if (goal === "想拒绝") {
+        script = talkDB[scene]?.script || info.script;
+        if (scene === "客户压价") script = "理解。当前价格是按交付内容核算的，如果预算不匹配也完全理解。建议你找更匹配你预算的剪辑师，以后有合适的项目再联系。";
+        else if (scene === "客户临时加需求") script = "这个需求不在原范围内。如果要加，费用增加X元，交期顺延Y天。或者你先把原定内容确认交付，这个作为追加单处理。你定哪个？";
+      } else if (goal === "想解释" && scene === "客户压价") {
+        script = "我先说一下这个价格包含什么：不只是剪顺，而是重排开头、节奏、重点和包装——让视频更像成熟博主内容，不是普通代剪。如果你只需要基础拼接，有更便宜的选择。";
+      } else if (goal === "想确认需求" && scene === "客户需求不清楚") {
+        script = `好的，我先帮你缩小范围：
+你更喜欢哪种感觉？
+A. 干净克制（少即是多，大博主感）
+B. 网感热闹（花字音效，综艺感）
+C. 商业质感（品牌感，适合接广告）
+另外发1-2个你觉得做得好的视频给我参考。`;
+      }
+
+      el("#talkResult").innerHTML = resultLayout(
+        "场景：" + scene + " | 目标：" + goal,
+        "客户类型判断：" + clientType + " | " + (goalLabels[goal] || ""),
+        [
+          resultCard("AI 小琳式判断", info.judgment, true),
+          resultCard("现实判断", info.reality, true),
+          resultCard("回复话术（可直接发）", script, true),
+          resultCard("最优先动作", info.action),
+          resultCard("如果不行怎么办", info.fallback),
+          resultCard("⚠️ 核心原则", info.tips)
+        ]
+      );
+      saveToHistory("talk", "沟通话术助手", "场景：" + scene + " | 目标：" + goal + " | 客户：" + clientType);
+    });
+  });
+}
+
+/* 修改意见整理助手 */
+
+function initRevision() {
+  el("#view-revision").innerHTML = `
+    <div class="tool-layout">
+      <form class="form-panel surface" id="revisionForm">
+        <div class="panel-title"><h3>粘贴客户修改意见</h3><span>自动整理</span></div>
+        <div class="field-grid">
+          <div class="field full"><label>客户修改意见</label><textarea class="control" name="feedback" style="min-height:190px" placeholder="支持粘贴零散聊天记录">开头那个停顿删掉；第 12 秒字幕太小；中间产品特写换成我后面发的素材；结尾电话再放大一点，音乐声音也小一点。</textarea></div>
+          <div class="field"><label>视频总时长</label><input class="control" name="duration" value="1 分 10 秒"></div>
+          <div class="field"><label>是否需要回复客户</label><div class="choice-row"><label class="choice"><input type="radio" name="reply" value="是" checked><span>是</span></label><label class="choice"><input type="radio" name="reply" value="否"><span>否</span></label></div></div>
+        </div>
+        <div class="form-actions"><span class="form-tip">整理后仍需核对时间点，避免对客户模糊描述过度推断。</span><button class="primary-button" type="submit">整理修改清单</button></div>
+      </form>
+      ${resultShell("revisionResult", "整理修改清单")}
+    </div>`;
+
+  el("#revisionForm").addEventListener("submit", event => {
+    event.preventDefault();
+    simulate(event.currentTarget, event.submitter, () => {
+      el("#revisionResult").innerHTML = `<div class="result-content">
+        <div class="result-hero"><small>整理完成</small><h4>共识别 5 项修改</h4></div>
+        <div class="result-table-wrap"><table class="result-table">
+          <thead><tr><th>时间点</th><th>修改内容</th><th>类型</th><th>优先级</th><th>二次确认</th></tr></thead>
+          <tbody>
+            <tr><td>00:00</td><td>删除开头停顿</td><td>节奏</td><td><span class="priority">高</span></td><td>否</td></tr>
+            <tr><td>00:12</td><td>放大字幕字号</td><td>字幕</td><td><span class="priority">中</span></td><td>否</td></tr>
+            <tr><td>中段</td><td>替换产品特写素材</td><td>素材</td><td><span class="priority">高</span></td><td>是，待客户发素材</td></tr>
+            <tr><td>结尾</td><td>放大联系电话</td><td>包装</td><td><span class="priority">中</span></td><td>否</td></tr>
+            <tr><td>全片</td><td>降低背景音乐音量</td><td>声音</td><td><span class="priority">中</span></td><td>否</td></tr>
+          </tbody>
+        </table></div>
+        <div class="result-grid" style="margin-top:12px">${resultCard("给客户的回复话术", "收到，本轮共整理出 5 项修改。其中产品特写替换需要您补发对应素材，其余修改我会按清单处理。素材收到后我再同步新的交付时间。", true)}</div>
+        <div class="result-toolbar"><button class="secondary-button copy-result" type="button">复制清单</button><button class="export-button export-pdf" type="button">导出 PDF</button></div>
+      </div>`;
+      saveToHistory("revision", "修改意见整理助手", "共识别 5 项修改");
+    });
+  });
+}
+
+/* 作品集包装助手 */
+
+function initPortfolio() {
+  el("#view-portfolio").innerHTML = `
+    <div class="tool-layout">
+      <form class="form-panel surface" id="portfolioForm">
+        <div class="panel-title"><h3>填写案例信息</h3><span>多平台文案</span></div>
+        <div class="field-grid">
+          <div class="field"><label>案例类型</label><select class="control" name="type"><option>口播</option><option>vlog</option><option selected>探店</option><option>带货</option><option>课程</option><option>广告</option><option>混剪</option></select></div>
+          <div class="field"><label>客户行业</label><input class="control" name="industry" value="本地餐饮"></div>
+          <div class="field full"><label>这个案例做了什么</label><textarea class="control" name="work">负责素材筛选、节奏重组、字幕包装、产品特写和门店氛围调色。</textarea></div>
+          <div class="field full"><label>亮点描述</label><textarea class="control" name="highlight">前三秒直接展示招牌产品，信息密度高但画面不乱，整体节奏适合本地生活账号。</textarea></div>
+          <div class="field"><label>是否有数据结果</label><input class="control" name="data" placeholder="没有可填写：暂无公开数据" value="完播率比往期提升 18%"></div>
+          <div class="field"><label>想发布的平台</label><select class="control" name="platform"><option>小红书</option><option>抖音</option><option>朋友圈</option><option>简历</option><option>接单页</option></select></div>
+        </div>
+        <div class="form-actions"><span class="form-tip">数据结果请使用真实数据，没有数据也可以突出服务过程和交付价值。</span><button class="primary-button" type="submit">生成作品集文案</button></div>
+      </form>
+      ${resultShell("portfolioResult", "生成作品集文案")}
+    </div>`;
+
+  el("#portfolioForm").addEventListener("submit", event => {
+    event.preventDefault();
+    simulate(event.currentTarget, event.submitter, data => {
+      const type = data.get("type");
+      const industry = data.get("industry");
+      const work = data.get("work");
+      const highlight = data.get("highlight");
+      const resultData = data.get("data");
+
+      el("#portfolioResult").innerHTML = resultLayout("作品集标题", `本地餐饮${type}案例｜从素材整理到成片包装`, [
+        resultCard("案例介绍", `${work} 通过重新设计前三秒信息、调整素材顺序和统一字幕视觉，让案例更适合短视频平台观看。`, true),
+        resultCard("我的服务亮点", ["能从客户目标反推剪辑重点", "不仅剪顺，还会处理信息层级", "交付前主动检查字幕、声音和画幅"]),
+        resultCard("展示给客户的话术", `这是我为${industry}账号制作的案例，重点处理了前三秒产品展示、字幕信息和门店氛围。如果您的账号也需要稳定更新同类内容，我可以按统一模板长期协作。`),
+        resultCard("小红书发布版", `剪辑作品集更新｜这次做的是${industry}${type}案例。相比堆转场，我更关注前三秒有没有吸引力、产品特写是否清楚，以及字幕会不会抢画面。`, true),
+        resultCard("朋友圈发布版", `更新一条${industry}剪辑案例：素材整理、节奏重组、字幕包装、基础调色均由我完成。目前可承接${type}、探店和本地生活类短视频剪辑。`),
+        resultCard("简历 / 接单页展示版", `项目类型：${type}短视频｜负责内容：素材筛选、结构调整、字幕包装、声音处理与调色｜结果：${resultData}`)
+      ]);
+      saveToHistory("portfolio", "作品集包装助手", `${industry} ${type}案例 · 多平台文案`);
+    });
+  });
+}
+
+/* 素材辅助工具 (字体识别 + 混合制作) */
+
+function switchMaterialTab(tab) {
+  const isFont = tab === "font";
+  el("#materialFont").hidden = !isFont;
+  el("#materialMix").hidden = isFont;
+  const input = el(`#materialTabs input[value="${tab}"]`);
+  if (input) input.checked = true;
+}
+
+function initMaterial() {
+  el("#view-material").innerHTML = `
+    <div class="surface" style="padding:10px;margin-bottom:18px">
+      <div class="choice-row" id="materialTabs">
+        <label class="choice"><input type="radio" name="materialTab" value="font" checked><span>封面 / 字幕字体识别</span></label>
+        <label class="choice"><input type="radio" name="materialTab" value="mix"><span>图片 / 视频混合制作</span></label>
+      </div>
+    </div>
+    <div id="materialFont">
+      <div class="tool-layout">
+        <form class="form-panel surface" id="fontForm">
+          <div class="panel-title"><h3>上传截图并描述风格</h3><span>模拟识别</span></div>
+          <div class="upload-zone" data-upload="image">
+            <input type="file" accept=".jpg,.jpeg,.png,.webp,image/*">
+            <div class="upload-copy"><div class="upload-symbol">＋</div><strong>拖拽或点击上传截图</strong><p>支持 JPG / PNG / WEBP，第一版只做本地预览</p></div>
+            <img class="preview-image" alt="上传图片预览">
+          </div>
+          <div class="field-grid" style="margin-top:17px">
+            <div class="field full"><label>输入截图中的文字</label><input class="control" name="text" value="剪辑小白如何开始接单"></div>
+            <div class="field"><label>选择用途</label><select class="control" name="use"><option>封面大字</option><option>视频字幕</option><option>标题字</option><option>海报字</option></select></div>
+            <div class="field"><label>选择风格</label><select class="control" name="style"><option>干净高级</option><option>可爱活泼</option><option>商业感</option><option>情绪感</option><option>教程感</option></select></div>
+          </div>
+          <div class="form-actions"><span class="form-tip">第一版不接真实 OCR 与字体库，结果用于排版方向参考。</span><button class="primary-button" type="submit">开始识别字体</button></div>
+        </form>
+        ${resultShell("fontResult", "开始识别字体")}
+      </div>
+    </div>
+    <div id="materialMix" hidden>
+      <div class="tool-layout">
+        <form class="form-panel surface" id="mixForm">
+          <div class="panel-title"><h3>上传图片或视频素材</h3><span>制作方案</span></div>
+          <div class="upload-zone" data-upload="files">
+            <input type="file" multiple accept="image/*,video/*">
+            <div class="upload-copy"><div class="upload-symbol">＋</div><strong>拖拽或点击上传素材</strong><p>支持常见图片与视频格式，仅显示文件名，不上传服务器</p></div>
+          </div>
+          <div class="file-list"></div>
+          <div class="field-grid" style="margin-top:17px">
+            <div class="field"><label>制作类型</label><select class="control" name="type"><option>作品集展示</option><option>客户案例包装</option><option>小红书封面图</option><option>接单介绍页</option><option>朋友圈展示</option></select></div>
+            <div class="field"><label>选择风格</label><select class="control" name="style"><option>干净高级</option><option>小红书感</option><option>商单感</option><option>教程感</option><option>情绪感</option></select></div>
+            <div class="field"><label>选择画幅</label>${choice("ratio", ["9:16", "16:9", "1:1"])}</div>
+            <div class="field full"><label>想表达的卖点</label><textarea class="control" name="selling">突出我会做节奏、字幕包装、调色和商单案例整理，适合口播与本地生活账号。</textarea></div>
+          </div>
+          <div class="form-actions"><span class="form-tip">第一版不做真实合成与导出，只生成剪映制作方案。</span><button class="primary-button" type="submit">生成制作方案</button></div>
+        </form>
+        ${resultShell("mixResult", "生成制作方案")}
+      </div>
+    </div>`;
+
+  el("#materialTabs").addEventListener("change", event => switchMaterialTab(event.target.value));
+
+  el("#fontForm").addEventListener("submit", event => {
+    event.preventDefault();
+    simulate(event.currentTarget, event.submitter, data => {
+      el("#fontResult").innerHTML = resultLayout("模拟识别结果", "现代无衬线粗体 · 相似度 82%", [
+        resultCard("可能相似字体", "思源黑体 Heavy / 阿里巴巴普惠体 Bold / HarmonyOS Sans SC Black"),
+        resultCard("剪映可替代字体", "优先尝试：得意黑、雅月体、系统黑体加粗。具体字体名称会随剪映版本变化。"),
+        resultCard("适合的视频类型", `<span class="result-tag">${data.get("use")}</span><span class="result-tag">教程口播</span><span class="result-tag">干货封面</span>`, true),
+        resultCard("字幕 / 封面排版建议", ["两行以内，每行 8-12 个字", "关键词可放大 15%-20%", "文字与背景保持明显明暗对比", "不要同时使用超过两种字重"]),
+        resultCard("是否适合新手模仿", "适合。字体本身克制，重点在字号层级、字间距和留白，不依赖复杂特效。"),
+        resultCard("注意事项", "模拟结果不能替代字体授权判断；商用前请确认字体许可证。")
+      ]);
+      saveToHistory("material", "字体识别", "识别结果：现代无衬线粗体 · 相似度 82%");
+    });
+  });
+
+  el("#mixForm").addEventListener("submit", event => {
+    event.preventDefault();
+    simulate(event.currentTarget, event.submitter, data => {
+      el("#mixResult").innerHTML = resultLayout("推荐方案", `${data.get("type")} · ${data.get("style")} · ${data.get("ratio")}`, [
+        resultCard("推荐画面结构", ["0-3 秒：最强案例画面 + 服务定位", "3-10 秒：展示原素材与处理后对比", "10-22 秒：按能力拆分代表片段", "结尾：服务范围与联系方式"]),
+        resultCard("开头文案", "不是只会剪顺，我会把素材整理成客户看得懂、愿意下单的作品。"),
+        resultCard("展示顺序", "先放最成熟案例，再放字幕包装和节奏对比，最后补充服务范围与合作方式。", true),
+        resultCard("字幕建议", "统一左对齐或居中布局；主标题 1 个字重，解释信息降低 20% 对比度。"),
+        resultCard("BGM 氛围建议", "选择节奏清晰、不过度抢戏的轻电子或简约律动音乐，卡点以段落转换为主。"),
+        resultCard("适合发布的平台", "小红书、抖音、朋友圈、接单介绍页"),
+        resultCard("后续用剪映怎么做", ["先建立统一画幅与安全区", "按案例建复合片段", "统一字幕样式后批量应用", "最后做音乐节奏和音量检查"], true)
+      ]);
+      saveToHistory("material", "混合制作", `${data.get("type")} · ${data.get("style")}`);
+    });
+  });
+}
+
+/* 对标链接拆解助手 */
+
+function initBenchmark() {
+  el("#view-benchmark").innerHTML = `
+    <div class="tool-layout">
+      <form class="form-panel surface" id="benchmarkForm">
+        <div class="panel-title"><h3>链接识别 + 截图补充</h3><span>稳定拆解</span></div>
+        <div class="field-grid">
+          <div class="field full"><label>粘贴对标链接</label><input class="control" name="link" placeholder="粘贴抖音/小红书/B站链接，用来识别平台和保存来源" value="https://example.com/video"></div>
+          <div class="field"><label>平台</label><select class="control" name="platform"><option>抖音</option><option selected>小红书</option><option>B站</option><option>视频号</option><option>其他</option></select></div>
+          <div class="field"><label>我想学习的方向</label><select class="control" name="direction"><option>开头</option><option>节奏</option><option>字幕</option><option>封面</option><option>选题</option><option>结构</option><option>转场</option><option>BGM</option></select></div>
+          <div class="field full">
+            <label>上传截图</label>
+            <div class="upload-zone" data-upload="image">
+              <input type="file" accept=".jpg,.jpeg,.png,.webp,image/*">
+              <div class="upload-copy"><div class="upload-symbol">＋</div><strong>上传封面/视频截图/评论截图</strong><p>图片只在本地预览，不上传服务器。链接读不到时，用截图继续拆解。</p></div>
+              <img class="preview-image" alt="对标截图预览">
+            </div>
+            <input type="hidden" name="screenshot" value="">
+          </div>
+          <div class="field full"><label>爆款标题</label><input class="control" name="title" value="剪辑小白第一个月，是怎么接到第一单的？"></div>
+          <div class="field full"><label>前 3 秒内容</label><textarea class="control" name="hook">开头展示收款截图，再抛出"剪辑小白如何拿到第一单"的问题。</textarea></div>
+          <div class="field full"><label>视频内容描述</label><textarea class="control" name="description">真人口播分享接单经历，中段讲三步方法，结尾引导观众评论自己的阶段。</textarea></div>
+          <div class="field"><label>字幕/画面风格</label><input class="control" name="visual" value="短句字幕、关键词放大、收款截图结果前置"></div>
+          <div class="field"><label>节奏/BGM感受</label><input class="control" name="rhythm" value="开头快，中段每个方法点停顿清楚，BGM不抢人声"></div>
+          <div class="field full"><label>热评/观众问题</label><textarea class="control" name="comments">"没有作品集怎么办？""客户去哪里找？""报价多少比较合适？"</textarea></div>
+          <div class="field full"><label>我想迁移到自己作品的动作</label><textarea class="control" name="transfer">结果前置、问题拆分、短句字幕，用自己的真实案例替换原作者经历。</textarea></div>
+        </div>
+        <div class="form-actions"><span class="form-tip">不下载视频、不承诺读取平台内容；链接只做来源识别，拆解基于截图和你主动填写的信息。</span><button class="primary-button" type="submit">生成AI拆解表</button></div>
+      </form>
+      ${resultShell("benchmarkResult", "生成AI拆解表")}
+    </div>`;
+
+  el("#benchmarkForm").addEventListener("submit", event => {
+    event.preventDefault();
+    simulate(event.currentTarget, event.submitter, data => {
+      const link = data.get("link") || "未填写";
+      const platform = data.get("platform");
+      const direction = data.get("direction");
+      const title = data.get("title") || "未填写";
+      const hook = data.get("hook") || "未填写";
+      const description = data.get("description") || "未填写";
+      const visual = data.get("visual") || "未填写";
+      const rhythm = data.get("rhythm") || "未填写";
+      const comments = data.get("comments") || "未填写";
+      const transfer = data.get("transfer") || "未填写";
+      const screenshot = data.get("screenshot") || "未上传截图";
+
+      const aiPrompt = [
+        "你是短视频剪辑课助教，请根据我手动补充的信息做对标拆解，不要假设你已经读取了平台原视频。",
+        "平台：" + platform, "原链接：" + link, "截图状态：" + screenshot,
+        "标题：" + title, "前3秒：" + hook, "内容描述：" + description,
+        "字幕/画面风格：" + visual, "节奏/BGM感受：" + rhythm,
+        "热评/观众问题：" + comments, "我想迁移的动作：" + transfer,
+        "请输出：1. 前3秒钩子拆解；2. 内容结构；3. 字幕/画面/节奏特点；4. 评论区需求；5. 可迁移动作；6. 不建议模仿的地方；7. 我可以做成作品集的样片方案。"
+      ].join("
+");
+
+      el("#benchmarkResult").innerHTML = resultLayout("AI拆解表", `${platform} · ${direction}方向 · 基于手动信息`, [
+        resultCard("链接识别结果", [`平台：${platform}`, `来源链接：${link}`, `截图：${screenshot}`, "说明：抖音/小红书经常禁止网页自动读取，当前流程不依赖抓取。"], true),
+        resultCard("前 3 秒钩子", `根据你填写的信息，开头重点是：${hook}。拆解时先判断它有没有做到结果前置、问题明确、人群清楚。`),
+        resultCard("内容结构", [`标题：${title}`, `主体描述：${description}`, "建议按"结果/痛点 → 过程/方法 → 证明/案例 → 互动/转化"四段记录。"]),
+        resultCard("字幕 / 画面 / 节奏", [`字幕画面：${visual}`, `节奏BGM：${rhythm}`, "判断重点：字幕是否服务理解、画面是否抢重点、BGM是否影响人声。"]),
+        resultCard("评论区未满足需求", comments.split(/[\n；;]+/).filter(Boolean).slice(0, 6)),
+        resultCard("适合学员迁移", transfer, true),
+        resultCard("不建议模仿", ["不要复制原作者文案、人设和封面样式", "不要使用虚假收入数据或无法证明的结果", "不要为了像对标而堆转场、音效和花字"]),
+        resultCard("可做成作品集的样片", `围绕"${direction}"做一条 30-60 秒样片：先复刻底层结构，再替换成自己的真实素材/案例/服务对象。`),
+        resultCard("复制给 AI 的拆解提示词", aiPrompt, true)
+      ]);
+      saveToHistory("benchmark", "对标拆解助手", `${platform} · ${direction} · ${title}`);
+    });
+  });
+}
+
+/* 字幕文案优化助手 */
+
+function initSubtitle() {
+  el("#view-subtitle").innerHTML = `
+    <div class="tool-layout">
+      <form class="form-panel surface" id="subtitleForm">
+        <div class="panel-title"><h3>粘贴原始口播文案</h3><span>短视频表达</span></div>
+        <div class="field-grid">
+          <div class="field full"><label>原始口播文案</label><textarea class="control" name="content" style="min-height:190px">大家好，今天想和大家分享一下，我最近在学习剪辑的时候发现，其实很多新手不是不会用软件，而是不知道应该做什么作品，也不知道怎么拿作品去接单。</textarea></div>
+          <div class="field"><label>视频类型</label><select class="control" name="type"><option selected>口播</option><option>探店</option><option>vlog</option><option>带货</option><option>教程</option><option>课程</option><option>情绪表达</option></select></div>
+          <div class="field"><label>想要风格</label><select class="control" name="style"><option>自然口语</option><option selected>干净专业</option><option>情绪强一点</option><option>小红书感</option><option>成交感</option></select></div>
+          <div class="field full"><label>是否需要封面标题</label>${choice("cover", ["是", "否"])}</div>
+        </div>
+        <div class="form-actions"><span class="form-tip">优化会减少口头废话，但不会改变原文核心意思。</span><button class="primary-button" type="submit">优化字幕文案</button></div>
+      </form>
+      ${resultShell("subtitleResult", "优化字幕文案")}
+    </div>`;
+
+  el("#subtitleForm").addEventListener("submit", event => {
+    event.preventDefault();
+    simulate(event.currentTarget, event.submitter, data => {
+      el("#subtitleResult").innerHTML = resultLayout("优化完成", `${data.get("type")} · ${data.get("style")}`, [
+        resultCard("优化后的字幕版", "很多剪辑新手，卡住的不是软件。
+而是学完之后，不知道该做什么作品。
+更不知道，怎么拿作品去接单。
+
+所以第一步，不是继续学更多功能。
+而是先做一套客户看得懂的作品集。", true),
+        resultCard("可做封面大字的句子", "剪辑新手接不到单，可能不是技术问题"),
+        resultCard("建议强调的关键词", `<span class="result-tag">不是软件</span><span class="result-tag">做什么作品</span><span class="result-tag">拿作品接单</span><span class="result-tag">客户看得懂</span>`),
+        resultCard("字幕断句建议", ["每行控制在 8-14 个字", "转折词单独成句", "结论句停留时间略长", "重点句前后留 0.2-0.4 秒呼吸"]),
+        resultCard("不建议保留的废话", ""大家好""今天想和大家分享一下""我最近在学习的时候发现"可直接删除或压缩。", true)
+      ]);
+      saveToHistory("subtitle", "字幕文案优化", `${data.get("type")} · ${data.get("style")}`);
+    });
+  });
+}
+
+/* 剪映字体速查助手 */
+
+function initFontguide() {
+  el("#view-fontguide").innerHTML = `
+    <div class="tool-layout">
+      <form class="form-panel surface" id="fontguideForm">
+        <div class="panel-title"><h3>选择视频风格</h3><span>剪映字体速查</span></div>
+        <div class="field-grid">
+          <div class="field"><label>视频类型</label><select class="control" name="type"><option>口播/知识</option><option>vlog/生活</option><option>探店/美食</option><option>带货/种草</option><option>课程/教程</option><option>情绪/故事</option><option>综艺/搞笑</option></select></div>
+          <div class="field"><label>使用位置</label><select class="control" name="position"><option>封面标题</option><option>视频字幕</option><option>重点花字</option><option>人名条/标签</option><option>结尾引流</option></select></div>
+          <div class="field"><label>风格感觉</label><select class="control" name="style"><option>干净高级</option><option>可爱活泼</option><option>商业质感</option><option>网感综艺</option><option>文艺情绪</option><option>科技简约</option></select></div>
+          <div class="field full"><label>📎 粘贴视频/截图链接（可选）</label><input class="control" name="link" placeholder="贴一个你想参考字体的视频链接，帮你判断字体方向"></div>
+          <div class="field"><label>是否商用</label>${choice("license", ["是，商用单", "否，个人练习"], 1)}</div>
+        </div>
+        <div class="form-actions"><span class="form-tip">字体建议基于剪映当前内置字体库，实际字体随版本更新变化。</span><button class="primary-button" type="submit">查询字体方案</button></div>
+      </form>
+      ${resultShell("fontguideResult", "查询字体方案")}
+    </div>`;
+
+  el("#fontguideForm").addEventListener("submit", event => {
+    event.preventDefault();
+    simulate(event.currentTarget, event.submitter, data => {
+      const style = data.get("style");
+      const position = data.get("position");
+      const link = data.get("link") || "";
+      const info = fontDB[style] || fontDB["干净高级"];
+      const posTip = positionTips[position] || "";
+
+      el("#fontguideResult").innerHTML = resultLayout("推荐字体", style + " / " + position, [
+        resultCard("中文推荐", info.cn.join("、")),
+        resultCard("剪映内搜索", info.cn.slice(0, 2).join("、") + " / 在剪映文字-字体中直接搜索"),
+        resultCard("排版建议", info.tip),
+        resultCard(position + "专属建议", posTip),
+        resultCard("📎 链接参考提示", link
+          ? "你贴了链接：分析目标视频的风格倾向。如果视频偏干净克制→选无衬线字体；偏综艺热闹→选粗体撞色；偏文艺情绪→选衬线/手写体。具体推荐见上方。"
+          : "没贴链接。建议贴一个参考视频链接，我能帮你判断字体方向。")
+      ]);
+      saveToHistory("fontguide", "字体速查", `${style} / ${position}`);
+    });
+  });
+}
+
+/* BGM搜歌助手 */
+
+function initMusic() {
+  el("#view-music").innerHTML = `
+    <div class="tool-layout">
+      <form class="form-panel surface" id="musicForm">
+        <div class="panel-title"><h3>描述视频情绪</h3><span>BGM搜歌</span></div>
+        <div class="field-grid">
+          <div class="field"><label>视频类型</label><select class="control" name="type"><option>口播/知识</option><option>vlog/生活</option><option>探店/美食</option><option>带货/种草</option><option>情绪/故事</option><option>混剪/卡点</option><option>综艺/搞笑</option></select></div>
+          <div class="field"><label>情绪/氛围</label><select class="control" name="mood"><option>温暖治愈</option><option>积极向上</option><option>紧张悬疑</option><option>轻松愉快</option><option>伤感情绪</option><option>酷炫潮流</option><option>大气磅礴</option></select></div>
+          <div class="field"><label>节奏快慢</label><select class="control" name="tempo"><option>慢节奏（抒情）</option><option>中等节奏</option><option>快节奏（卡点）</option><option>由慢到快</option></select></div>
+          <div class="field"><label>有无歌词偏好</label>${choice("lyrics", ["纯音乐/轻音乐", "有歌词", "无所谓"], 2)}</div>
+          <div class="field full"><label>📎 粘贴视频链接（可选）</label><input class="control" name="link" placeholder="贴视频链接，帮你判断BGM风格和节奏"></div>
+          <div class="field full"><label>参考BGM（可选）</label><input class="control" name="ref" placeholder="如果听过类似的，描述一下或写歌名"></div>
+        </div>
+        <div class="form-actions"><span class="form-tip">本工具推荐音乐风格和剪映曲库关键词，不提供商业MP3下载。商用请确认版权。</span><button class="primary-button" type="submit">搜歌推荐</button></div>
+      </form>
+      ${resultShell("musicResult", "搜歌推荐")}
+    </div>`;
+
+  el("#musicForm").addEventListener("submit", event => {
+    event.preventDefault();
+    simulate(event.currentTarget, event.submitter, data => {
+      const mood = data.get("mood");
+      const tempo = data.get("tempo");
+      const lyrics = data.get("lyrics");
+      const link = data.get("link") || "";
+      const info = moodDB[mood] || moodDB["温暖治愈"];
+      const lyricTip = lyrics === "纯音乐/轻音乐" ? "纯音乐" : lyrics === "有歌词" ? "有歌词版" : "纯音乐/有歌词均可";
+
+      el("#musicResult").innerHTML = resultLayout("推荐音乐方向", mood + " / " + tempo, [
+        resultCard("风格建议", info.style + " / " + lyricTip + " / " + info.bpm),
+        resultCard("剪映曲库搜索关键词", info.keywords.join("、")),
+        resultCard("免版权音乐来源（免费商用）", ["剪映内置曲库（已授权）", "YouTube Audio Library", "Pixabay Music (pixabay.com/music)", "Uppbeat (uppbeat.io)", "Mixkit (mixkit.co/free-stock-music)"], true),
+        resultCard("商用注意", "剪映内置音乐限剪映发布渠道使用。独立商用/广告请使用已购授权音乐。以上免版权来源大多免费商用，使用前请逐个确认具体曲目授权。"),
+        resultCard("📎 链接分析", link ? "你贴了视频链接。可以先打开视频感受：它的BGM是快还是慢？有歌词还是纯音乐？情绪是温暖/紧张/活泼？根据你的感受匹配上方的推荐方案。如果不确定，录屏截取一段用听歌识曲。" : "没贴链接。建议贴一个想参考BGM风格的视频链接，帮你分析该用什么音乐。")
+      ]);
+      saveToHistory("music", "BGM搜歌", `${mood} / ${tempo}`);
+    });
+  });
+}
+
+/* 剪映音效特效速查 */
+
+function initSfx() {
+  el("#view-sfx").innerHTML = `
+    <div class="tool-layout">
+      <form class="form-panel surface" id="sfxForm">
+        <div class="panel-title"><h3>选择需要的效果</h3><span>剪映音效特效</span></div>
+        <div class="field-grid">
+          <div class="field"><label>视频类型</label><select class="control" name="type"><option>口播/知识</option><option>vlog/生活</option><option>探店/美食</option><option>带货/种草</option><option>综艺/搞笑</option><option>混剪/卡点</option></select></div>
+          <div class="field"><label>需要的音效类型</label><select class="control" name="sfxType"><option>转场音效（嗖、呼、唰）</option><option>提示音（叮、弹出、确认）</option><option>氛围音（环境、自然、城市）</option><option>动作音（脚步、开门、放东西）</option><option>卡点音效（鼓点、重音）</option><option>搞笑音效（滑倒、尴尬、惊讶）</option><option>综艺感（鼓掌、欢呼、笑声）</option></select></div>
+          <div class="field"><label>需要的特效类型</label><select class="control" name="vfxType"><option>转场特效</option><option>画面特效（发光/震动/模糊）</option><option>文字动画</option><option>贴纸/表情</option><option>分屏/画中画</option><option>不需要特效，只要音效</option></select></div>
+          <div class="field full"><label>📎 粘贴视频链接（可选）</label><input class="control" name="link" placeholder="贴视频链接，帮你拆解里面的音效和特效用法"></div>
+          <div class="field"><label>节奏风格</label><select class="control" name="rhythm"><option>干净克制</option><option>适中节奏</option><option>强节奏/综艺感</option></select></div>
+        </div>
+        <div class="form-actions"><span class="form-tip">音效和特效名称基于剪映当前版本，以剪映内实际显示为准。</span><button class="primary-button" type="submit">查找音效特效</button></div>
+      </form>
+      ${resultShell("sfxResult", "查找音效特效")}
+    </div>`;
+
+  el("#sfxForm").addEventListener("submit", event => {
+    event.preventDefault();
+    simulate(event.currentTarget, event.submitter, data => {
+      const sfxType = data.get("sfxType");
+      const vfxType = data.get("vfxType");
+      const rhythm = data.get("rhythm");
+      const link = data.get("link") || "";
+      const s = sfxDB[sfxType] || sfxDB["转场音效（嗖、呼、唰）"];
+      const v = vfxDB[vfxType] || vfxDB["转场特效"];
+      const rm = getRhythmTip(rhythm);
+
+      el("#sfxResult").innerHTML = resultLayout("音效特效推荐", sfxType, [
+        resultCard("推荐音效", s.sfx),
+        resultCard("剪映音效库搜索", "音频-音效中搜索：" + s.search),
+        resultCard("音效使用技巧", s.tip),
+        resultCard("推荐特效", v.vfx),
+        resultCard("剪映特效搜索", v.search ? "特效中搜索：" + v.search : "不需要特效"),
+        resultCard("特效使用技巧", v.tip),
+        resultCard("节奏风格建议", rm, true),
+        resultCard("📎 链接参考", link ? "你贴了视频链接。可以打开观察：转场用的什么类型（叠化/滑动/闪白）？音效出现在哪些位置（转场/卡点/重点文字）？特效是克制还是堆叠？记录下来就是你的音效参考库。" : "没贴链接。建议贴一个参考视频，帮你拆解里面的音效和特效用法。")
+      ]);
+      saveToHistory("sfx", "音效特效速查", sfxType);
+    });
+  });
+}
+
+/* 素材库整理助手 */
+
+function initOrganize() {
+  el("#view-organize").innerHTML = `
+    <div class="tool-layout">
+      <form class="form-panel surface" id="organizeForm">
+        <div class="panel-title"><h3>选择你的素材类型</h3><span>自动整理方案</span></div>
+        <div class="field-grid">
+          <div class="field full"><label>你常做的视频类型</label><select class="control" name="videotype"><option>口播/知识</option><option>vlog/生活</option><option>探店/美食</option><option>带货/种草</option><option>多类型都做</option></select></div>
+          <div class="field"><label>素材存储位置</label><select class="control" name="location"><option>电脑本地硬盘</option><option>移动硬盘</option><option>NAS/云盘</option><option>混合存储</option></select></div>
+          <div class="field"><label>需要整理的素材</label>${choice("materials", ["视频素材+音乐+音效+图片+模板", "只要视频素材"], 0)}</div>
+          <div class="field"><label>项目命名偏好</label><select class="control" name="naming"><option>日期-客户名-项目名</option><option>客户名-项目名-版本号</option><option>项目编号-日期-类型</option></select></div>
+          <div class="field full"><label>📎 粘贴素材/资源链接（可选）</label><input class="control" name="link" placeholder="贴素材链接、网盘链接或资源页面，帮你分类整理"></div>
+          <div class="field"><label>是否需要备份方案</label>${choice("backup", ["是，需要", "否，暂不需要"])}</div>
+        </div>
+        <div class="form-actions"><span class="form-tip">文件夹结构建议基于实际剪辑工作流，可复制到本地直接使用。</span><button class="primary-button" type="submit">生成整理方案</button></div>
+      </form>
+      ${resultShell("organizeResult", "生成整理方案")}
+    </div>`;
+
+  el("#organizeForm").addEventListener("submit", event => {
+    event.preventDefault();
+    simulate(event.currentTarget, event.submitter, data => {
+      const naming = data.get("naming");
+      const needBackup = data.get("backup");
+      const location = data.get("location");
+      const link = data.get("link") || "";
+      const materials = data.get("materials");
+      const isFull = materials && materials.includes("+");
+      const scheme = naming === "日期-客户名-项目名" ? "20260626_客户名_项目名"
+        : naming === "客户名-项目名-版本号" ? "客户名_项目名_v1"
+        : "001_20260626_口播";
+      const locLabel = location.indexOf("移动") !== -1 ? "移动硬盘" : "电脑";
+
+      const cards = [
+        resultCard("根目录结构", "剪辑项目/
+  |-- 01_进行中/     正在做的项目
+  |-- 02_已交付/     完成归档
+  |-- 03_素材库/     通用素材
+  |-- 04_模板/       常用预设
+  |-- 05_音乐音效/   BGM和SFX
+  |-- 06_作品集导出/ 最终成片", true),
+        resultCard("单项目文件夹 (" + scheme + ")", scheme + "/
+  |-- 01_客户原始素材/  不动原片
+  |-- 02_筛选后素材/
+  |-- 03_参考对标/
+  |-- 04_项目文件/      剪映工程
+  |-- 05_导出/          各版成片
+  |-- 06_交付文档/      报价/变更/说明
+  |-- README.txt        项目笔记", true),
+        isFull ? resultCard("素材库分类", "03_素材库/
+  |-- 视频素材/（空镜/转场/特效）
+  |-- 图片素材/（背景/贴纸/封面模板）
+  |-- 音乐BGM/（治愈/励志/情绪）
+  |-- 音效SFX/（转场/提示音/氛围）", true) : "",
+        resultCard("命名规范", ["项目：" + scheme, "成片：" + scheme + "_成片_日期.mp4", "修改版：" + scheme + "_V2_修改说明.mp4", "素材保持原名（方便回溯）", "不用空格用下划线，日期YYYYMMDD"], true),
+        needBackup === "是，需要" ? resultCard("备份方案", ["每周五备份到" + locLabel, "重要项目交付后立即备份", "云盘只同步05_导出和06_交付文档", "3个月前项目移到02_已交付/年份/归档"]) : "",
+        resultCard("马上可以做", ["1. 在" + locLabel + "上建好根目录", "2. 把现有素材拖入对应文件夹", "3. 正在做的项目按模板创建", "4. 以后每个新项目都按这个结构", "养成习惯 > 找工具 -- 这个结构够用一年"]),
+        resultCard("📎 链接素材整理", link ? "你贴了素材链接。建议按来源分类：在03_素材库下新建一个文件夹用链接来源命名，把从该链接下载的素材统一放进去。链接本身保存到README.txt的素材来源记录里，方便以后回溯。" : "没贴链接。下次可以贴素材链接、网盘链接或资源页面，帮你规划素材分类和存放位置。")
+      ];
+
+      el("#organizeResult").innerHTML = resultLayout("文件夹结构方案", naming, cards.filter(Boolean));
+      saveToHistory("organize", "素材库整理", naming);
+    });
+  });
+}
+
+/* 合同模板生成器 — 新增第13个工具 */
+
+function initContract() {
+  el("#view-contract").innerHTML = `
+    <div class="tool-layout">
+      <form class="form-panel surface" id="contractForm">
+        <div class="panel-title"><h3>填写项目基本信息</h3><span>生成确认书</span></div>
+        <div class="field-grid">
+          <div class="field"><label>你的名字/工作室</label><input class="control" name="editor" placeholder="例如：小陈剪辑" value="剪辑师"></div>
+          <div class="field"><label>客户名称</label><input class="control" name="client" placeholder="客户/公司名称" value="客户"></div>
+          <div class="field"><label>项目类型</label><select class="control" name="type"><option>短视频剪辑</option><option>口播剪辑</option><option>vlog剪辑</option><option>探店视频</option><option>带货视频</option><option>课程切片</option><option>广告片</option></select></div>
+          <div class="field"><label>视频数量</label><input class="control" name="count" value="1 条"></div>
+          <div class="field full"><label>交付内容描述</label><textarea class="control" name="deliverables" placeholder="详细列出交付内容">1. 成片 1 条（含字幕、基础调色、BGM）
+2. 封面图 1 张
+3. 可修改 2 轮（小改范围：错字、局部音量、字幕位置）</textarea></div>
+          <div class="field"><label>交付时间</label><input class="control" name="deadline" placeholder="例如：2026年7月5日" value="2026年7月5日"></div>
+          <div class="field"><label>项目费用</label><input class="control" name="price" placeholder="例如：800 元" value="800 元"></div>
+          <div class="field"><label>付款方式</label><select class="control" name="payment"><option>确认后付 50% 定金，交付前付清尾款</option><option>确认后全额预付</option><option>交付后 3 日内付清</option></select></div>
+          <div class="field"><label>修改轮数上限</label><select class="control" name="revisions"><option>2 轮</option><option>3 轮</option><option>1 轮</option></select></div>
+          <div class="field full"><label>补充条款（可选）</label><textarea class="control" name="extra" placeholder="其他约定事项">超出修改轮数范围的新增需求，按次单独计费（100 元/轮）。加急交付加收 30% 急单费。素材由客户提供，版权问题由客户自行负责。</textarea></div>
+          <div class="field"><label>是否包含源文件</label>${choice("source", ["是，交付剪映工程文件", "否，仅交付成片"], 1)}</div>
+          <div class="field"><label>是否需要双方签署</label>${choice("sign", ["是，生成签署区", "否，仅做参考"], 1)}</div>
+        </div>
+        <div class="form-actions"><span class="form-tip">本模板仅供学习参考，正式合同请咨询法律专业人士。</span><button class="primary-button" type="submit">生成合同模板</button></div>
+      </form>
+      ${resultShell("contractResult", "生成合同模板")}
+    </div>`;
+
+  el("#contractForm").addEventListener("submit", event => {
+    event.preventDefault();
+    simulate(event.currentTarget, event.submitter, data => {
+      const editor = data.get("editor") || "剪辑师";
+      const client = data.get("client") || "客户";
+      const type = data.get("type");
+      const count = data.get("count") || "1 条";
+      const deliverables = data.get("deliverables") || "";
+      const deadline = data.get("deadline") || "";
+      const price = data.get("price") || "";
+      const payment = data.get("payment") || "";
+      const revisions = data.get("revisions") || "2 轮";
+      const extra = data.get("extra") || "";
+      const includeSource = data.get("source")?.includes("是");
+      const needSign = data.get("sign")?.includes("是");
+      const today = new Date().toLocaleDateString("zh-CN");
+
+      const contractText = [
+        "═══════════════════════════════",
+        "  视频剪辑服务确认书",
+        "═══════════════════════════════",
+        "",
+        `日期：${today}`,
+        "",
+        "一、双方信息",
+        `  剪辑方（乙方）：${editor}`,
+        `  委托方（甲方）：${client}`,
+        "",
+        "二、项目内容",
+        `  项目类型：${type}`,
+        `  数量：${count}`,
+        "",
+        "三、交付内容",
+        ...deliverables.split("
+").map(l => `  · ${l}`),
+        "",
+        "四、交付时间",
+        `  约定交付日期：${deadline}`,
+        "  如需加急，加收 30% 急单费，交付时间另行协商。",
+        "",
+        "五、费用与付款",
+        `  项目费用：${price}`,
+        `  付款方式：${payment}`,
+        "",
+        "六、修改条款",
+        `  免费修改上限：${revisions}`,
+        "  小改范围：错字、局部音量、字幕位置调整",
+        "  超出范围的结构调整、风格变化、素材替换按次计费",
+        `  ${extra ? "补充条款：" + extra : ""}`,
+        "",
+        `七、源文件${includeSource ? "交付" : "不交付"}`,
+        `  ${includeSource ? "交付剪映工程文件，甲方可自行修改" : "仅交付最终成片（MP4），工程文件由乙方保留"}`,
+        "",
+        "八、版权说明",
+        "  甲方提供的原始素材版权由甲方负责。",
+        "  乙方保留作品集展示权（可在作品集中展示该案例）。",
+        "  如甲方不希望公开展示，请在签署前注明。",
+        "",
+        "九、违约责任",
+        "  乙方未按时交付的，每延迟 1 天减免 5% 费用。",
+        "  甲方未按时支付费用的，乙方有权暂停交付。",
+        "  因甲方原因导致项目取消的，已付定金不予退还。",
+        "",
+        ...(needSign ? [
+          "",
+          "  甲方确认：________________",
+          `  日期：____年____月____日`,
+          "",
+          "  乙方确认：________________",
+          `  日期：____年____月____日`,
+        ] : [
+          "",
+          "（本确认书为参考模板，正式签约请咨询律师）"
+        ]),
+        "",
+        "═══════════════════════════════"
+      ].join("
+");
+
+      el("#contractResult").innerHTML = `
+        <div class="result-content">
+          <div class="result-hero"><small>合同确认书</small><h4>${type} · ${price}</h4></div>
+          <div class="result-grid">
+            ${resultCard("合同预览（可复制）", contractText, true)}
+            ${resultCard("📋 发送给客户前请检查", [
+              "✓ 客户名称是否正确",
+              "✓ 交付内容是否完整",
+              "✓ 价格和付款方式是否确认",
+              "✓ 交付时间是否合理（留缓冲）",
+              "✓ 修改次数是否明确",
+              "✓ 补充条款是否遗漏"
+            ], true)}
+            ${resultCard("📞 发送话术", `Hi，我整理了一份项目确认书，把咱们聊的内容写清楚了。你看一下交付内容、时间和费用有没有问题。确认没问题回复"确认"，我就按这个开始做。`, true)}
+            ${resultCard("⚠️ 重要提醒", [
+              "这是参考模板，不是正式法律文件",
+              "大额项目（>5000元）建议使用正式合同",
+              "合作前确认客户身份和支付能力",
+              "保留所有聊天记录和变更确认记录",
+              "遇到纠纷：先沟通 → 聊天记录 → 平台投诉 → 法律途径"
+            ])}
+          </div>
+          <div class="result-toolbar">
+            <button class="secondary-button copy-result" type="button">复制合同全文</button>
+            <button class="export-button export-pdf" type="button">导出 PDF</button>
+          </div>
+        </div>`;
+      saveToHistory("contract", "合同模板", `${type} · ${price} · ${client}`);
+    });
+  });
+}
+
+// ===== INIT =====
+initApp();
+initQuote();
+initTalk();
+initRevision();
+initPortfolio();
+initMaterial();
+initBenchmark();
+initSubtitle();
+initFontguide();
+initMusic();
+initSfx();
+initOrganize();
+initContract();
+
 </script>
 
 <!-- Link Analyzer + PWA (non-module: uses DOM events) -->
