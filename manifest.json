@@ -1,7 +1,7 @@
 {
   "name": "剪辑接单百宝箱",
   "short_name": "百宝箱",
-  "description": "剪辑课学员专属接单、报价、沟通、素材与作品集工具箱",
+  "description": "剪辑课学员专属接单、报价、沟通、素材与作品集工具箱 · 13合1 · 支持离线使用",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
@@ -9,7 +9,7 @@
   "background_color": "#aaa9a5",
   "theme_color": "#292a2d",
   "lang": "zh-CN",
-  "categories": ["productivity", "education", "utilities"],
+  "categories": ["productivity", "education", "utilities", "multimedia"],
   "icons": [
     {
       "src": "icon-192.png",
@@ -22,6 +22,13 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "related_applications": [
+    {
+      "platform": "play",
+      "id": "com.toolbox.editing"
     }
   ]
 }

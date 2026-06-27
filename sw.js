@@ -1,21 +1,45 @@
-// Service Worker for 剪辑接单百宝箱 PWA
-const CACHE_NAME = 'toolbox-v4';
-const ASSETS = [
+// Service Worker for 剪辑接单百宝箱 v2.1
+// Strategy: shell cache-first, data network-first, assets stale-while-revalidate
+const CACHE_NAME = 'toolbox-v5';
+const SHELL = [
   './',
   './index.html',
+  './css/main.css',
   './manifest.json',
   './icon-192.png',
   './icon-512.png'
 ];
+// JS modules to pre-cache
+const MODULES = [
+  './js/utils.js',
+  './js/app.js',
+  './js/data/talk-db.js',
+  './js/data/font-db.js',
+  './js/data/music-db.js',
+  './js/data/sfx-db.js',
+  './js/tools/quote.js',
+  './js/tools/talk.js',
+  './js/tools/revision.js',
+  './js/tools/portfolio.js',
+  './js/tools/material.js',
+  './js/tools/benchmark.js',
+  './js/tools/subtitle.js',
+  './js/tools/fontguide.js',
+  './js/tools/music.js',
+  './js/tools/sfx.js',
+  './js/tools/organize.js',
+  './js/tools/contract.js'
+];
 
-// Install: cache all core assets
+// Install: pre-cache shell + modules
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
-      return cache.addAll(ASSETS).catch(err => {
-        // Don't fail if some assets aren't available yet
-        console.log('SW install: some assets not cached', err);
-      });
+      return Promise.allSettled(
+        [...SHELL, ...MODULES].map(url =>
+          cache.add(url).catch(err => console.log('SW: failed to cache', url, err))
+        )
+      );
     }).then(() => self.skipWaiting())
   );
 });
@@ -31,45 +55,61 @@ self.addEventListener('activate', event => {
   );
 });
 
-// Fetch: cache-first strategy for app shell, network-first for everything else
+// Fetch: strategy by request type
 self.addEventListener('fetch', event => {
-  // Skip non-GET requests
-  if (event.request.method !== 'GET') return;
+  const { request } = event;
+  if (request.method !== 'GET') return;
 
-  // Skip chrome-extension and other non-http(s) requests
-  const url = new URL(event.request.url);
+  const url = new URL(request.url);
   if (!url.protocol.startsWith('http')) return;
 
-  if (event.request.mode === 'navigate' || url.pathname.endsWith('/index.html')) {
+  // API calls: network-first
+  if (url.pathname.startsWith('/api/')) {
     event.respondWith(
-      fetch(event.request).then(response => {
-        if (response && response.status === 200) {
+      fetch(request).then(response => {
+        if (response.ok) {
           const clone = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put('./index.html', clone));
+          caches.open(CACHE_NAME).then(cache => cache.put(request, clone));
         }
         return response;
-      }).catch(() => caches.match('./index.html'))
+      }).catch(() => caches.match(request))
     );
     return;
   }
 
-  event.respondWith(
-    caches.match(event.request).then(cached => {
-      // Return cached version immediately, then update cache in background
-      const fetchPromise = fetch(event.request).then(response => {
-        if (response && response.status === 200) {
+  // Navigation / shell: network-first (to get latest), fallback to cache
+  if (request.mode === 'navigate' || SHELL.some(s => url.pathname.endsWith(s.replace('./', '')))) {
+    event.respondWith(
+      fetch(request).then(response => {
+        if (response.ok) {
           const clone = response.clone();
-          caches.open(CACHE_NAME).then(cache => {
-            cache.put(event.request, clone);
-          });
+          caches.open(CACHE_NAME).then(cache => cache.put(request, clone));
         }
         return response;
-      }).catch(() => {
-        // If network fails and we have nothing cached, return the main page
-        return cached || caches.match('./index.html');
-      });
+      }).catch(() => caches.match(request).then(cached => cached || caches.match('./index.html')))
+    );
+    return;
+  }
+
+  // JS modules & assets: stale-while-revalidate
+  event.respondWith(
+    caches.match(request).then(cached => {
+      const fetchPromise = fetch(request).then(response => {
+        if (response.ok) {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(request, clone));
+        }
+        return response;
+      }).catch(() => cached);
 
       return cached || fetchPromise;
     })
   );
+});
+
+// Message handler for skipWaiting
+self.addEventListener('message', event => {
+  if (event.data === 'skipWaiting') {
+    self.skipWaiting();
+  }
 });

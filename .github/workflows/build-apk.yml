@@ -6,6 +6,8 @@ on:
     branches: [master]
     paths:
       - 'index.html'
+      - 'css/**'
+      - 'js/**'
       - 'android/**'
       - '.github/workflows/build-apk.yml'
 
@@ -46,7 +48,8 @@ jobs:
             -keystore android/release.keystore \
             -alias toolbox \
             -keyalg RSA -keysize 2048 -validity 10000 \
-            -storepass toolbox2026 -keypass toolbox2026 \
+            -storepass ${{ secrets.KEYSTORE_PASSWORD }} \
+            -keypass ${{ secrets.KEYSTORE_PASSWORD }} \
             -dname "CN=Toolbox" -noprompt
 
       - name: Build APK
