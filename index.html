@@ -913,18 +913,31 @@
     el("#view-benchmark").innerHTML = `
       <div class="tool-layout">
         <form class="form-panel surface" id="benchmarkForm">
-          <div class="panel-title"><h3>补充对标内容</h3><span>合规拆解</span></div>
+          <div class="panel-title"><h3>链接识别 + 截图补充</h3><span>稳定拆解</span></div>
           <div class="field-grid">
-            <div class="field full"><label>粘贴对标链接</label><input class="control" name="link" placeholder="https://..." value="https://example.com/video"></div>
+            <div class="field full"><label>粘贴对标链接</label><input class="control" name="link" placeholder="粘贴抖音/小红书/B站链接，用来识别平台和保存来源" value="https://example.com/video"></div>
             <div class="field"><label>平台</label><select class="control" name="platform"><option>抖音</option><option selected>小红书</option><option>B站</option><option>视频号</option><option>其他</option></select></div>
             <div class="field"><label>我想学习的方向</label><select class="control" name="direction"><option>开头</option><option>节奏</option><option>字幕</option><option>封面</option><option>选题</option><option>结构</option><option>转场</option><option>BGM</option></select></div>
+            <div class="field full">
+              <label>上传截图</label>
+              <div class="upload-zone" data-upload="image">
+                <input type="file" accept=".jpg,.jpeg,.png,.webp,image/*">
+                <div class="upload-copy"><div class="upload-symbol">＋</div><strong>上传封面/视频截图/评论截图</strong><p>图片只在本地预览，不上传服务器。链接读不到时，用截图继续拆解。</p></div>
+                <img class="preview-image" alt="对标截图预览">
+              </div>
+              <input type="hidden" name="screenshot" value="">
+            </div>
             <div class="field full"><label>爆款标题</label><input class="control" name="title" value="剪辑小白第一个月，是怎么接到第一单的？"></div>
-            <div class="field full"><label>视频内容描述</label><textarea class="control" name="description">真人口播分享接单经历，开头展示收款截图，中段讲三步方法，结尾引导观众评论自己的阶段。</textarea></div>
-            <div class="field full"><label>热评内容</label><textarea class="control" name="comments">「没有作品集怎么办？」「客户去哪里找？」「报价多少比较合适？」</textarea></div>
+            <div class="field full"><label>前 3 秒内容</label><textarea class="control" name="hook">开头展示收款截图，再抛出“剪辑小白如何拿到第一单”的问题。</textarea></div>
+            <div class="field full"><label>视频内容描述</label><textarea class="control" name="description">真人口播分享接单经历，中段讲三步方法，结尾引导观众评论自己的阶段。</textarea></div>
+            <div class="field"><label>字幕/画面风格</label><input class="control" name="visual" value="短句字幕、关键词放大、收款截图结果前置"></div>
+            <div class="field"><label>节奏/BGM感受</label><input class="control" name="rhythm" value="开头快，中段每个方法点停顿清楚，BGM不抢人声"></div>
+            <div class="field full"><label>热评/观众问题</label><textarea class="control" name="comments">「没有作品集怎么办？」「客户去哪里找？」「报价多少比较合适？」</textarea></div>
+            <div class="field full"><label>我想迁移到自己作品的动作</label><textarea class="control" name="transfer">结果前置、问题拆分、短句字幕，用自己的真实案例替换原作者经历。</textarea></div>
           </div>
-          <div class="form-actions"><span class="form-tip">不下载视频、不抓取数据，所有分析均基于你主动填写的内容。</span><button class="primary-button" type="submit">开始拆解</button></div>
+          <div class="form-actions"><span class="form-tip">不下载视频、不承诺读取平台内容；链接只做来源识别，拆解基于截图和你主动填写的信息。</span><button class="primary-button" type="submit">生成AI拆解表</button></div>
         </form>
-        ${resultShell("benchmarkResult", "开始拆解")}
+        ${resultShell("benchmarkResult", "生成AI拆解表")}
       </div>`;
 
     el("#view-subtitle").innerHTML = `
@@ -1280,16 +1293,42 @@ el("#revisionForm").addEventListener("submit", event => {
     el("#benchmarkForm").addEventListener("submit", event => {
       event.preventDefault();
       simulate(event.currentTarget, event.submitter, data => {
-        el("#benchmarkResult").innerHTML = resultLayout("拆解结论", `${data.get("platform")} · ${data.get("direction")}方向`, [
-          resultCard("前 3 秒钩子", "先展示接单结果，再抛出「剪辑小白如何拿到第一单」的具体问题，结果前置降低观众理解成本。"),
-          resultCard("内容结构", ["结果展示：证明内容值得看", "经历共鸣：说明自己也从零开始", "三步方法：给观众可执行路径", "互动收口：引导评论当前阶段"]),
-          resultCard("剪辑节奏", "开头 3 秒高信息密度；方法段落每 4-6 秒切一次视觉层级；观点间用停顿和字幕变化，不依赖大量转场。"),
-          resultCard("字幕特点", "短句、关键词放大、数字突出。字幕服务理解，不与人物表情和关键画面抢空间。"),
-          resultCard("封面标题特点", "人群明确 + 结果具体 + 保留过程悬念，观众一眼知道内容和自己是否相关。"),
-          resultCard("评论区未满足需求", ["缺少从零准备作品集的方法", "缺少具体报价范围", "缺少寻找第一批客户的渠道"]),
-          resultCard("适合学员模仿", "模仿结果前置、问题拆分和短句字幕；用自己的真实案例替换收款截图与经历。", true),
-          resultCard("可迁移的作品集案例", "可以制作一条「从原素材到接单级成片」的前后对比案例，同时展示剪辑思路。"),
-          resultCard("不建议模仿", "不复制原作者措辞、封面和个人经历；不使用虚假收入数据；不要堆叠与内容无关的转场。")
+        const link = data.get("link") || "未填写";
+        const platform = data.get("platform");
+        const direction = data.get("direction");
+        const title = data.get("title") || "未填写";
+        const hook = data.get("hook") || "未填写";
+        const description = data.get("description") || "未填写";
+        const visual = data.get("visual") || "未填写";
+        const rhythm = data.get("rhythm") || "未填写";
+        const comments = data.get("comments") || "未填写";
+        const transfer = data.get("transfer") || "未填写";
+        const screenshot = data.get("screenshot") || "未上传截图";
+        const aiPrompt = [
+          "你是短视频剪辑课助教，请根据我手动补充的信息做对标拆解，不要假设你已经读取了平台原视频。",
+          "平台：" + platform,
+          "原链接：" + link,
+          "截图状态：" + screenshot,
+          "标题：" + title,
+          "前3秒：" + hook,
+          "内容描述：" + description,
+          "字幕/画面风格：" + visual,
+          "节奏/BGM感受：" + rhythm,
+          "热评/观众问题：" + comments,
+          "我想迁移的动作：" + transfer,
+          "请输出：1. 前3秒钩子拆解；2. 内容结构；3. 字幕/画面/节奏特点；4. 评论区需求；5. 可迁移动作；6. 不建议模仿的地方；7. 我可以做成作品集的样片方案。"
+        ].join("\n");
+
+        el("#benchmarkResult").innerHTML = resultLayout("AI拆解表", `${platform} · ${direction}方向 · 基于手动信息`, [
+          resultCard("链接识别结果", [`平台：${platform}`, `来源链接：${link}`, `截图：${screenshot}`, "说明：抖音/小红书经常禁止网页自动读取，当前流程不依赖抓取。"], true),
+          resultCard("前 3 秒钩子", `根据你填写的信息，开头重点是：${hook}。拆解时先判断它有没有做到结果前置、问题明确、人群清楚。`),
+          resultCard("内容结构", [`标题：${title}`, `主体描述：${description}`, "建议按“结果/痛点 → 过程/方法 → 证明/案例 → 互动/转化”四段记录。"]),
+          resultCard("字幕 / 画面 / 节奏", [`字幕画面：${visual}`, `节奏BGM：${rhythm}`, "判断重点：字幕是否服务理解、画面是否抢重点、BGM是否影响人声。"]),
+          resultCard("评论区未满足需求", comments.split(/[\\n；;]+/).filter(Boolean).slice(0, 6)),
+          resultCard("适合学员迁移", transfer, true),
+          resultCard("不建议模仿", ["不要复制原作者文案、人设和封面样式", "不要使用虚假收入数据或无法证明的结果", "不要为了像对标而堆转场、音效和花字"]),
+          resultCard("可做成作品集的样片", `围绕“${direction}”做一条 30-60 秒样片：先复刻底层结构，再替换成自己的真实素材/案例/服务对象。`),
+          resultCard("复制给 AI 的拆解提示词", aiPrompt, true)
         ]);
       });
     });
@@ -1456,6 +1495,9 @@ el("#revisionForm").addEventListener("submit", event => {
         image.src = URL.createObjectURL(file);
         image.style.display = "block";
         el(".upload-copy", zone).style.display = "none";
+        const form = zone.closest("form");
+        const screenshotInput = form?.querySelector('input[name="screenshot"]');
+        if (screenshotInput) screenshotInput.value = file.name;
         showToast(`已读取图片：${file.name}`);
       } else {
         const list = zone.nextElementSibling;
@@ -1508,45 +1550,79 @@ el("#revisionForm").addEventListener("submit", event => {
         if (res.ok) return await res.json();
       } catch(e) {}
       // Fallback: client-side platform detection
-      var hostname = url.replace(/^https?:\/\//, '').split('/')[0];
-      var platform =
-        hostname.indexOf('douyin') !== -1 ? 'douyin' :
-        hostname.indexOf('xiaohongshu') !== -1 || hostname.indexOf('xhslink') !== -1 ? 'xiaohongshu' :
-        hostname.indexOf('bilibili') !== -1 || hostname.indexOf('b23.tv') !== -1 ? 'bilibili' :
-        hostname.indexOf('youtube') !== -1 || hostname.indexOf('youtu.be') !== -1 ? 'youtube' : 'web';
+      var platform = detectPlatformFromUrl(url);
       return { platform: platform, url: url, title: '', description: '', fallback: true };
     }
 
     window._analyzeLink = analyzeLink;
+
+    function extractFirstUrl(text) {
+      var match = String(text || "").match(/https?:\/\/[^\s，。]+/i);
+      return match ? match[0].replace(/[）)】\\]]$/, "") : "";
+    }
+
+    function detectPlatformFromUrl(url) {
+      var hostname = String(url || "").replace(/^https?:\/\//, '').split('/')[0].toLowerCase();
+      if (hostname.indexOf('douyin') !== -1 || hostname.indexOf('iesdouyin') !== -1) return 'douyin';
+      if (hostname.indexOf('xiaohongshu') !== -1 || hostname.indexOf('xhslink') !== -1) return 'xiaohongshu';
+      if (hostname.indexOf('bilibili') !== -1 || hostname.indexOf('b23.tv') !== -1) return 'bilibili';
+      if (hostname.indexOf('youtube') !== -1 || hostname.indexOf('youtu.be') !== -1) return 'youtube';
+      if (hostname.indexOf('weixin') !== -1 || hostname.indexOf('channels') !== -1) return 'wechat';
+      return 'web';
+    }
+
+    function platformLabel(platform) {
+      return platform === 'douyin' ? '抖音' :
+        platform === 'xiaohongshu' ? '小红书' :
+        platform === 'bilibili' ? 'B站' :
+        platform === 'youtube' ? 'YouTube' :
+        platform === 'wechat' ? '视频号' : '网页';
+    }
+
+    function syncPlatformSelect(input, platform) {
+      var form = input.closest("form");
+      var select = form?.querySelector('select[name="platform"]');
+      if (!select) return;
+      var label = platformLabel(platform);
+      Array.from(select.options).forEach(option => {
+        if (option.textContent === label) select.value = option.value;
+      });
+    }
 
     // Global link detection: auto-detect platform when user pastes a URL
     document.addEventListener('blur', function(e) {
       var input = e.target;
       if (input.tagName !== 'INPUT' && input.tagName !== 'TEXTAREA') return;
       var val = (input.value || '').trim();
-      if (!val.startsWith('http')) return;
-      if (input._linkChecked) return;
-      input._linkChecked = true;
+      var url = extractFirstUrl(val);
+      if (!url) return;
+      if (input._linkChecked === url) return;
+      input._linkChecked = url;
 
       // Show loading
       var note = document.createElement('div');
       note.style.cssText = 'margin:4px 0 0 4px;padding:6px 10px;border-radius:10px;font-size:11px;font-weight:650;background:#e8e8e3;color:#555';
-      note.textContent = '⏳ 正在分析链接...';
+      note.textContent = '⏳ 正在识别平台...';
       input.parentNode.appendChild(note);
 
-      analyzeLink(val).then(function(data) {
+      analyzeLink(url).then(function(data) {
+        syncPlatformSelect(input, data.platform);
         if (data.error) {
-          note.style.background = '#f5e0dc'; note.style.color = '#6b3a30';
-          note.textContent = '⚠ 无法读取，请手动输入信息';
+          var localPlatform = detectPlatformFromUrl(url);
+          syncPlatformSelect(input, localPlatform);
+          note.style.background = '#efe7d2'; note.style.color = '#5f5130';
+          note.textContent = '✓ 已识别' + platformLabel(localPlatform) + '，请上传截图并补充信息';
         } else {
           note.style.background = '#d4e8de'; note.style.color = '#2d4d3c';
-          var p = data.platform === 'douyin' ? '抖音' : data.platform === 'xiaohongshu' ? '小红书' : data.platform === 'bilibili' ? 'B站' : data.platform === 'youtube' ? 'YouTube' : '网页';
-          note.innerHTML = '✓ 已识别 <b>' + p + '</b>' + (data.fallback ? ' (本地)' : '');
+          var p = platformLabel(data.platform);
+          note.innerHTML = '✓ 已识别 <b>' + p + '</b>，请上传截图并补充信息';
         }
         input._linkData = data;
       }).catch(function() {
-        note.style.background = '#f5e0dc'; note.style.color = '#6b3a30';
-        note.textContent = '⚠ 网络错误';
+        var localPlatform = detectPlatformFromUrl(url);
+        syncPlatformSelect(input, localPlatform);
+        note.style.background = '#efe7d2'; note.style.color = '#5f5130';
+        note.textContent = '✓ 已识别' + platformLabel(localPlatform) + '，请上传截图并补充信息';
       });
     }, true);
 
