@@ -1,2 +1,4 @@
 index.backup-before-*.html
 .local-backups/
+api/*.backup-before-*.js
+vercel.backup-before-*.json

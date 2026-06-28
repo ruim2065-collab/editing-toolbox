@@ -6,3 +6,5 @@ _check*.js
 .vercel
 .env*
 index.backup-before-*.html
+api/*.backup-before-*.js
+vercel.backup-before-*.json

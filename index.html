@@ -816,6 +816,30 @@ select.control { appearance: none; background-image: linear-gradient(45deg, tran
   border: 1px solid rgba(255,255,255,.20);
 }
 .file-item span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.vision-status {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 13px;
+  color: #555652;
+  font-size: 12px;
+  line-height: 1.55;
+  background: rgba(255,255,255,.18);
+  border: 1px solid rgba(255,255,255,.26);
+}
+.vision-status[data-state="idle"] { color: #696a65; }
+.vision-status[data-state="uploading"],
+.vision-status[data-state="recognizing"],
+.vision-status[data-state="analyzing"] { color: #36536a; background: rgba(214,230,245,.45); }
+.vision-status[data-state="done"] { color: #2f6044; background: rgba(212,235,222,.55); }
+.vision-status[data-state="error"],
+.vision-status[data-state="unconfigured"] { color: #7b3b3b; background: rgba(242,220,220,.60); }
+.entry-note {
+  padding: 18px 20px;
+  margin-bottom: 16px;
+}
+.entry-note h3 { margin: 0 0 6px; font-size: 18px; }
+.entry-note p { margin: 0; color: #686965; font-size: 13px; line-height: 1.7; }
+.vision-tool-layout { margin-top: 18px; }
 
 /* ---- Result Table ---- */
 .result-table-wrap { overflow-x: auto; border-radius: 16px; border: 1px solid var(--line); }
@@ -2003,6 +2027,8 @@ function renderHistoryList() {
 // ---- File Upload ----
 function initUploadZones() {
   all(".upload-zone").forEach(zone => {
+    if (zone.dataset.uploadBound === "1") return;
+    zone.dataset.uploadBound = "1";
     const input = el("input[type=file]", zone);
     ["dragenter", "dragover"].forEach(type =>
       zone.addEventListener(type, e => { e.preventDefault(); zone.classList.add("dragging"); })
@@ -2017,16 +2043,25 @@ function initUploadZones() {
 
 function handleFiles(zone, files) {
   if (!files?.length) return;
-  if (zone.dataset.upload === "image") {
+  const isVisionUpload = zone.dataset.upload === "vision-subtitle" || zone.dataset.upload === "vision-font";
+  if (zone.dataset.upload === "image" || isVisionUpload) {
     const file = files[0];
-    if (!file.type.startsWith("image/")) return showToast("请选择 JPG、PNG 或 WEBP 图片。");
+    if (isVisionUpload && !["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+      setVisionStatus(zone.closest("form"), "error", "请上传 JPG / PNG / WEBP 图片。");
+      return showToast("请选择 JPG、PNG 或 WEBP 图片。");
+    }
+    if (!isVisionUpload && !file.type.startsWith("image/")) return showToast("请选择 JPG、PNG 或 WEBP 图片。");
     const image = el(".preview-image", zone);
     image.src = URL.createObjectURL(file);
     image.style.display = "block";
     el(".upload-copy", zone).style.display = "none";
+    if (isVisionUpload) zone._visionFile = file;
     const form = zone.closest("form");
     const screenshotInput = form?.querySelector('input[name="screenshot"]');
     if (screenshotInput) screenshotInput.value = file.name;
+    if (isVisionUpload) {
+      setVisionStatus(form, "idle", "图片已上传并预览。点击「识别截图」后才会发送到服务端识别。");
+    }
     showToast(`已读取图片：${file.name}`);
   } else {
     const list = zone.nextElementSibling;
@@ -2037,6 +2072,137 @@ function handleFiles(zone, files) {
     }
     showToast(`已读取 ${files.length} 个素材文件。`);
   }
+}
+
+function getVisionEndpoint() {
+  if (location.hostname.includes("github.io") || location.protocol === "file:") {
+    return "https://editing-toolbox-6i5o.vercel.app/api/vision";
+  }
+  return "/api/vision";
+}
+
+function setVisionStatus(form, state, message) {
+  const status = form?.querySelector(".vision-status");
+  if (!status) return;
+  status.dataset.state = state;
+  status.textContent = message;
+}
+
+function fileToDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(new Error("图片读取失败"));
+    reader.readAsDataURL(file);
+  });
+}
+
+function escapeHtml(value) {
+  return String(value ?? "").replace(/[&<>"']/g, char => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  }[char]));
+}
+
+function safeList(value, fallback = "未识别到明确内容") {
+  const list = Array.isArray(value) ? value : (value ? [value] : [fallback]);
+  return list.filter(Boolean).map(item => escapeHtml(item));
+}
+
+function safeText(value, fallback = "未识别到明确内容") {
+  return escapeHtml(value || fallback);
+}
+
+async function runVisionAnalysis(form, mode, resultSelector) {
+  const zone = form.querySelector(`[data-upload="vision-${mode}"]`);
+  const file = zone?._visionFile;
+  if (!file) {
+    setVisionStatus(form, "error", "请先上传一张 JPG / PNG / WEBP 截图。");
+    el(resultSelector).innerHTML = renderVisionMessage("未上传图片", "请先上传真实截图，再点击识别。");
+    return;
+  }
+
+  try {
+    setVisionStatus(form, "uploading", "上传中：正在读取图片。");
+    const dataUrl = await fileToDataUrl(file);
+    setVisionStatus(form, "recognizing", "识别中：正在调用服务端图片识别。");
+    const res = await fetch(getVisionEndpoint(), {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        mode,
+        image: { dataUrl, mime: file.type, name: file.name, size: file.size }
+      })
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data.ok) {
+      const message = data.message || "图片识别失败，请稍后重试。";
+      const state = data.error === "vision_not_configured" || data.configured === false ? "unconfigured" : "error";
+      setVisionStatus(form, state, message);
+      el(resultSelector).innerHTML = renderVisionMessage(state === "unconfigured" ? "图片识别服务暂未配置" : "识别失败", message);
+      return;
+    }
+    setVisionStatus(form, "analyzing", "分析中：正在整理识别结果。");
+    if (mode === "subtitle") {
+      el(resultSelector).innerHTML = renderSubtitleVisionResult(data.analysis);
+      saveToHistory("subtitle", "截图字幕识别", (data.analysis.recognizedText || []).join(" / ").substring(0, 80) || file.name);
+    } else {
+      el(resultSelector).innerHTML = renderFontVisionResult(data.analysis);
+      saveToHistory("fontguide", "截图字体识别", data.analysis.detectedStyle || file.name);
+    }
+    setVisionStatus(form, "done", "完成：已基于真实图片识别结果生成建议。");
+    showToast("图片识别完成。");
+  } catch (err) {
+    setVisionStatus(form, "error", err.message || "图片识别失败。");
+    el(resultSelector).innerHTML = renderVisionMessage("识别失败", err.message || "图片识别失败，请检查网络后重试。");
+  }
+}
+
+function renderVisionMessage(title, message) {
+  return resultLayout(title, "未生成识别建议", [
+    resultCard("提示", safeText(message), true),
+    resultCard("下一步", ["确认服务端环境变量是否已配置", "确认上传图片为 JPG / PNG / WEBP", "配置完成后重新上传并识别"], true)
+  ]);
+}
+
+function renderSubtitleVisionResult(a) {
+  return resultLayout("截图字幕识别", safeText(a.confidence ? "置信度：" + a.confidence : "基于截图分析"), [
+    resultCard("识别到的字幕", safeList(a.recognizedText, "未识别到字幕文字"), true),
+    resultCard("当前问题", safeList(a.currentProblems, "未发现明确字幕问题")),
+    resultCard("优化建议", safeList(a.optimizationSuggestions, "未生成具体建议")),
+    resultCard("可直接复制的优化后字幕", safeText(a.optimizedSubtitle, "未生成优化后字幕"), true),
+    resultCard("剪辑师判断", safeText(a.editorJudgment, "未生成接单视角判断"), true),
+    resultCard("识别细节", [
+      `位置：${safeText(a.position)}`,
+      `行数：${safeText(a.lineCount)}`,
+      `颜色：${safeList(a.colors).join(" / ")}`,
+      `效果：${safeList(a.effects).join(" / ")}`,
+      `对比度：${safeText(a.contrast)}`,
+      `遮挡主体：${safeText(a.occlusion)}`,
+      `层级：${safeText(a.hierarchy)}`
+    ], true),
+    resultCard("限制说明", safeList(a.limitations, "无特别限制说明"))
+  ]);
+}
+
+function renderFontVisionResult(a) {
+  const fontList = Array.isArray(a.similarFonts) && a.similarFonts.length
+    ? a.similarFonts.map(item => `${escapeHtml(item.name || "相似字体方向")}：${escapeHtml(item.style || "")}｜${escapeHtml(item.usage || "")}`)
+    : ["未生成相似字体推荐"];
+  return resultLayout("截图字体识别", safeText(a.detectedStyle, "识别到的字体风格"), [
+    resultCard("识别到的字体风格", safeText(a.detectedStyle), true),
+    resultCard("置信度说明", safeText(a.confidenceNote || "无法百分百确认原字体，以下为相似风格推荐。"), true),
+    resultCard("字体类型 / 字重", [`类型：${safeText(a.fontType)}`, `字重：${safeText(a.weight)}`]),
+    resultCard("字形特征", safeList(a.shapeFeatures)),
+    resultCard("相似字体推荐", fontList, true),
+    resultCard("适合用在哪类视频", safeList(a.suitableVideos)),
+    resultCard("这张图怎么优化字体", safeList(a.optimizationSuggestions), true),
+    resultCard("字体层级问题", safeText(a.hierarchy)),
+    resultCard("使用提醒", safeText(a.usageReminder || "不提供字体文件；商用前请确认字体授权。"), true)
+  ]);
 }
 
 // ---- Global Event Delegation ----
@@ -2600,9 +2766,13 @@ function initBenchmark() {
 
 function initSubtitle() {
   el("#view-subtitle").innerHTML = `
+    <div class="entry-note surface">
+      <h3>两个入口</h3>
+      <p>入口A：手动输入字幕，适合已经有文案想优化断句和层级。入口B：上传截图识别字幕，适合不知道问题在哪里，先让服务端读取真实截图。</p>
+    </div>
     <div class="tool-layout">
       <form class="form-panel surface" id="subtitleForm">
-        <div class="panel-title"><h3>粘贴原始口播文案</h3><span>短视频表达</span></div>
+        <div class="panel-title"><h3>入口A：手动输入字幕</h3><span>短视频表达</span></div>
         <div class="field-grid">
           <div class="field full"><label>原始口播文案</label><textarea class="control" name="content" style="min-height:190px">大家好，今天想和大家分享一下，我最近在学习剪辑的时候发现，其实很多新手不是不会用软件，而是不知道应该做什么作品，也不知道怎么拿作品去接单。</textarea></div>
           <div class="field"><label>视频类型</label><select class="control" name="type"><option selected>口播</option><option>探店</option><option>vlog</option><option>带货</option><option>教程</option><option>课程</option><option>情绪表达</option></select></div>
@@ -2612,6 +2782,19 @@ function initSubtitle() {
         <div class="form-actions"><span class="form-tip">优化会减少口头废话，但不会改变原文核心意思。</span><button class="primary-button" type="submit">优化字幕文案</button></div>
       </form>
       ${resultShell("subtitleResult", "优化字幕文案")}
+    </div>
+    <div class="tool-layout vision-tool-layout">
+      <form class="form-panel surface" id="subtitleVisionForm">
+        <div class="panel-title"><h3>入口B：上传截图识别字幕</h3><span>真实图片识别</span></div>
+        <div class="upload-zone" data-upload="vision-subtitle">
+          <input type="file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp">
+          <div class="upload-copy"><div class="upload-symbol">＋</div><strong>上传视频截图 / 封面截图</strong><p>支持 JPG / PNG / WEBP。点击识别后会传到服务端视觉接口；未配置接口时不会生成假结果。</p></div>
+          <img class="preview-image" alt="字幕截图预览">
+        </div>
+        <div class="vision-status" data-state="idle">等待上传截图。</div>
+        <div class="form-actions"><span class="form-tip">图片不会永久保存；识别结果可复制，也可保存到使用记录。</span><button class="primary-button" type="submit">识别截图字幕</button></div>
+      </form>
+      ${resultShell("subtitleVisionResult", "识别截图字幕")}
     </div>`;
 
   el("#subtitleForm").addEventListener("submit", event => {
@@ -2636,15 +2819,24 @@ function initSubtitle() {
       saveToHistory("subtitle", "字幕文案优化", `${data.get("type")} · ${data.get("style")}`);
     });
   });
+
+  el("#subtitleVisionForm").addEventListener("submit", event => {
+    event.preventDefault();
+    runVisionAnalysis(event.currentTarget, "subtitle", "#subtitleVisionResult");
+  });
 }
 
 /* 剪映字体速查助手 */
 
 function initFontguide() {
   el("#view-fontguide").innerHTML = `
+    <div class="entry-note surface">
+      <h3>两个入口</h3>
+      <p>入口A：按风格搜索字体，适合你已经知道想要高级感、综艺感、可爱或知识口播。入口B：上传截图识别字体风格，适合拿参考图找相似方向。</p>
+    </div>
     <div class="tool-layout">
       <form class="form-panel surface" id="fontguideForm">
-        <div class="panel-title"><h3>选择视频风格</h3><span>剪映字体速查</span></div>
+        <div class="panel-title"><h3>入口A：按风格搜索字体</h3><span>剪映字体速查</span></div>
         <div class="field-grid">
           <div class="field"><label>视频类型</label><select class="control" name="type"><option>口播/知识</option><option>vlog/生活</option><option>探店/美食</option><option>带货/种草</option><option>课程/教程</option><option>情绪/故事</option><option>综艺/搞笑</option></select></div>
           <div class="field"><label>使用位置</label><select class="control" name="position"><option>封面标题</option><option>视频字幕</option><option>重点花字</option><option>人名条/标签</option><option>结尾引流</option></select></div>
@@ -2655,6 +2847,19 @@ function initFontguide() {
         <div class="form-actions"><span class="form-tip">字体建议基于剪映当前内置字体库，实际字体随版本更新变化。</span><button class="primary-button" type="submit">查询字体方案</button></div>
       </form>
       ${resultShell("fontguideResult", "查询字体方案")}
+    </div>
+    <div class="tool-layout vision-tool-layout">
+      <form class="form-panel surface" id="fontVisionForm">
+        <div class="panel-title"><h3>入口B：上传截图识别字体风格</h3><span>相似字体方向</span></div>
+        <div class="upload-zone" data-upload="vision-font">
+          <input type="file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp">
+          <div class="upload-copy"><div class="upload-symbol">＋</div><strong>上传参考截图</strong><p>支持 JPG / PNG / WEBP。系统会分析字体风格，不会假装百分百识别原字体。</p></div>
+          <img class="preview-image" alt="字体截图预览">
+        </div>
+        <div class="vision-status" data-state="idle">等待上传截图。</div>
+        <div class="form-actions"><span class="form-tip">只推荐相似字体方向，不提供字体文件；商用前请确认授权。</span><button class="primary-button" type="submit">识别字体风格</button></div>
+      </form>
+      ${resultShell("fontVisionResult", "识别字体风格")}
     </div>`;
 
   el("#fontguideForm").addEventListener("submit", event => {
@@ -2679,6 +2884,11 @@ function initFontguide() {
       ]);
       saveToHistory("fontguide", "字体速查", `${style} / ${position}`);
     });
+  });
+
+  el("#fontVisionForm").addEventListener("submit", event => {
+    event.preventDefault();
+    runVisionAnalysis(event.currentTarget, "font", "#fontVisionResult");
   });
 }
 
@@ -2987,6 +3197,7 @@ initSubtitle();
 initFontguide();
 initMusic();
 initSfx();
+initUploadZones();
 
 </script>
 
