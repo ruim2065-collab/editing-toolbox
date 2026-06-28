@@ -6,6 +6,7 @@
   <!-- SW核弹：强制清掉所有旧版本Service Worker -->
   <script>
   (function killOldSW(){
+    if(!/^https?:$/.test(location.protocol)) return;
     if(!('serviceWorker' in navigator)) return;
     var KILLED = false;
     navigator.serviceWorker.getRegistrations().then(function(regs){
@@ -17,7 +18,7 @@
     });
   })();
   </script>
-  <meta name="description" content="剪辑接单百宝箱——剪辑课程学员专属接单、沟通、素材与作品集工具箱，13合1，支持 AI 智能生成与离线使用。" />
+  <meta name="description" content="剪辑接单百宝箱——剪辑课程学员专属接单、沟通、作品集与剪映工具箱，9合1，支持 AI 智能生成与离线使用。" />
   <title>剪辑接单百宝箱 v2.1</title>
   <!-- PWA -->
   <link rel="manifest" href="manifest.json" />
@@ -954,7 +955,7 @@ select.control { appearance: none; background-image: linear-gradient(45deg, tran
 </style>
   <!-- Open Graph -->
   <meta property="og:title" content="剪辑接单百宝箱" />
-  <meta property="og:description" content="13合1剪辑学员工具箱：报价、话术、修改、作品集、字体、音乐、音效、合同……从会剪到会接单。" />
+  <meta property="og:description" content="9合1剪辑学员工具箱：报价、话术、作品集、对标、字幕、字体、音乐、音效……从会剪到会接单。" />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="icon-512.png" />
   <!-- Structured Data -->
@@ -981,16 +982,12 @@ select.control { appearance: none; background-image: linear-gradient(45deg, tran
       <button class="rail-button active" type="button" data-view="home"><span class="icon">首</span><span class="tooltip">首页</span></button>
       <button class="rail-button" type="button" data-view="quote"><span class="icon">价</span><span class="tooltip">接单工具</span></button>
       <button class="rail-button" type="button" data-view="talk"><span class="icon">聊</span><span class="tooltip">沟通话术</span></button>
-      <button class="rail-button" type="button" data-view="revision"><span class="icon">改</span><span class="tooltip">修改整理</span></button>
-      <button class="rail-button" type="button" data-view="portfolio"><span class="icon">集</span><span class="tooltip">作品集工具</span></button>
-      <button class="rail-button" type="button" data-view="material"><span class="icon">材</span><span class="tooltip">素材工具</span></button>
-      <button class="rail-button" type="button" data-view="benchmark"><span class="icon">拆</span><span class="tooltip">对标拆解</span></button>
+       <button class="rail-button" type="button" data-view="portfolio"><span class="icon">集</span><span class="tooltip">作品集工具</span></button>
+       <button class="rail-button" type="button" data-view="benchmark"><span class="icon">拆</span><span class="tooltip">对标拆解</span></button>
       <button class="rail-button" type="button" data-view="subtitle"><span class="icon">字</span><span class="tooltip">字幕优化</span></button>
       <button class="rail-button" type="button" data-view="fontguide"><span class="icon">体</span><span class="tooltip">字体速查</span></button>
       <button class="rail-button" type="button" data-view="music"><span class="icon">曲</span><span class="tooltip">BGM搜歌</span></button>
       <button class="rail-button" type="button" data-view="sfx"><span class="icon">听</span><span class="tooltip">音效特效</span></button>
-      <button class="rail-button" type="button" data-view="organize"><span class="icon">夹</span><span class="tooltip">素材整理</span></button>
-      <button class="rail-button" type="button" data-view="contract"><span class="icon">约</span><span class="tooltip">合同模板</span></button>
     </nav>
     <div class="rail-spacer"></div>
     <button class="theme-toggle rail-settings" id="themeToggle" type="button" aria-label="切换主题" title="切换深色/浅色模式">🌙</button>
@@ -1004,7 +1001,7 @@ select.control { appearance: none; background-image: linear-gradient(45deg, tran
     <div class="brand-copy">
       <p class="eyebrow">Editing Toolbox</p>
       <h1>剪辑接单百宝箱</h1>
-      <p>13 个工具，覆盖接单全流程。<br>模拟版 · 学员专属</p>
+      <p>9 个工具，覆盖接单关键流程。<br>模拟版 · 学员专属</p>
     </div>
     <div class="side-section">
       <p class="side-label">全部工具</p>
@@ -1012,16 +1009,12 @@ select.control { appearance: none; background-image: linear-gradient(45deg, tran
         <button type="button" data-view="home" class="active"><span class="nav-symbol">首</span><span class="nav-name">首页</span><span class="nav-arrow">›</span></button>
         <button type="button" data-view="quote"><span class="nav-symbol">价</span><span class="nav-name">接单工具</span><span class="nav-arrow">›</span></button>
         <button type="button" data-view="talk"><span class="nav-symbol">聊</span><span class="nav-name">沟通话术</span><span class="nav-arrow">›</span></button>
-        <button type="button" data-view="revision"><span class="nav-symbol">改</span><span class="nav-name">修改整理</span><span class="nav-arrow">›</span></button>
         <button type="button" data-view="portfolio"><span class="nav-symbol">集</span><span class="nav-name">作品集工具</span><span class="nav-arrow">›</span></button>
-        <button type="button" data-view="material"><span class="nav-symbol">材</span><span class="nav-name">素材工具</span><span class="nav-arrow">›</span></button>
         <button type="button" data-view="benchmark"><span class="nav-symbol">拆</span><span class="nav-name">对标拆解</span><span class="nav-arrow">›</span></button>
         <button type="button" data-view="subtitle"><span class="nav-symbol">字</span><span class="nav-name">字幕优化</span><span class="nav-arrow">›</span></button>
         <button type="button" data-view="fontguide"><span class="nav-symbol">体</span><span class="nav-name">字体速查</span><span class="nav-arrow">›</span></button>
         <button type="button" data-view="music"><span class="nav-symbol">曲</span><span class="nav-name">BGM搜歌</span><span class="nav-arrow">›</span></button>
         <button type="button" data-view="sfx"><span class="nav-symbol">听</span><span class="nav-name">音效特效</span><span class="nav-arrow">›</span></button>
-        <button type="button" data-view="organize"><span class="nav-symbol">夹</span><span class="nav-name">素材整理</span><span class="nav-arrow">›</span></button>
-        <button type="button" data-view="contract"><span class="nav-symbol">约</span><span class="nav-name">合同模板</span><span class="nav-arrow">›</span></button>
       </nav>
     </div>
     <div class="side-note">
@@ -1057,13 +1050,13 @@ select.control { appearance: none; background-image: linear-gradient(45deg, tran
       <div class="welcome surface">
         <div>
           <h3>从会剪到会接单</h3>
-          <p>这是一套给剪辑课学员使用的增值工具，帮助你完成接单报价、客户沟通、修改意见整理、对标拆解、字体参考、字幕优化和作品集包装。</p>
+          <p>这是一套给剪辑课学员使用的增值工具，帮助你完成接单报价、客户沟通、对标拆解、字体参考、字幕优化和作品集包装。</p>
         </div>
         <div class="welcome-seal" aria-label="v2.1 学员专属"></div>
       </div>
 
       <div class="stat-strip surface">
-        <div class="stat"><small>已内置工具</small><strong id="statToolCount">13 个</strong></div>
+        <div class="stat"><small>已内置工具</small><strong id="statToolCount">9 个</strong></div>
         <div class="stat"><small>历史使用</small><strong id="statTotalRuns">0 次</strong></div>
         <div class="stat"><small>最常用工具</small><strong id="statMostUsed">—</strong></div>
         <div class="stat"><small>最近使用</small><strong id="statLastUsed">—</strong></div>
@@ -1076,32 +1069,24 @@ select.control { appearance: none; background-image: linear-gradient(45deg, tran
       <div class="tool-list surface" id="homeToolList">
         <article class="tool-row"><div class="tool-number">01</div><div><h4>接单报价助手</h4><p>快速生成报价参考、交付清单和确认问题</p></div><button class="round-button" type="button" data-view="quote" aria-label="进入接单报价助手">→</button></article>
         <article class="tool-row"><div class="tool-number">02</div><div><h4>客户沟通话术助手</h4><p>面对压价、催稿和加需求时更从容</p></div><button class="round-button" type="button" data-view="talk" aria-label="进入客户沟通话术助手">→</button></article>
-        <article class="tool-row"><div class="tool-number">03</div><div><h4>修改意见整理助手</h4><p>把零散反馈变成可执行修改清单</p></div><button class="round-button" type="button" data-view="revision" aria-label="进入修改意见整理助手">→</button></article>
-        <article class="tool-row"><div class="tool-number">04</div><div><h4>作品集包装助手</h4><p>把剪过的视频包装成能接单的案例</p></div><button class="round-button" type="button" data-view="portfolio" aria-label="进入作品集包装助手">→</button></article>
-        <article class="tool-row"><div class="tool-number">05</div><div><h4>素材辅助工具</h4><p>字体参考与图片视频混合制作方案</p></div><button class="round-button" type="button" data-view="material" aria-label="进入素材辅助工具">→</button></article>
-        <article class="tool-row"><div class="tool-number">06</div><div><h4>对标链接拆解助手</h4><p>拆解爆款视频结构与可迁移方法</p></div><button class="round-button" type="button" data-view="benchmark" aria-label="进入对标链接拆解助手">→</button></article>
-        <article class="tool-row"><div class="tool-number">07</div><div><h4>字幕文案优化助手</h4><p>让普通口播更适合短视频观看</p></div><button class="round-button" type="button" data-view="subtitle" aria-label="进入字幕文案优化助手">→</button></article>
-        <article class="tool-row"><div class="tool-number">08</div><div><h4>剪映字体速查助手</h4><p>根据视频风格推荐剪映内置字体搭配</p></div><button class="round-button" type="button" data-view="fontguide" aria-label="进入剪映字体速查助手">→</button></article>
-        <article class="tool-row"><div class="tool-number">09</div><div><h4>BGM搜歌助手</h4><p>根据视频情绪和节奏推荐背景音乐</p></div><button class="round-button" type="button" data-view="music" aria-label="进入BGM搜歌助手">→</button></article>
-        <article class="tool-row"><div class="tool-number">10</div><div><h4>剪映音效特效速查</h4><p>快速找到适合的音效和转场特效</p></div><button class="round-button" type="button" data-view="sfx" aria-label="进入剪映音效特效速查">→</button></article>
-        <article class="tool-row"><div class="tool-number">11</div><div><h4>素材库整理助手</h4><p>自动生成项目文件夹结构和命名规范</p></div><button class="round-button" type="button" data-view="organize" aria-label="进入素材库整理助手">→</button></article>
-        <article class="tool-row"><div class="tool-number">12</div><div><h4>接单合同模板生成器</h4><p>生成剪辑接单确认书与简易合同</p></div><button class="round-button" type="button" data-view="contract" aria-label="进入接单合同模板生成器">→</button></article>
+        <article class="tool-row"><div class="tool-number">03</div><div><h4>作品集包装助手</h4><p>把剪过的视频包装成能接单的案例</p></div><button class="round-button" type="button" data-view="portfolio" aria-label="进入作品集包装助手">→</button></article>
+        <article class="tool-row"><div class="tool-number">04</div><div><h4>对标链接拆解助手</h4><p>拆解爆款视频结构与可迁移方法</p></div><button class="round-button" type="button" data-view="benchmark" aria-label="进入对标链接拆解助手">→</button></article>
+        <article class="tool-row"><div class="tool-number">05</div><div><h4>字幕文案优化助手</h4><p>让普通口播更适合短视频观看</p></div><button class="round-button" type="button" data-view="subtitle" aria-label="进入字幕文案优化助手">→</button></article>
+        <article class="tool-row"><div class="tool-number">06</div><div><h4>剪映字体速查助手</h4><p>根据视频风格推荐剪映内置字体搭配</p></div><button class="round-button" type="button" data-view="fontguide" aria-label="进入剪映字体速查助手">→</button></article>
+        <article class="tool-row"><div class="tool-number">07</div><div><h4>BGM搜歌助手</h4><p>根据视频情绪和节奏推荐背景音乐</p></div><button class="round-button" type="button" data-view="music" aria-label="进入BGM搜歌助手">→</button></article>
+        <article class="tool-row"><div class="tool-number">08</div><div><h4>剪映音效特效速查</h4><p>快速找到适合的音效和转场特效</p></div><button class="round-button" type="button" data-view="sfx" aria-label="进入剪映音效特效速查">→</button></article>
       </div>
     </section>
 
     <!-- Tool Views -->
     <section class="view" id="view-quote"></section>
     <section class="view" id="view-talk"></section>
-    <section class="view" id="view-revision"></section>
     <section class="view" id="view-portfolio"></section>
-    <section class="view" id="view-material"></section>
     <section class="view" id="view-benchmark"></section>
     <section class="view" id="view-subtitle"></section>
     <section class="view" id="view-fontguide"></section>
     <section class="view" id="view-music"></section>
     <section class="view" id="view-sfx"></section>
-    <section class="view" id="view-organize"></section>
-    <section class="view" id="view-contract"></section>
   </main>
 </div>
 
@@ -1113,16 +1098,12 @@ select.control { appearance: none; background-image: linear-gradient(45deg, tran
       <button type="button" data-view="home" class="active"><span class="nav-symbol">首</span><span class="nav-name">首页</span><span class="nav-arrow">›</span></button>
       <button type="button" data-view="quote"><span class="nav-symbol">价</span><span class="nav-name">接单工具</span><span class="nav-arrow">›</span></button>
       <button type="button" data-view="talk"><span class="nav-symbol">聊</span><span class="nav-name">沟通话术</span><span class="nav-arrow">›</span></button>
-      <button type="button" data-view="revision"><span class="nav-symbol">改</span><span class="nav-name">修改整理</span><span class="nav-arrow">›</span></button>
       <button type="button" data-view="portfolio"><span class="nav-symbol">集</span><span class="nav-name">作品集工具</span><span class="nav-arrow">›</span></button>
-      <button type="button" data-view="material"><span class="nav-symbol">材</span><span class="nav-name">素材工具</span><span class="nav-arrow">›</span></button>
       <button type="button" data-view="benchmark"><span class="nav-symbol">拆</span><span class="nav-name">对标拆解</span><span class="nav-arrow">›</span></button>
       <button type="button" data-view="subtitle"><span class="nav-symbol">字</span><span class="nav-name">字幕优化</span><span class="nav-arrow">›</span></button>
       <button type="button" data-view="fontguide"><span class="nav-symbol">体</span><span class="nav-name">字体速查</span><span class="nav-arrow">›</span></button>
       <button type="button" data-view="music"><span class="nav-symbol">曲</span><span class="nav-name">BGM搜歌</span><span class="nav-arrow">›</span></button>
       <button type="button" data-view="sfx"><span class="nav-symbol">听</span><span class="nav-name">音效特效</span><span class="nav-arrow">›</span></button>
-      <button type="button" data-view="organize"><span class="nav-symbol">夹</span><span class="nav-name">素材整理</span><span class="nav-arrow">›</span></button>
-      <button type="button" data-view="contract"><span class="nav-symbol">约</span><span class="nav-name">合同模板</span><span class="nav-arrow">›</span></button>
     </nav>
   </div>
 </div>
@@ -1749,16 +1730,12 @@ const tools = [
   { id: "home", name: "首页", short: "首", title: "首页", desc: "查看工具概览与使用入口", subtitle: "剪辑课学员专属增值工具箱 · 支持 AI 智能生成与离线使用", tags: ["概览","入口"] },
   { id: "quote", name: "接单工具", short: "价", title: "接单报价助手", desc: "快速生成报价参考、交付清单和确认问题", subtitle: "根据客户类型、视频需求和交付条件生成报价参考", tags: ["报价","接单","客户"] },
   { id: "talk", name: "沟通话术", short: "聊", title: "客户沟通话术助手", desc: "面对压价、催稿和加需求时更从容", subtitle: "把客户原话整理成温和、专业与强边界三种回复", tags: ["沟通","客户","话术"] },
-  { id: "revision", name: "修改整理", short: "改", title: "修改意见整理助手", desc: "把零散反馈变成可执行修改清单", subtitle: "整理时间点、修改类型、优先级与二次确认事项", tags: ["修改","整理"] },
   { id: "portfolio", name: "作品集工具", short: "集", title: "作品集包装助手", desc: "把剪过的视频包装成能接单的案例", subtitle: "生成作品集标题、案例介绍与多平台发布文案", tags: ["作品集","包装","展示"] },
-  { id: "material", name: "素材工具", short: "材", title: "素材辅助工具", desc: "字体参考与图片视频混合制作方案", subtitle: "识别风格、整理素材，并生成作品集制作方案", tags: ["素材","字体","混合"] },
   { id: "benchmark", name: "对标拆解", short: "拆", title: "对标链接拆解助手", desc: "拆解爆款视频结构与可迁移方法", subtitle: "只做内容拆解，不下载、不爬取、不违规解析", tags: ["对标","拆解","学习"] },
   { id: "subtitle", name: "字幕优化", short: "字", title: "字幕文案优化助手", desc: "让普通口播更适合短视频观看", subtitle: "优化字幕表达、断句、封面大字与强调关键词", tags: ["字幕","文案","口播"] },
   { id: "fontguide", name: "字体速查", short: "体", title: "剪映字体速查助手", desc: "根据视频风格推荐剪映内置字体搭配", subtitle: "查找适合你视频风格的剪映字体、字号与排版方案", tags: ["字体","剪映","排版"] },
   { id: "music", name: "BGM搜歌", short: "曲", title: "BGM搜歌助手", desc: "根据视频情绪和节奏推荐背景音乐", subtitle: "按风格/情绪/节奏搜歌，推荐剪映曲库和免版权音乐来源", tags: ["音乐","BGM","情绪"] },
-  { id: "sfx", name: "音效特效", short: "听", title: "剪映音效特效速查", desc: "快速找到适合的音效和转场特效", subtitle: "按场景查找剪映音效库和特效，含节奏卡点音效指南", tags: ["音效","特效","剪映"] },
-  { id: "organize", name: "素材整理", short: "夹", title: "素材库整理助手", desc: "自动生成项目文件夹结构和命名规范", subtitle: "告别乱糟糟的素材库，一键生成分类清晰的文件夹方案", tags: ["整理","素材库","文件夹"] },
-  { id: "contract", name: "合同模板", short: "约", title: "接单合同模板生成器", desc: "生成剪辑接单确认书与简易合同", subtitle: "保护双方权益，交付内容、修改次数、付款方式一目了然", tags: ["合同","法律","确认"] }
+  { id: "sfx", name: "音效特效", short: "听", title: "剪映音效特效速查", desc: "快速找到适合的音效和转场特效", subtitle: "按场景查找剪映音效库和特效，含节奏卡点音效指南", tags: ["音效","特效","剪映"] }
 ];
 
 // ---- Update Stats ----
@@ -1781,6 +1758,7 @@ function updateStats() {
 // ---- View Switching ----
 function switchView(id, options = {}) {
   const tool = tools.find(item => item.id === id) || tools[0];
+  id = tool.id;
   all(".view").forEach(view => view.classList.toggle("active", view.id === `view-${id}`));
   all("[data-view]").forEach(button => button.classList.toggle("active", button.dataset.view === id));
   el("#pageTitle").textContent = tool.title;
@@ -1988,7 +1966,7 @@ function initTour() {
 
   const steps = [
     { icon: "🎬", title: "欢迎使用百宝箱", desc: "这里是剪辑课学员的专属工具箱，帮你完成从接单报价到作品集包装的全流程。" },
-    { icon: "📋", title: "13 个实用工具", desc: "左侧是工具导航栏，点击即可切换。推荐从「接单报价助手」开始，按接单流程依次使用。" },
+    { icon: "📋", title: "9 个实用工具", desc: "左侧是工具导航栏，点击即可切换。推荐从「接单报价助手」开始，按接单流程依次使用。" },
     { icon: "⌨️", title: "快捷键支持", desc: "Ctrl+1~9 快速切换工具，Ctrl+Enter 提交表单，Esc 关闭弹窗。试试看！" }
   ];
 
@@ -2119,14 +2097,14 @@ function initQuote() {
         resultCard("🟢 基础：" + basicPrice + " 元 | 🟡 标准：" + standardPrice + " 元 | 🔴 深度：" + premiumPrice + " 元", "基于 8 个因素综合计算。基础档 = 纯拼接+字幕；标准档 = 结构优化+花字+调色；深度档 = 风格设计+全包装+脚本协助。"),
         resultCard("标准档包含什么", dStandard),
         resultCard("⚠️ 报价前必须先拿到", ["客户账号主页或想剪的视频", "1个参考账号/视频（他喜欢的风格）", "视频用途（涨粉、种草、成交、建人设）", "素材是否已准备好", "交付时间要求"], true),
-        resultCard("📞 AI 小琳式报价话术", "我看了一下你的需求——这是" + valueLabel + "类项目，不只是顺素材剪完，我会帮你重排开头、节奏、重点和包装，让视频更像成熟博主内容。
+        resultCard("📞 AI 小琳式报价话术", `我看了一下你的需求——这是${valueLabel}类项目，不只是顺素材剪完，我会帮你重排开头、节奏、重点和包装，让视频更像成熟博主内容。
 
-根据你目前的情况，建议在 " + priceLabel + " 之间。
+根据你目前的情况，建议在 ${priceLabel} 之间。
 
-具体取决于选基础/标准/深度哪个档位和最终素材量。你先确认范围和交期，我给你出详细交付清单。", true),
-        resultCard("🤫 报价后铁律", "1. 报完闭嘴，等客户先回——先说话的人输
+具体取决于选基础/标准/深度哪个档位和最终素材量。你先确认范围和交期，我给你出详细交付清单。`, true),
+        resultCard("🤫 报价后铁律", `1. 报完闭嘴，等客户先回——先说话的人输
 2. 客户说贵 ≠ 真的贵，先诊断不直接降
-3. 降价格必须同时降范围，交付内容不变价格不变"),
+3. 降价格必须同时降范围，交付内容不变价格不变`),
         resultCard("📅 跟进节奏", ["当天：发送书面交付清单", "第1天：确认有没有疑问", "第3天：补发一个类似案例", "第7天：确认项目方向是否有变", "第14天：最后跟进（排期提醒）", "14天后：停止。不追。等他找你。"], true)
       ]);
 
@@ -2431,13 +2409,12 @@ function initBenchmark() {
         "字幕/画面风格：" + visual, "节奏/BGM感受：" + rhythm,
         "热评/观众问题：" + comments, "我想迁移的动作：" + transfer,
         "请输出：1. 前3秒钩子拆解；2. 内容结构；3. 字幕/画面/节奏特点；4. 评论区需求；5. 可迁移动作；6. 不建议模仿的地方；7. 我可以做成作品集的样片方案。"
-      ].join("
-");
+      ].join("\n");
 
       el("#benchmarkResult").innerHTML = resultLayout("AI拆解表", `${platform} · ${direction}方向 · 基于手动信息`, [
         resultCard("链接识别结果", [`平台：${platform}`, `来源链接：${link}`, `截图：${screenshot}`, "说明：抖音/小红书经常禁止网页自动读取，当前流程不依赖抓取。"], true),
         resultCard("前 3 秒钩子", `根据你填写的信息，开头重点是：${hook}。拆解时先判断它有没有做到结果前置、问题明确、人群清楚。`),
-        resultCard("内容结构", [`标题：${title}`, `主体描述：${description}`, "建议按"结果/痛点 → 过程/方法 → 证明/案例 → 互动/转化"四段记录。"]),
+        resultCard("内容结构", [`标题：${title}`, `主体描述：${description}`, "建议按“结果/痛点 → 过程/方法 → 证明/案例 → 互动/转化”四段记录。"]),
         resultCard("字幕 / 画面 / 节奏", [`字幕画面：${visual}`, `节奏BGM：${rhythm}`, "判断重点：字幕是否服务理解、画面是否抢重点、BGM是否影响人声。"]),
         resultCard("评论区未满足需求", comments.split(/[\n；;]+/).filter(Boolean).slice(0, 6)),
         resultCard("适合学员迁移", transfer, true),
@@ -2472,16 +2449,16 @@ function initSubtitle() {
     event.preventDefault();
     simulate(event.currentTarget, event.submitter, data => {
       el("#subtitleResult").innerHTML = resultLayout("优化完成", `${data.get("type")} · ${data.get("style")}`, [
-        resultCard("优化后的字幕版", "很多剪辑新手，卡住的不是软件。
+        resultCard("优化后的字幕版", `很多剪辑新手，卡住的不是软件。
 而是学完之后，不知道该做什么作品。
 更不知道，怎么拿作品去接单。
 
 所以第一步，不是继续学更多功能。
-而是先做一套客户看得懂的作品集。", true),
+而是先做一套客户看得懂的作品集。`, true),
         resultCard("可做封面大字的句子", "剪辑新手接不到单，可能不是技术问题"),
         resultCard("建议强调的关键词", `<span class="result-tag">不是软件</span><span class="result-tag">做什么作品</span><span class="result-tag">拿作品接单</span><span class="result-tag">客户看得懂</span>`),
         resultCard("字幕断句建议", ["每行控制在 8-14 个字", "转折词单独成句", "结论句停留时间略长", "重点句前后留 0.2-0.4 秒呼吸"]),
-        resultCard("不建议保留的废话", ""大家好""今天想和大家分享一下""我最近在学习的时候发现"可直接删除或压缩。", true)
+        resultCard("不建议保留的废话", "“大家好”“今天想和大家分享一下”“我最近在学习的时候发现”可直接删除或压缩。", true)
       ]);
       saveToHistory("subtitle", "字幕文案优化", `${data.get("type")} · ${data.get("style")}`);
     });
@@ -2652,26 +2629,26 @@ function initOrganize() {
       const locLabel = location.indexOf("移动") !== -1 ? "移动硬盘" : "电脑";
 
       const cards = [
-        resultCard("根目录结构", "剪辑项目/
+        resultCard("根目录结构", `剪辑项目/
   |-- 01_进行中/     正在做的项目
   |-- 02_已交付/     完成归档
   |-- 03_素材库/     通用素材
   |-- 04_模板/       常用预设
   |-- 05_音乐音效/   BGM和SFX
-  |-- 06_作品集导出/ 最终成片", true),
-        resultCard("单项目文件夹 (" + scheme + ")", scheme + "/
+  |-- 06_作品集导出/ 最终成片`, true),
+        resultCard("单项目文件夹 (" + scheme + ")", `${scheme}/
   |-- 01_客户原始素材/  不动原片
   |-- 02_筛选后素材/
   |-- 03_参考对标/
   |-- 04_项目文件/      剪映工程
   |-- 05_导出/          各版成片
   |-- 06_交付文档/      报价/变更/说明
-  |-- README.txt        项目笔记", true),
-        isFull ? resultCard("素材库分类", "03_素材库/
+  |-- README.txt        项目笔记`, true),
+        isFull ? resultCard("素材库分类", `03_素材库/
   |-- 视频素材/（空镜/转场/特效）
   |-- 图片素材/（背景/贴纸/封面模板）
   |-- 音乐BGM/（治愈/励志/情绪）
-  |-- 音效SFX/（转场/提示音/氛围）", true) : "",
+  |-- 音效SFX/（转场/提示音/氛围）`, true) : "",
         resultCard("命名规范", ["项目：" + scheme, "成片：" + scheme + "_成片_日期.mp4", "修改版：" + scheme + "_V2_修改说明.mp4", "素材保持原名（方便回溯）", "不用空格用下划线，日期YYYYMMDD"], true),
         needBackup === "是，需要" ? resultCard("备份方案", ["每周五备份到" + locLabel, "重要项目交付后立即备份", "云盘只同步05_导出和06_交付文档", "3个月前项目移到02_已交付/年份/归档"]) : "",
         resultCard("马上可以做", ["1. 在" + locLabel + "上建好根目录", "2. 把现有素材拖入对应文件夹", "3. 正在做的项目按模板创建", "4. 以后每个新项目都按这个结构", "养成习惯 > 找工具 -- 这个结构够用一年"]),
@@ -2745,8 +2722,7 @@ function initContract() {
         `  数量：${count}`,
         "",
         "三、交付内容",
-        ...deliverables.split("
-").map(l => `  · ${l}`),
+        ...deliverables.split("\n").map(l => `  · ${l}`),
         "",
         "四、交付时间",
         `  约定交付日期：${deadline}`,
@@ -2788,8 +2764,7 @@ function initContract() {
         ]),
         "",
         "═══════════════════════════════"
-      ].join("
-");
+      ].join("\n");
 
       el("#contractResult").innerHTML = `
         <div class="result-content">
@@ -2827,16 +2802,12 @@ function initContract() {
 initApp();
 initQuote();
 initTalk();
-initRevision();
 initPortfolio();
-initMaterial();
 initBenchmark();
 initSubtitle();
 initFontguide();
 initMusic();
 initSfx();
-initOrganize();
-initContract();
 
 </script>
 

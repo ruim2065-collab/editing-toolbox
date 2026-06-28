@@ -1,7 +1,7 @@
 {
   "name": "editing-toolbox",
-  "version": "2.0.0",
-  "description": "剪辑接单百宝箱 - 12合1学员工具箱",
+  "version": "2.2.0",
+  "description": "剪辑接单百宝箱 - 9合1学员工具箱",
   "scripts": {
     "dev": "vercel dev",
     "deploy": "vercel deploy --prod"

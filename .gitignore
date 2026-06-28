@@ -2,3 +2,6 @@
 Thumbs.db
 *.log
 _check*.js
+
+.vercel
+.env*
