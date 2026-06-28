@@ -5,3 +5,4 @@ _check*.js
 
 .vercel
 .env*
+index.backup-before-*.html

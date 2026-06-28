@@ -449,6 +449,97 @@ button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-
 .section-head h3 { margin: 0 0 5px; font-size: 20px; }
 .section-head p { margin: 0; color: #6e6f6a; font-size: 12px; }
 
+/* ---- Learning Flow Home ---- */
+.home-stack { display: grid; gap: 18px; }
+.flow-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 22px;
+  align-items: center;
+  padding: 34px;
+  margin-bottom: 0;
+}
+.flow-hero h3 { margin: 0 0 10px; font-size: clamp(28px, 4vw, 46px); line-height: 1.12; letter-spacing: 0; }
+.flow-hero p { max-width: 760px; margin: 0; color: #555652; font-size: 15px; line-height: 1.8; }
+.flow-hero .helper { margin-top: 12px; color: #73746f; font-size: 13px; }
+.flow-badge {
+  display: grid;
+  place-items: center;
+  width: 118px;
+  height: 118px;
+  border-radius: 30px;
+  color: #f5f5f2;
+  font-size: 15px;
+  font-weight: 800;
+  text-align: center;
+  background: linear-gradient(145deg, #3c3e42, #24262a);
+  box-shadow: var(--shadow-raised);
+}
+.home-panel { padding: 24px; }
+.home-panel h3 { margin: 0 0 6px; font-size: 20px; letter-spacing: 0; }
+.home-panel > p { margin: 0 0 17px; color: #6d6e69; font-size: 13px; line-height: 1.7; }
+.starter-list { display: grid; gap: 10px; }
+.starter-item {
+  display: grid;
+  grid-template-columns: minmax(110px, .45fr) minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  padding: 13px 15px;
+  border-radius: 16px;
+  background: rgba(255,255,255,.18);
+  border: 1px solid rgba(255,255,255,.30);
+}
+.starter-item strong { font-size: 13px; }
+.starter-item span { color: #60615d; font-size: 13px; line-height: 1.65; }
+.stage-grid, .task-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 13px;
+}
+.stage-card, .task-card, .designer-card {
+  border: 1px solid rgba(255,255,255,.34);
+  border-radius: 20px;
+  background: rgba(255,255,255,.20);
+  box-shadow: 4px 6px 14px rgba(62,63,60,.10), inset 0 1px rgba(255,255,255,.26);
+}
+.stage-card { padding: 18px; }
+.stage-card small { display: block; margin-bottom: 8px; color: #777873; font-size: 11px; font-weight: 800; }
+.stage-card h4 { margin: 0 0 8px; font-size: 16px; }
+.stage-card p { margin: 9px 0 0; color: #5f605c; font-size: 12px; line-height: 1.65; }
+.tool-pills { display: flex; flex-wrap: wrap; gap: 7px; }
+.tool-pill {
+  min-height: 28px;
+  padding: 6px 9px;
+  border-radius: 999px;
+  color: #40413f;
+  font-size: 11px;
+  font-weight: 700;
+  background: rgba(255,255,255,.32);
+  border: 1px solid rgba(255,255,255,.34);
+}
+.task-card {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 15px 16px;
+}
+.task-card h4 { margin: 0 0 5px; font-size: 14px; }
+.task-card p { margin: 0; color: #666762; font-size: 12px; }
+.task-card .primary-button { min-height: 36px; padding: 0 14px; font-size: 12px; white-space: nowrap; }
+.designer-card {
+  padding: 24px;
+  background:
+    linear-gradient(135deg, rgba(235,242,255,.82), rgba(244,236,255,.76)),
+    rgba(255,255,255,.38);
+}
+.designer-card h3 { color: #28324a; }
+.designer-card p { max-width: 780px; color: #4e5670; }
+.designer-points { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px 14px; margin: 16px 0; padding: 0; list-style: none; }
+.designer-points li { color: #47506a; font-size: 13px; line-height: 1.65; }
+.designer-flow { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; color: #3d4966; font-size: 12px; font-weight: 800; }
+.designer-flow span { padding: 7px 10px; border-radius: 999px; background: rgba(255,255,255,.55); border: 1px solid rgba(255,255,255,.65); }
+
 /* ---- Tool List ---- */
 .tool-list { overflow: hidden; }
 .tool-row {
@@ -915,6 +1006,7 @@ select.control { appearance: none; background-image: linear-gradient(45deg, tran
   .stat-strip { grid-template-columns: repeat(2, 1fr); }
   .stat:nth-child(2) { border-right: 0; }
   .stat:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+  .stage-grid, .task-grid { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 760px) {
@@ -939,6 +1031,15 @@ select.control { appearance: none; background-image: linear-gradient(45deg, tran
     box-shadow: var(--shadow-soft);
   }
   .main { padding: 16px; }
+  .flow-hero { grid-template-columns: 1fr; padding: 24px; }
+  .flow-badge { width: 92px; height: 92px; border-radius: 24px; font-size: 13px; }
+  .home-panel, .designer-card { padding: 19px; }
+  .starter-item { grid-template-columns: 1fr; gap: 6px; }
+  .stage-grid, .task-grid, .designer-points { grid-template-columns: 1fr; }
+  .task-card { grid-template-columns: 1fr; align-items: stretch; }
+  .task-card .primary-button { width: 100%; }
+  .designer-flow { align-items: stretch; }
+  .designer-flow span { flex: 1 1 130px; text-align: center; }
   .welcome { grid-template-columns: 1fr; }
   .welcome-seal { display: none; }
   .tool-row { grid-template-columns: 42px minmax(0,1fr) auto; padding: 13px 14px; }
@@ -947,6 +1048,8 @@ select.control { appearance: none; background-image: linear-gradient(45deg, tran
   .field-grid { grid-template-columns: 1fr; }
   .form-actions { flex-direction: column; align-items: flex-start; }
   .bottom-tabbar { display: block; }
+  .bottom-tab { min-width: 0; padding: 4px 7px; }
+  .bottom-tabbar-inner { max-width: none; }
   body { padding-bottom: 70px; }
   .history-panel { right: 4px; left: 4px; width: auto; }
   .history-toggle { right: 12px; bottom: 80px; }
@@ -1001,7 +1104,7 @@ select.control { appearance: none; background-image: linear-gradient(45deg, tran
     <div class="brand-copy">
       <p class="eyebrow">Editing Toolbox</p>
       <h1>剪辑接单百宝箱</h1>
-      <p>9 个工具，覆盖接单关键流程。<br>模拟版 · 学员专属</p>
+      <p>9 个工具，覆盖接单关键流程。<br>学员练习版 · 可直接套用</p>
     </div>
     <div class="side-section">
       <p class="side-label">全部工具</p>
@@ -1037,7 +1140,7 @@ select.control { appearance: none; background-image: linear-gradient(45deg, tran
     <div class="topbar">
       <div class="page-heading">
         <h2 id="pageTitle">首页</h2>
-        <p id="pageSubtitle">剪辑课学员专属增值工具箱 · 所有结果均为第一版模拟演示</p>
+        <p id="pageSubtitle">剪辑课学员专属工具箱 · 生成内容可复制、修改后用于真实沟通</p>
       </div>
       <div class="student-badge">
         <i>学</i><span>剪辑课学员</span>
@@ -1047,34 +1150,73 @@ select.control { appearance: none; background-image: linear-gradient(45deg, tran
     <!-- ===== Views ===== -->
     <!-- Home -->
     <section class="view active" id="view-home">
-      <div class="welcome surface">
-        <div>
-          <h3>从会剪到会接单</h3>
-          <p>这是一套给剪辑课学员使用的增值工具，帮助你完成接单报价、客户沟通、对标拆解、字体参考、字幕优化和作品集包装。</p>
+      <div class="home-stack">
+        <div class="flow-hero surface">
+          <div>
+            <h3>剪辑接单百宝箱</h3>
+            <p>剪辑课学员专属工具箱，帮你完成作品集、报价、沟通和交付。</p>
+            <p class="helper">不知道先用哪个工具？按你当前卡住的阶段选就行。</p>
+          </div>
+          <div class="flow-badge">接单<br>流程导航</div>
         </div>
-        <div class="welcome-seal" aria-label="v2.1 学员专属"></div>
-      </div>
 
-      <div class="stat-strip surface">
-        <div class="stat"><small>已内置工具</small><strong id="statToolCount">9 个</strong></div>
-        <div class="stat"><small>历史使用</small><strong id="statTotalRuns">0 次</strong></div>
-        <div class="stat"><small>最常用工具</small><strong id="statMostUsed">—</strong></div>
-        <div class="stat"><small>最近使用</small><strong id="statLastUsed">—</strong></div>
-      </div>
+        <div class="stat-strip surface">
+          <div class="stat"><small>已内置工具</small><strong id="statToolCount">9 个</strong></div>
+          <div class="stat"><small>历史使用</small><strong id="statTotalRuns">0 次</strong></div>
+          <div class="stat"><small>最常用工具</small><strong id="statMostUsed">—</strong></div>
+          <div class="stat"><small>最近使用</small><strong id="statLastUsed">—</strong></div>
+        </div>
 
-      <div class="section-head">
-        <div><h3>工具入口</h3><p>按你的当前任务选择工具</p></div>
-        <p>模拟版 · 直接体验完整流程</p>
-      </div>
-      <div class="tool-list surface" id="homeToolList">
-        <article class="tool-row"><div class="tool-number">01</div><div><h4>接单报价助手</h4><p>快速生成报价参考、交付清单和确认问题</p></div><button class="round-button" type="button" data-view="quote" aria-label="进入接单报价助手">→</button></article>
-        <article class="tool-row"><div class="tool-number">02</div><div><h4>客户沟通话术助手</h4><p>面对压价、催稿和加需求时更从容</p></div><button class="round-button" type="button" data-view="talk" aria-label="进入客户沟通话术助手">→</button></article>
-        <article class="tool-row"><div class="tool-number">03</div><div><h4>作品集包装助手</h4><p>把剪过的视频包装成能接单的案例</p></div><button class="round-button" type="button" data-view="portfolio" aria-label="进入作品集包装助手">→</button></article>
-        <article class="tool-row"><div class="tool-number">04</div><div><h4>对标链接拆解助手</h4><p>拆解爆款视频结构与可迁移方法</p></div><button class="round-button" type="button" data-view="benchmark" aria-label="进入对标链接拆解助手">→</button></article>
-        <article class="tool-row"><div class="tool-number">05</div><div><h4>字幕文案优化助手</h4><p>让普通口播更适合短视频观看</p></div><button class="round-button" type="button" data-view="subtitle" aria-label="进入字幕文案优化助手">→</button></article>
-        <article class="tool-row"><div class="tool-number">06</div><div><h4>剪映字体速查助手</h4><p>根据视频风格推荐剪映内置字体搭配</p></div><button class="round-button" type="button" data-view="fontguide" aria-label="进入剪映字体速查助手">→</button></article>
-        <article class="tool-row"><div class="tool-number">07</div><div><h4>BGM搜歌助手</h4><p>根据视频情绪和节奏推荐背景音乐</p></div><button class="round-button" type="button" data-view="music" aria-label="进入BGM搜歌助手">→</button></article>
-        <article class="tool-row"><div class="tool-number">08</div><div><h4>剪映音效特效速查</h4><p>快速找到适合的音效和转场特效</p></div><button class="round-button" type="button" data-view="sfx" aria-label="进入剪映音效特效速查">→</button></article>
+        <section class="home-panel surface" id="firstUse">
+          <h3>第一次使用，先看这里</h3>
+          <p>不用从头研究全部工具，先按当前状态选一个入口。</p>
+          <div class="starter-list">
+            <div class="starter-item"><strong>没接过单</strong><span>先用「对标拆解」+「作品集包装」，看清方向，再做能展示的样片。</span></div>
+            <div class="starter-item"><strong>有作品但不会展示</strong><span>先用「作品集包装」，把练习片改成客户能看懂的接单证据。</span></div>
+            <div class="starter-item"><strong>有客户来问价</strong><span>用「接单报价助手」，先明确范围、修改次数和交付时间。</span></div>
+            <div class="starter-item"><strong>客户压价、催稿、加需求</strong><span>用「客户沟通话术」，把话说清楚，把边界立住。</span></div>
+            <div class="starter-item"><strong>做样片时卡住</strong><span>用「字幕优化 / 字体速查 / BGM搜歌 / 音效特效」，先把样片质感做稳定。</span></div>
+          </div>
+        </section>
+
+        <section class="home-panel surface" id="courseStages">
+          <h3>按课程阶段使用</h3>
+          <p>把学习顺序和接单动作连起来，不要只学技巧。</p>
+          <div class="stage-grid">
+            <article class="stage-card"><small>第1-2课</small><h4>方向诊断</h4><div class="tool-pills"><button class="tool-pill" type="button" data-view="benchmark">对标拆解</button><button class="tool-pill" type="button" data-view="portfolio">作品集包装</button></div><p>先看清自己适合做哪类短视频，不要一开始就乱学技巧。</p></article>
+            <article class="stage-card"><small>第3-4课</small><h4>拆博主 / 选风格</h4><div class="tool-pills"><button class="tool-pill" type="button" data-view="benchmark">对标拆解</button><button class="tool-pill" type="button" data-view="fontguide">字体速查</button><button class="tool-pill" type="button" data-view="music">BGM搜歌</button></div><p>把好看的视频拆成可学习、可迁移的动作。</p></article>
+            <article class="stage-card"><small>第5-6课</small><h4>做样片 / 优化样片</h4><div class="tool-pills"><button class="tool-pill" type="button" data-view="subtitle">字幕优化</button><button class="tool-pill" type="button" data-view="sfx">音效特效</button><button class="tool-pill" type="button" data-view="portfolio">作品集包装</button></div><p>把练习片改成能放进作品集的样片。</p></article>
+            <article class="stage-card"><small>接单前</small><h4>报价准备</h4><div class="tool-pills"><button class="tool-pill" type="button" data-view="quote">接单报价助手</button><button class="tool-pill" type="button" data-view="talk">客户沟通话术</button></div><p>报价前先明确服务范围、修改次数和交付时间。</p></article>
+            <article class="stage-card"><small>接单后</small><h4>沟通交付</h4><div class="tool-pills"><button class="tool-pill" type="button" data-view="talk">客户沟通话术</button><button class="tool-pill" type="button" data-view="quote">交付范围确认</button></div><p>减少返工，控制边界，避免被客户拖着走。</p></article>
+          </div>
+        </section>
+
+        <section class="home-panel surface" id="taskTools">
+          <h3>你现在卡在哪一步？</h3>
+          <p>直接点当前问题，不需要先想工具名。</p>
+          <div class="task-grid">
+            <article class="task-card"><div><h4>我不知道自己适合剪什么</h4><p>用对标视频找方向</p></div><button class="primary-button" type="button" data-view="benchmark">去使用</button></article>
+            <article class="task-card"><div><h4>我不知道作品集怎么包装</h4><p>把练习片变成接单证据</p></div><button class="primary-button" type="button" data-view="portfolio">去使用</button></article>
+            <article class="task-card"><div><h4>我不知道怎么报价</h4><p>先定范围和修改次数</p></div><button class="primary-button" type="button" data-view="quote">去使用</button></article>
+            <article class="task-card"><div><h4>我不知道怎么回复客户</h4><p>压价、催稿、加需求都能处理</p></div><button class="primary-button" type="button" data-view="talk">去使用</button></article>
+            <article class="task-card"><div><h4>我觉得字幕不好看</h4><p>先优化断句和层级</p></div><button class="primary-button" type="button" data-view="subtitle">去使用</button></article>
+            <article class="task-card"><div><h4>我不知道用什么字体</h4><p>按视频风格选剪映字体</p></div><button class="primary-button" type="button" data-view="fontguide">去使用</button></article>
+            <article class="task-card"><div><h4>我找不到合适BGM</h4><p>按情绪和节奏找关键词</p></div><button class="primary-button" type="button" data-view="music">去使用</button></article>
+            <article class="task-card"><div><h4>我不知道怎么加音效/特效</h4><p>先做重点和转场提示</p></div><button class="primary-button" type="button" data-view="sfx">去使用</button></article>
+          </div>
+        </section>
+
+        <section class="designer-card" id="designerEntry">
+          <h3>如果你是学美术 / 设计的小设计师</h3>
+          <p>你不缺审美基础，但短视频接单不是只看画面好不好看。你需要学会把审美转成客户听得懂的交付价值。</p>
+          <ul class="designer-points">
+            <li>把平面审美转成短视频节奏、字幕、镜头和信息层级</li>
+            <li>不只做“好看”，而是做“客户愿意付钱的样片”</li>
+            <li>学会拆客户参考，而不是只凭感觉判断高级</li>
+            <li>把作品集从“练习展示”改成“接单证据”</li>
+          </ul>
+          <div class="designer-flow"><span>对标拆解</span>→<span>字幕优化</span>→<span>作品集包装</span>→<span>接单报价助手</span></div>
+        </section>
       </div>
     </section>
 
@@ -1112,9 +1254,9 @@ select.control { appearance: none; background-image: linear-gradient(45deg, tran
 <div class="bottom-tabbar" id="bottomTabBar">
   <div class="bottom-tabbar-inner">
     <button class="bottom-tab active" data-view="home"><span class="tab-icon">首</span>首页</button>
-    <button class="bottom-tab" data-view="quote"><span class="tab-icon">价</span>接单工具</button>
-    <button class="bottom-tab" data-view="talk"><span class="tab-icon">聊</span>沟通话术</button>
-    <button class="bottom-tab" data-view="portfolio"><span class="tab-icon">集</span>作品集工具</button>
+    <button class="bottom-tab" data-view="home" data-anchor="taskTools"><span class="tab-icon">具</span>工具</button>
+    <button class="bottom-tab" data-action="history"><span class="tab-icon">记</span>使用记录</button>
+    <button class="bottom-tab" data-view="home" data-anchor="courseStages"><span class="tab-icon">课</span>课程阶段</button>
   </div>
 </div>
 
@@ -1414,10 +1556,10 @@ function choice(name, values, checked = 0) {
 function resultShell(id, label) {
   return `
     <div class="result-panel surface">
-      <div class="panel-title"><h3>生成结果</h3><span>模拟结果</span></div>
+      <div class="panel-title"><h3>生成结果</h3><span>初稿建议</span></div>
       <div id="${id}">
         <div class="empty-result">
-          <div><div class="empty-icon">结果</div><strong>等待生成</strong><p>填写左侧信息并点击「${label}」，这里会显示结构化模拟结果。</p></div>
+          <div><div class="empty-icon">结果</div><strong>等待生成</strong><p>填写左侧信息并点击「${label}」，这里会显示可复制、可调整的初稿建议。</p></div>
         </div>
       </div>
     </div>`;
@@ -1711,10 +1853,10 @@ window._aiGenerate = async function(formData, callback, button, originalText) {
     // Pass the AI result through - for now fall back to simulated
     // In a full implementation, each tool would parse the AI response
     callback(formData);
-    showToast('✨ AI 生成完成（当前为模拟模式，可配置真实 API 密钥启用 AI 生成）');
+    showToast('AI 生成完成，结果可复制后按实际客户需求调整。');
   } else {
     callback(formData);
-    showToast('AI 暂不可用，使用模拟结果。');
+    showToast('AI 暂不可用，已生成练习版初稿建议。');
   }
 };
 
@@ -1900,6 +2042,13 @@ function handleFiles(zone, files) {
 // ---- Global Event Delegation ----
 function initGlobalEvents() {
   document.addEventListener("click", event => {
+    const action = event.target.closest("[data-action]");
+    if (action?.dataset.action === "history") {
+      el("#historyPanel").classList.toggle("open");
+      if (el("#historyPanel").classList.contains("open")) renderHistoryList();
+      return;
+    }
+
     // Navigation
     const nav = event.target.closest("[data-view]");
     if (nav) {
@@ -1907,6 +2056,9 @@ function initGlobalEvents() {
         switchView(nav.dataset.view, { tab: nav.dataset.tab });
       } else {
         switchView(nav.dataset.view);
+      }
+      if (nav.dataset.anchor) {
+        setTimeout(() => el("#" + nav.dataset.anchor)?.scrollIntoView({ behavior: "smooth", block: "start" }), 120);
       }
     }
 
@@ -2011,21 +2163,26 @@ function initTour() {
 function initBottomTabBar() {
   const bar = el("#bottomTabBar");
   if (!bar) return;
-  // Quick access: home, quote, talk, portfolio
-  const tabs = ["home", "quote", "talk", "portfolio"];
   bar.innerHTML = `
     <div class="bottom-tabbar-inner">
-      ${tabs.map(id => {
-        const t = tools.find(x => x.id === id);
-        return `<button class="bottom-tab ${id === "home" ? "active" : ""}" data-view="${id}">
-          <span class="tab-icon">${t.short}</span>${t.name}
-        </button>`;
-      }).join("")}
+      <button class="bottom-tab active" data-view="home"><span class="tab-icon">首</span>首页</button>
+      <button class="bottom-tab" data-view="home" data-anchor="taskTools"><span class="tab-icon">具</span>工具</button>
+      <button class="bottom-tab" data-action="history"><span class="tab-icon">记</span>使用记录</button>
+      <button class="bottom-tab" data-view="home" data-anchor="courseStages"><span class="tab-icon">课</span>课程阶段</button>
     </div>`;
 
   bar.querySelectorAll(".bottom-tab").forEach(tab => {
-    tab.addEventListener("click", () => {
-      switchView(tab.dataset.view);
+    tab.addEventListener("click", event => {
+      event.stopPropagation();
+      if (tab.dataset.action === "history") {
+        el("#historyPanel").classList.toggle("open");
+        if (el("#historyPanel").classList.contains("open")) renderHistoryList();
+      } else {
+        switchView(tab.dataset.view);
+        if (tab.dataset.anchor) {
+          setTimeout(() => el("#" + tab.dataset.anchor)?.scrollIntoView({ behavior: "smooth", block: "start" }), 120);
+        }
+      }
       bar.querySelectorAll(".bottom-tab").forEach(t => t.classList.remove("active"));
       tab.classList.add("active");
     });
@@ -2061,7 +2218,7 @@ function initQuote() {
           <div class="field"><label>是否需要脚本协助</label>${choice("script", ["是", "否"], 1)}</div>
           <div class="field"><label>是否加急</label>${choice("urgent", ["是", "否"], 1)}</div>
         </div>
-        <div class="form-actions"><span class="form-tip">报价仅作课程练习参考，正式报价前请确认客户预算与修改次数。</span><button class="primary-button" type="submit">生成报价建议</button></div>
+        <div class="form-actions"><span class="form-tip">结果为初稿建议，请结合实际客户需求调整。</span><button class="primary-button" type="submit">生成报价建议</button></div>
       </form>
       ${resultShell("quoteResult", "生成报价建议")}
     </div>`;
@@ -2093,19 +2250,20 @@ function initQuote() {
       const dStandard = ["成片 1 条", "结构优化（钩子+节奏+信息层级）", "重点花字/关键词强调", "基础调色", "音乐音效匹配", "2 轮修改", needPackage ? "封面制作" : null].filter(Boolean);
 
       const html = resultLayout("建议报价区间", priceLabel, [
-        resultCard("💡 先判断再报价", "不要拿到需求直接报。" + client + "的" + video + "视频，时长约" + durationSec + "秒——这属于" + valueLabel + "类项目，不是简单代剪。报价前先确认：客户账号阶段、视频用途（涨粉/种草/成交）、是否需要内容判断、是否能作为作品集案例。"),
-        resultCard("🟢 基础：" + basicPrice + " 元 | 🟡 标准：" + standardPrice + " 元 | 🔴 深度：" + premiumPrice + " 元", "基于 8 个因素综合计算。基础档 = 纯拼接+字幕；标准档 = 结构优化+花字+调色；深度档 = 风格设计+全包装+脚本协助。"),
-        resultCard("标准档包含什么", dStandard),
-        resultCard("⚠️ 报价前必须先拿到", ["客户账号主页或想剪的视频", "1个参考账号/视频（他喜欢的风格）", "视频用途（涨粉、种草、成交、建人设）", "素材是否已准备好", "交付时间要求"], true),
-        resultCard("📞 AI 小琳式报价话术", `我看了一下你的需求——这是${valueLabel}类项目，不只是顺素材剪完，我会帮你重排开头、节奏、重点和包装，让视频更像成熟博主内容。
+        resultCard("报价参考", `基础：${basicPrice} 元｜标准：${standardPrice} 元｜深度：${premiumPrice} 元。建议先按“标准档”沟通，再根据素材量、交期和包装要求上下调整。`),
+        resultCard("包含内容", dStandard),
+        resultCard("不包含内容", ["脚本从 0 到 1 策划", "额外封面多版本设计", "客户临时新增素材重剪", "超过约定轮次的大改返工"]),
+        resultCard("修改次数 / 交付时间", [`默认包含 2 轮小改`, `建议交付时间：${isUrgent ? "加急 24-48 小时，需加急费" : "正常 3-5 天"}`, "新增需求单独报价，交期顺延"], true),
+        resultCard("需要提前问客户的问题", ["这条视频主要目标是什么：涨粉、种草、成交还是展示案例？", "有没有参考账号或参考视频？", "素材是否已准备好，是否需要补拍？", "是否需要封面、花字、调色和脚本协助？", "最终交付时间和修改轮次能否确认？"], true),
+        resultCard("可复制给客户的话术", `我看了一下你的需求——这是${valueLabel}类项目，不只是顺素材剪完，我会帮你重排开头、节奏、重点和包装，让视频更像成熟博主内容。
 
 根据你目前的情况，建议在 ${priceLabel} 之间。
 
 具体取决于选基础/标准/深度哪个档位和最终素材量。你先确认范围和交期，我给你出详细交付清单。`, true),
-        resultCard("🤫 报价后铁律", `1. 报完闭嘴，等客户先回——先说话的人输
+        resultCard("使用提醒", `1. 报完闭嘴，等客户先回——先说话的人输
 2. 客户说贵 ≠ 真的贵，先诊断不直接降
 3. 降价格必须同时降范围，交付内容不变价格不变`),
-        resultCard("📅 跟进节奏", ["当天：发送书面交付清单", "第1天：确认有没有疑问", "第3天：补发一个类似案例", "第7天：确认项目方向是否有变", "第14天：最后跟进（排期提醒）", "14天后：停止。不追。等他找你。"], true)
+        resultCard("下一步建议", ["把报价话术发给客户前，先补上具体交付清单", "客户回复后，用「客户沟通话术」处理压价、催稿和加需求", "成交后把交付范围保存到聊天记录或文档里"], true)
       ]);
 
       el("#quoteResult").innerHTML = html;
@@ -2167,12 +2325,12 @@ C. 商业质感（品牌感，适合接广告）
         "场景：" + scene + " | 目标：" + goal,
         "客户类型判断：" + clientType + " | " + (goalLabels[goal] || ""),
         [
-          resultCard("AI 小琳式判断", info.judgment, true),
-          resultCard("现实判断", info.reality, true),
-          resultCard("回复话术（可直接发）", script, true),
-          resultCard("最优先动作", info.action),
-          resultCard("如果不行怎么办", info.fallback),
-          resultCard("⚠️ 核心原则", info.tips)
+          resultCard("直接可复制版本", script, true),
+          resultCard("温和版", `我理解你的想法。为了不影响最终效果，我这边需要先确认需求、素材和交期，再看是否能调整范围。我们可以一起把方案压到更适合你的预算，但不建议在交付内容不变的情况下直接降价。`, true),
+          resultCard("边界清晰版", `这个需求如果继续加，会超出原本约定范围。可以做，但需要增加费用或顺延交付时间。你可以选择：A 按原范围交付；B 增加需求并调整费用和交期。`, true),
+          resultCard("不建议这样说", ["别说：那我给你便宜点吧", "别说：随便改都行", "别说：我尽量今天做完", "别在需求不清楚时承诺价格和交期"]),
+          resultCard("下一步动作", info.action),
+          resultCard("使用提醒", info.tips)
         ]
       );
       saveToHistory("talk", "沟通话术助手", "场景：" + scene + " | 目标：" + goal + " | 客户：" + clientType);
@@ -2249,13 +2407,24 @@ function initPortfolio() {
       const highlight = data.get("highlight");
       const resultData = data.get("data");
 
-      el("#portfolioResult").innerHTML = resultLayout("作品集标题", `本地餐饮${type}案例｜从素材整理到成片包装`, [
-        resultCard("案例介绍", `${work} 通过重新设计前三秒信息、调整素材顺序和统一字幕视觉，让案例更适合短视频平台观看。`, true),
-        resultCard("我的服务亮点", ["能从客户目标反推剪辑重点", "不仅剪顺，还会处理信息层级", "交付前主动检查字幕、声音和画幅"]),
-        resultCard("展示给客户的话术", `这是我为${industry}账号制作的案例，重点处理了前三秒产品展示、字幕信息和门店氛围。如果您的账号也需要稳定更新同类内容，我可以按统一模板长期协作。`),
-        resultCard("小红书发布版", `剪辑作品集更新｜这次做的是${industry}${type}案例。相比堆转场，我更关注前三秒有没有吸引力、产品特写是否清楚，以及字幕会不会抢画面。`, true),
-        resultCard("朋友圈发布版", `更新一条${industry}剪辑案例：素材整理、节奏重组、字幕包装、基础调色均由我完成。目前可承接${type}、探店和本地生活类短视频剪辑。`),
-        resultCard("简历 / 接单页展示版", `项目类型：${type}短视频｜负责内容：素材筛选、结构调整、字幕包装、声音处理与调色｜结果：${resultData}`)
+      el("#portfolioResult").innerHTML = resultLayout("作品标题", `${industry}${type}样片｜从素材整理到成片包装`, [
+        resultCard("服务对象", `适合${industry}账号、同城商家、个人博主或需要稳定发布${type}内容的客户。`),
+        resultCard("作品亮点", [highlight, "前三秒先给客户看到结果或核心卖点", "字幕、节奏、音乐和画面服务同一个目标"]),
+        resultCard("我负责的内容", work, true),
+        resultCard("适合展示在哪里", ["小红书作品集笔记", "朋友圈接单展示", "私聊客户时作为案例链接", "接单页 / 简历案例区"]),
+        resultCard("可复制的小红书文案", `剪辑作品集更新｜这次做的是${industry}${type}案例。
+
+我重点处理的不是“堆特效”，而是前三秒信息、素材顺序、字幕层级和产品/人物重点。
+
+适合想做${type}短视频，但不知道怎么把素材剪成可发布内容的客户参考。`, true),
+        resultCard("可复制的朋友圈文案", `更新一条${industry}剪辑案例：${work}
+
+亮点：${highlight}
+
+目前可承接${type}、口播、探店和本地生活类短视频剪辑。`, true),
+        resultCard("结果补充", resultData || "暂无公开数据时，可以写清楚负责内容、前后对比和交付价值。"),
+        resultCard("下一步建议", "把这条作品放到作品集最前面，并准备 1 句私聊客户时能发的解释：我不是只会剪顺，我能帮你把素材包装成客户看得懂的短视频。"),
+        resultCard("使用提醒", "不要把作品集写成练习记录，要写成客户能理解的交付价值：服务对象、你解决了什么问题、客户为什么该找你。")
       ]);
       saveToHistory("portfolio", "作品集包装助手", `${industry} ${type}案例 · 多平台文案`);
     });
@@ -2283,10 +2452,10 @@ function initMaterial() {
     <div id="materialFont">
       <div class="tool-layout">
         <form class="form-panel surface" id="fontForm">
-          <div class="panel-title"><h3>上传截图并描述风格</h3><span>模拟识别</span></div>
+          <div class="panel-title"><h3>上传截图并描述风格</h3><span>排版参考</span></div>
           <div class="upload-zone" data-upload="image">
             <input type="file" accept=".jpg,.jpeg,.png,.webp,image/*">
-            <div class="upload-copy"><div class="upload-symbol">＋</div><strong>拖拽或点击上传截图</strong><p>支持 JPG / PNG / WEBP，第一版只做本地预览</p></div>
+            <div class="upload-copy"><div class="upload-symbol">＋</div><strong>拖拽或点击上传截图</strong><p>支持 JPG / PNG / WEBP，图片只在本地预览</p></div>
             <img class="preview-image" alt="上传图片预览">
           </div>
           <div class="field-grid" style="margin-top:17px">
@@ -2294,7 +2463,7 @@ function initMaterial() {
             <div class="field"><label>选择用途</label><select class="control" name="use"><option>封面大字</option><option>视频字幕</option><option>标题字</option><option>海报字</option></select></div>
             <div class="field"><label>选择风格</label><select class="control" name="style"><option>干净高级</option><option>可爱活泼</option><option>商业感</option><option>情绪感</option><option>教程感</option></select></div>
           </div>
-          <div class="form-actions"><span class="form-tip">第一版不接真实 OCR 与字体库，结果用于排版方向参考。</span><button class="primary-button" type="submit">开始识别字体</button></div>
+          <div class="form-actions"><span class="form-tip">结果为排版方向建议，商用前请确认字体授权。</span><button class="primary-button" type="submit">开始识别字体</button></div>
         </form>
         ${resultShell("fontResult", "开始识别字体")}
       </div>
@@ -2314,7 +2483,7 @@ function initMaterial() {
             <div class="field"><label>选择画幅</label>${choice("ratio", ["9:16", "16:9", "1:1"])}</div>
             <div class="field full"><label>想表达的卖点</label><textarea class="control" name="selling">突出我会做节奏、字幕包装、调色和商单案例整理，适合口播与本地生活账号。</textarea></div>
           </div>
-          <div class="form-actions"><span class="form-tip">第一版不做真实合成与导出，只生成剪映制作方案。</span><button class="primary-button" type="submit">生成制作方案</button></div>
+          <div class="form-actions"><span class="form-tip">生成剪映制作步骤，方便你按步骤完成样片。</span><button class="primary-button" type="submit">生成制作方案</button></div>
         </form>
         ${resultShell("mixResult", "生成制作方案")}
       </div>
@@ -2325,13 +2494,13 @@ function initMaterial() {
   el("#fontForm").addEventListener("submit", event => {
     event.preventDefault();
     simulate(event.currentTarget, event.submitter, data => {
-      el("#fontResult").innerHTML = resultLayout("模拟识别结果", "现代无衬线粗体 · 相似度 82%", [
+      el("#fontResult").innerHTML = resultLayout("排版参考结果", "现代无衬线粗体 · 相似度 82%", [
         resultCard("可能相似字体", "思源黑体 Heavy / 阿里巴巴普惠体 Bold / HarmonyOS Sans SC Black"),
         resultCard("剪映可替代字体", "优先尝试：得意黑、雅月体、系统黑体加粗。具体字体名称会随剪映版本变化。"),
         resultCard("适合的视频类型", `<span class="result-tag">${data.get("use")}</span><span class="result-tag">教程口播</span><span class="result-tag">干货封面</span>`, true),
         resultCard("字幕 / 封面排版建议", ["两行以内，每行 8-12 个字", "关键词可放大 15%-20%", "文字与背景保持明显明暗对比", "不要同时使用超过两种字重"]),
         resultCard("是否适合新手模仿", "适合。字体本身克制，重点在字号层级、字间距和留白，不依赖复杂特效。"),
-        resultCard("注意事项", "模拟结果不能替代字体授权判断；商用前请确认字体许可证。")
+        resultCard("注意事项", "结果为初稿建议，请结合实际画面调整；商用前请确认字体许可证。")
       ]);
       saveToHistory("material", "字体识别", "识别结果：现代无衬线粗体 · 相似度 82%");
     });
@@ -2411,15 +2580,15 @@ function initBenchmark() {
         "请输出：1. 前3秒钩子拆解；2. 内容结构；3. 字幕/画面/节奏特点；4. 评论区需求；5. 可迁移动作；6. 不建议模仿的地方；7. 我可以做成作品集的样片方案。"
       ].join("\n");
 
-      el("#benchmarkResult").innerHTML = resultLayout("AI拆解表", `${platform} · ${direction}方向 · 基于手动信息`, [
-        resultCard("链接识别结果", [`平台：${platform}`, `来源链接：${link}`, `截图：${screenshot}`, "说明：抖音/小红书经常禁止网页自动读取，当前流程不依赖抓取。"], true),
-        resultCard("前 3 秒钩子", `根据你填写的信息，开头重点是：${hook}。拆解时先判断它有没有做到结果前置、问题明确、人群清楚。`),
-        resultCard("内容结构", [`标题：${title}`, `主体描述：${description}`, "建议按“结果/痛点 → 过程/方法 → 证明/案例 → 互动/转化”四段记录。"]),
-        resultCard("字幕 / 画面 / 节奏", [`字幕画面：${visual}`, `节奏BGM：${rhythm}`, "判断重点：字幕是否服务理解、画面是否抢重点、BGM是否影响人声。"]),
+      el("#benchmarkResult").innerHTML = resultLayout("对标拆解表", `${platform} · ${direction}方向 · 基于手动信息`, [
+        resultCard("视频类型", [`平台：${platform}`, `来源链接：${link}`, `标题：${title}`, `截图：${screenshot}`], true),
+        resultCard("前 3 秒结构", [`开头动作：${hook}`, "判断重点：有没有结果前置、问题明确、人群清楚", "如果开头没有抓人，先学结构，不急着学特效"]),
+        resultCard("字幕 / 节奏 / 包装可学习点", [`字幕画面：${visual}`, `节奏BGM：${rhythm}`, "把好看的地方翻译成动作：字号、停顿、画面顺序、关键词出现位置"]),
+        resultCard("不要照抄的地方", ["不要复制原作者文案、人设和封面样式", "不要使用虚假收入数据或无法证明的结果", "不要为了像对标而堆转场、音效和花字"]),
+        resultCard("可以迁移到自己样片的动作", transfer, true),
         resultCard("评论区未满足需求", comments.split(/[\n；;]+/).filter(Boolean).slice(0, 6)),
-        resultCard("适合学员迁移", transfer, true),
-        resultCard("不建议模仿", ["不要复制原作者文案、人设和封面样式", "不要使用虚假收入数据或无法证明的结果", "不要为了像对标而堆转场、音效和花字"]),
-        resultCard("可做成作品集的样片", `围绕"${direction}"做一条 30-60 秒样片：先复刻底层结构，再替换成自己的真实素材/案例/服务对象。`),
+        resultCard("下一步建议", `围绕“${direction}”做一条 30-60 秒样片：先复刻底层结构，再替换成自己的真实素材、案例或服务对象。`),
+        resultCard("使用提醒", "这里只做学习拆解，不下载、不搬运、不照抄。你要迁移的是结构和表达方法，不是原视频本身。"),
         resultCard("复制给 AI 的拆解提示词", aiPrompt, true)
       ]);
       saveToHistory("benchmark", "对标拆解助手", `${platform} · ${direction} · ${title}`);
@@ -2449,16 +2618,20 @@ function initSubtitle() {
     event.preventDefault();
     simulate(event.currentTarget, event.submitter, data => {
       el("#subtitleResult").innerHTML = resultLayout("优化完成", `${data.get("type")} · ${data.get("style")}`, [
-        resultCard("优化后的字幕版", `很多剪辑新手，卡住的不是软件。
+        resultCard("优化前问题", ["开头铺垫太长，观众还没看到重点", "“大家好、分享一下、我发现”这类口头语可以删", "核心痛点出现太晚，需要更早说清楚"]),
+        resultCard("优化后字幕", `很多剪辑新手，卡住的不是软件。
 而是学完之后，不知道该做什么作品。
 更不知道，怎么拿作品去接单。
 
 所以第一步，不是继续学更多功能。
 而是先做一套客户看得懂的作品集。`, true),
-        resultCard("可做封面大字的句子", "剪辑新手接不到单，可能不是技术问题"),
-        resultCard("建议强调的关键词", `<span class="result-tag">不是软件</span><span class="result-tag">做什么作品</span><span class="result-tag">拿作品接单</span><span class="result-tag">客户看得懂</span>`),
-        resultCard("字幕断句建议", ["每行控制在 8-14 个字", "转折词单独成句", "结论句停留时间略长", "重点句前后留 0.2-0.4 秒呼吸"]),
-        resultCard("不建议保留的废话", "“大家好”“今天想和大家分享一下”“我最近在学习的时候发现”可直接删除或压缩。", true)
+        resultCard("字幕层级建议", ["主字幕：每行 8-14 个字，保证手机端一眼看懂", "关键词：只放大 1-2 个词，不要整句都加粗", "解释信息：字号降低 15%-20%，不要抢主标题"]),
+        resultCard("关键词突出建议", `<span class="result-tag">不是软件</span><span class="result-tag">做什么作品</span><span class="result-tag">拿作品接单</span><span class="result-tag">客户看得懂</span>`),
+        resultCard("可直接复制版本", `剪辑新手接不到单，可能不是技术问题。
+
+你真正缺的，可能是一套客户看得懂的作品集。`, true),
+        resultCard("下一步建议", ["把优化后的字幕放进样片前 10 秒", "用字体速查确认主字幕风格", "导出前用手机看一遍，确认字幕不卡画面"]),
+        resultCard("使用提醒", "优化字幕不是把句子变复杂，而是让观众更快看懂重点。做样片时先保证清楚，再追求高级。")
       ]);
       saveToHistory("subtitle", "字幕文案优化", `${data.get("type")} · ${data.get("style")}`);
     });
@@ -2500,7 +2673,9 @@ function initFontguide() {
         resultCard(position + "专属建议", posTip),
         resultCard("📎 链接参考提示", link
           ? "你贴了链接：分析目标视频的风格倾向。如果视频偏干净克制→选无衬线字体；偏综艺热闹→选粗体撞色；偏文艺情绪→选衬线/手写体。具体推荐见上方。"
-          : "没贴链接。建议贴一个参考视频链接，我能帮你判断字体方向。")
+          : "没贴链接。建议贴一个参考视频链接，我能帮你判断字体方向。"),
+        resultCard("下一步建议", ["先在剪映里试 2 个候选字体", "固定主标题/副标题/说明字三层字号", "导出前用手机预览，确认小屏也能看清"]),
+        resultCard("使用提醒", "字体不是越特别越好。接单样片优先做到清楚、稳定、客户能看懂。")
       ]);
       saveToHistory("fontguide", "字体速查", `${style} / ${position}`);
     });
@@ -2542,7 +2717,9 @@ function initMusic() {
         resultCard("剪映曲库搜索关键词", info.keywords.join("、")),
         resultCard("免版权音乐来源（免费商用）", ["剪映内置曲库（已授权）", "YouTube Audio Library", "Pixabay Music (pixabay.com/music)", "Uppbeat (uppbeat.io)", "Mixkit (mixkit.co/free-stock-music)"], true),
         resultCard("商用注意", "剪映内置音乐限剪映发布渠道使用。独立商用/广告请使用已购授权音乐。以上免版权来源大多免费商用，使用前请逐个确认具体曲目授权。"),
-        resultCard("📎 链接分析", link ? "你贴了视频链接。可以先打开视频感受：它的BGM是快还是慢？有歌词还是纯音乐？情绪是温暖/紧张/活泼？根据你的感受匹配上方的推荐方案。如果不确定，录屏截取一段用听歌识曲。" : "没贴链接。建议贴一个想参考BGM风格的视频链接，帮你分析该用什么音乐。")
+        resultCard("📎 链接分析", link ? "你贴了视频链接。可以先打开视频感受：它的BGM是快还是慢？有歌词还是纯音乐？情绪是温暖/紧张/活泼？根据你的感受匹配上方的推荐方案。如果不确定，录屏截取一段用听歌识曲。" : "没贴链接。建议贴一个想参考BGM风格的视频链接，帮你分析该用什么音乐。"),
+        resultCard("下一步建议", ["先选 3 首候选 BGM", "把人声调到主位，BGM 只做情绪铺底", "导出前检查开头 3 秒有没有抢人声"]),
+        resultCard("使用提醒", "BGM 服务内容，不要为了高级感盖住人声。商用前一定确认授权。")
       ]);
       saveToHistory("music", "BGM搜歌", `${mood} / ${tempo}`);
     });
@@ -2587,7 +2764,9 @@ function initSfx() {
         resultCard("剪映特效搜索", v.search ? "特效中搜索：" + v.search : "不需要特效"),
         resultCard("特效使用技巧", v.tip),
         resultCard("节奏风格建议", rm, true),
-        resultCard("📎 链接参考", link ? "你贴了视频链接。可以打开观察：转场用的什么类型（叠化/滑动/闪白）？音效出现在哪些位置（转场/卡点/重点文字）？特效是克制还是堆叠？记录下来就是你的音效参考库。" : "没贴链接。建议贴一个参考视频，帮你拆解里面的音效和特效用法。")
+        resultCard("📎 链接参考", link ? "你贴了视频链接。可以打开观察：转场用的什么类型（叠化/滑动/闪白）？音效出现在哪些位置（转场/卡点/重点文字）？特效是克制还是堆叠？记录下来就是你的音效参考库。" : "没贴链接。建议贴一个参考视频，帮你拆解里面的音效和特效用法。"),
+        resultCard("下一步建议", ["只给重点信息加音效，不要每个动作都加", "转场先用 1-2 种统一风格", "导出前关闭一遍音效听人声是否清楚"]),
+        resultCard("使用提醒", "音效特效是辅助理解，不是炫技。客户样片优先干净、清楚、稳定。")
       ]);
       saveToHistory("sfx", "音效特效速查", sfxType);
     });
