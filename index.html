@@ -1361,7 +1361,7 @@ body:not(.auth-locked) .access-gate { display: none; }
   <div class="bottom-tabbar-inner">
     <button class="bottom-tab active" data-view="home"><span class="tab-icon">首</span>首页</button>
     <button class="bottom-tab" data-view="home" data-anchor="taskTools"><span class="tab-icon">具</span>工具</button>
-    <button class="bottom-tab" data-action="history"><span class="tab-icon">记</span>使用记录</button>
+    <button class="bottom-tab" data-action="history"><span class="tab-icon">记</span>接单记录</button>
     <button class="bottom-tab" data-view="home" data-anchor="courseStages"><span class="tab-icon">课</span>课程阶段</button>
   </div>
 </div>
@@ -1370,10 +1370,10 @@ body:not(.auth-locked) .access-gate { display: none; }
 <div class="toast" id="toast"><i>✓</i><span></span></div>
 
 <!-- History Panel -->
-<button class="history-toggle" id="historyToggle" type="button" title="历史记录" aria-label="历史记录">📋</button>
+<button class="history-toggle" id="historyToggle" type="button" title="接单记录" aria-label="接单记录">📋</button>
 <div class="history-panel" id="historyPanel">
   <div class="history-head">
-    <h4>📋 生成历史</h4>
+    <h4>📋 我的接单记录</h4>
     <button class="secondary-button" id="historyClear" type="button">清空</button>
   </div>
   <div id="historyList"></div>
@@ -1864,11 +1864,20 @@ const MAX_HISTORY = 50;
 function saveToHistory(toolId, toolName, preview) {
   try {
     const history = JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
+    const text = String(preview || "");
+    const amountMatch = text.match(/(?:报价区间[:：]?\s*)?(\d{2,4}\s*(?:-|–|—|到|~)\s*\d{2,4}|\d{2,4})\s*元/);
+    const status = toolId === "quote" ? "待跟进"
+      : toolId === "talk" ? "沟通中"
+      : toolId === "benchmark" || toolId === "portfolio" ? "做样片"
+      : toolId === "subtitle" || toolId === "fontguide" ? "优化中"
+      : "已记录";
     history.unshift({
       toolId,
       toolName,
-      preview: preview.substring(0, 120),
-      full: preview,
+      preview: text.substring(0, 120),
+      full: text,
+      amount: amountMatch ? amountMatch[0] : "",
+      status,
       time: Date.now()
     });
     if (history.length > MAX_HISTORY) history.length = MAX_HISTORY;
@@ -2193,7 +2202,7 @@ function initHistoryPanel() {
   el("#historyClear")?.addEventListener("click", () => {
     clearHistory();
     renderHistoryList();
-    showToast("历史记录已清空。");
+    showToast("接单记录已清空。");
   });
 }
 
@@ -2201,23 +2210,22 @@ function renderHistoryList() {
   const list = el("#historyList");
   const history = getHistory();
   if (!history.length) {
-    list.innerHTML = '<div class="empty-result" style="min-height:120px"><p>暂无历史记录</p></div>';
+    list.innerHTML = `<div class="empty-state">还没有接单记录。用一次报价、话术、对标或识别工具后，会自动记录在这里。</div>`;
     return;
   }
   list.innerHTML = history.map((h, i) => `
     <div class="history-item" data-idx="${i}">
-      <div class="tool-name">${h.toolName} · ${new Date(h.time).toLocaleString("zh-CN")}</div>
-      <div class="preview">${h.preview}</div>
-    </div>`).join("");
-
+      <div class="tool-name">${escapeHtml(h.toolName)} · ${escapeHtml(h.status || "已记录")}${h.amount ? " · " + escapeHtml(h.amount) : ""}</div>
+      <div class="preview">${escapeHtml(h.preview)}</div>
+      <div class="time">${new Date(h.time).toLocaleString("zh-CN")} · 点击回到对应工具</div>
+    </div>
+  `).join("");
   list.querySelectorAll(".history-item").forEach(item => {
     item.addEventListener("click", () => {
-      const idx = parseInt(item.dataset.idx);
-      const entry = getHistory()[idx];
-      if (entry) {
-        switchView(entry.toolId);
+      const record = history[Number(item.dataset.idx)];
+      if (record?.toolId) {
+        switchView(record.toolId);
         el("#historyPanel").classList.remove("open");
-        showToast("已从历史记录进入「" + entry.toolName + "」");
       }
     });
   });
@@ -2368,10 +2376,27 @@ function renderVisionMessage(title, message) {
 }
 
 function renderSubtitleVisionResult(a) {
+  const parameterTips = Array.isArray(a.capcutParameters) && a.capcutParameters.length ? a.capcutParameters : [
+    "字体：黑体 / 粗黑，先保证手机上看得清",
+    "颜色：白字优先；背景亮时加黑色描边",
+    "描边：黑色 4-6，背景复杂时加到 6-8",
+    "阴影：20%-30%，不要太重",
+    "位置：底部 15%-20%，避开人物脸和产品主体",
+    "每行字数：8-14 字，一屏不要超过 2 行"
+  ];
+  const actionSteps = Array.isArray(a.capcutActionSteps) && a.capcutActionSteps.length ? a.capcutActionSteps : [
+    "先把识别到的字幕复制到剪映文本里",
+    "按语义断句：一句只讲一个重点",
+    "主字幕用黑体/粗黑，关键词单独加粗或换色",
+    "预览一遍手机小屏，挡脸、挡产品就上移或下移",
+    "导出前静音看一遍，确认不听声音也能看懂"
+  ];
   return resultLayout("截图字幕识别", safeText(a.confidence ? "置信度：" + a.confidence : "基于截图分析"), [
     resultCard("识别到的字幕", safeList(a.recognizedText, "未识别到字幕文字"), true),
     resultCard("当前问题", safeList(a.currentProblems, "未发现明确字幕问题")),
     resultCard("优化建议", safeList(a.optimizationSuggestions, "未生成具体建议")),
+    resultCard("剪映参数建议", parameterTips, true),
+    resultCard("剪映实操步骤", actionSteps, true),
     resultCard("可直接复制的优化后字幕", safeText(a.optimizedSubtitle, "未生成优化后字幕"), true),
     resultCard("剪辑师判断", safeText(a.editorJudgment, "未生成接单视角判断"), true),
     resultCard("识别细节", [
@@ -2393,12 +2418,23 @@ function renderFontVisionResult(a) {
     : Array.isArray(a.similarFonts) && a.similarFonts.length
       ? a.similarFonts.map(item => `${escapeHtml(item.name || "黑体")}：${escapeHtml(item.style || "")}｜${escapeHtml(item.usage || "")}`)
       : ["建议先在剪映里搜：黑体、粗黑、圆体、手写、综艺，根据画面风格逐个试。"];
+  const firstKeyword = Array.isArray(a.jianyingSearchKeywords) && a.jianyingSearchKeywords[0]?.keyword ? a.jianyingSearchKeywords[0].keyword : "粗黑";
+  const secondKeyword = Array.isArray(a.jianyingSearchKeywords) && a.jianyingSearchKeywords[1]?.keyword ? a.jianyingSearchKeywords[1].keyword : "黑体";
+  const fontSteps = Array.isArray(a.capcutActionSteps) && a.capcutActionSteps.length ? a.capcutActionSteps : [
+    "打开剪映：文字 → 字体",
+    `先搜索：${firstKeyword}`,
+    `找不到就搜：${secondKeyword} / 黑体 / 圆体 / 综艺`,
+    "主标题用更粗的字，辅助说明用简黑/黑体",
+    "关键词可以单独加粗、换色或加描边，不要整屏都花",
+    "商用前确认字体授权，找不到原字体就用相似方向替代"
+  ];
   return resultLayout("截图字体识别", safeText(a.detectedStyle, "识别到的字体风格"), [
     resultCard("识别到的字体风格", safeText(a.detectedStyle), true),
     resultCard("置信度说明", safeText(a.confidenceNote || "无法百分百确认原字体，以下为剪映内相似搜索方向。"), true),
     resultCard("字体类型 / 字重", [`类型：${safeText(a.fontType)}`, `字重：${safeText(a.weight)}`]),
     resultCard("字形特征", safeList(a.shapeFeatures)),
     resultCard("剪映里建议这样搜", keywordList, true),
+    resultCard("剪映实操步骤", fontSteps, true),
     resultCard("适合用在哪类视频", safeList(a.suitableVideos)),
     resultCard("这张图怎么优化字体", safeList(a.optimizationSuggestions), true),
     resultCard("字体层级问题", safeText(a.hierarchy)),
@@ -2536,7 +2572,7 @@ function initBottomTabBar() {
     <div class="bottom-tabbar-inner">
       <button class="bottom-tab active" data-view="home"><span class="tab-icon">首</span>首页</button>
       <button class="bottom-tab" data-view="home" data-anchor="taskTools"><span class="tab-icon">具</span>工具</button>
-      <button class="bottom-tab" data-action="history"><span class="tab-icon">记</span>使用记录</button>
+      <button class="bottom-tab" data-action="history"><span class="tab-icon">记</span>接单记录</button>
       <button class="bottom-tab" data-view="home" data-anchor="courseStages"><span class="tab-icon">课</span>课程阶段</button>
     </div>`;
 
@@ -2636,6 +2672,7 @@ function initQuote() {
         resultCard("修改次数 / 交付时间", [`默认包含 1-2 轮小改`, `建议交付时间：${isUrgent ? "加急 24-48 小时，可加 30-50 元" : "正常 2-3 天"}`, "新增需求单独报价，交期顺延"], true),
         resultCard("需要提前问客户的问题", ["视频大概多长？素材有多少？", "是否只剪 1 条，还是长期合作？", "要不要字幕、花字、封面、BGM？", "有没有参考视频？", "能接受几天交付、几轮修改？"], true),
         resultCard("可复制给客户的话术", `我看了一下，这条属于${valueLabel}类短视频。\n\n如果是基础剪辑+字幕，单条大概 ${basicPrice} 元起；如果需要节奏优化、少量花字和BGM，建议按 ${recommended} 来做。\n\n这个价格包含：${dStandard.join("、")}。\n不包含临时新增需求和大改重剪。你先确认素材量、交付时间和修改轮次，我再给你定最终价。`, true),
+        resultCard("100 / 150 / 200 / 250 四档报价模板", ["100 元：基础剪辑 + 基础字幕，适合练手和简单口播", "150 元：剪辑 + 字幕 + 少量花字，适合大多数新人单", "200 元：节奏优化 + 花字 + BGM/简单音效，适合想要质感的客户", "250 元：含封面或更精细包装，适合素材清楚、要求明确的单条项目"], true),
         resultCard("使用提醒", "先按 100-250 元区间练成交和交付，不要一上来报太高。后面有稳定作品集、客户案例和复购，再逐步涨价。"),
         resultCard("下一步建议", ["把报价话术发给客户前，先补上具体交付清单", "客户压价时，优先减少范围，不要交付不变直接降价", "成交后把价格、范围、修改次数写进聊天记录"], true)
       ]);
@@ -2957,6 +2994,7 @@ function initBenchmark() {
         resultCard("可学习点", [`先看${direction}背后的目的：它是在抓注意力、解释信息，还是推动成交？`, "把你觉得好看的地方翻译成可执行动作：位置、字号、节奏、停顿、信息顺序。", "只学结构和方法，不搬运原文案、画面和人设。"]),
         resultCard("不要照抄的地方", ["不要复制原视频标题、口播文案和封面样式", "不要使用对方无法验证的数据或案例", "不要为了像对标而堆花字、转场和音效"]),
         resultCard("可以迁移到自己样片的动作", [`围绕“${direction}”做一条 30-60 秒样片`, "把对标里的结构换成自己的真实案例、素材或服务对象", "完成后用作品集包装工具写成客户看得懂的案例说明"], true),
+        resultCard("生成我的样片任务", ["今天先做一条 30 秒样片，不追求完整账号包装", `开头只学习它的${direction}结构，不照抄文案`, "字幕用同样的层级：主字幕清楚，关键词少量突出", "结尾展示你的服务对象：我能帮哪类客户剪成什么效果", "做完后放进作品集工具，包装成一个接单案例"], true),
         resultCard("复制给 AI 的拆解提示词", aiPrompt, true),
         resultCard("使用提醒", "对标不是复制爆款，而是把好看的视频拆成你能学习、能迁移、能交付的动作。")
       ]);

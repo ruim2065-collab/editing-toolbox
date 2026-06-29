@@ -364,9 +364,9 @@ function ensureArray(value) {
 function deepSeekPrompt(mode, analysis) {
   const base = JSON.stringify(analysis || {}, null, 2);
   if (mode === 'subtitle') {
-    return `请把下面的截图字幕识别结果整理成同字段 JSON。要求：建议更适合剪辑小白接单交付；不能编造未识别到的文字；保留 recognizedText、position、lineCount、colors、effects、contrast、occlusion、density、hierarchy、textIssues、currentProblems、optimizationSuggestions、optimizedSubtitle、editorJudgment、confidence、limitations 字段。\n\n${base}`;
+    return `请把下面的截图字幕识别结果整理成同字段 JSON。要求：建议更适合剪辑小白接单交付；不能编造未识别到的文字；保留 recognizedText、position、lineCount、colors、effects、contrast、occlusion、density、hierarchy、textIssues、currentProblems、optimizationSuggestions、capcutParameters、capcutActionSteps、optimizedSubtitle、editorJudgment、confidence、limitations 字段。\n\n${base}`;
   }
-  return `请把下面的截图字体识别结果整理成同字段 JSON。要求：只做字体风格诊断和相似方向推荐，不要猜测精确字体名；如果输入结果里有具体字体名但证据不足，要改写为“相似方向”。不提供字体文件或盗版下载；保留 detectedStyle、confidenceNote、fontType、weight、shapeFeatures、hierarchy、issues、jianyingSearchKeywords、similarFonts、suitableVideos、optimizationSuggestions、usageReminder、limitations、uploadAdvice 字段；similarFonts 也必须使用剪映可搜索关键词，不要使用外部字体名。\n\n${base}`;
+  return `请把下面的截图字体识别结果整理成同字段 JSON。要求：只做字体风格诊断和相似方向推荐，不要猜测精确字体名；如果输入结果里有具体字体名但证据不足，要改写为“相似方向”。不提供字体文件或盗版下载；保留 detectedStyle、confidenceNote、fontType、weight、shapeFeatures、hierarchy、issues、jianyingSearchKeywords、similarFonts、suitableVideos、optimizationSuggestions、capcutActionSteps、usageReminder、limitations、uploadAdvice 字段；similarFonts 也必须使用剪映可搜索关键词，不要使用外部字体名。\n\n${base}`;
 }
 
 function parseVisionText(text) {
@@ -411,6 +411,8 @@ function subtitlePrompt() {
   "textIssues": ["错别字/标点/断句问题，没有就写未发现明确问题"],
   "currentProblems": ["当前问题"],
   "optimizationSuggestions": ["具体优化建议"],
+  "capcutParameters": ["剪映参数建议：字体、颜色、描边、阴影、位置、每行字数等"],
+  "capcutActionSteps": ["剪映里下一步怎么操作，给学员可照做的步骤"],
   "optimizedSubtitle": "可直接复制的优化后字幕",
   "editorJudgment": "从接单交付角度解释为什么这样改更像可交付成片",
   "confidence": "高/中/低",
@@ -458,6 +460,7 @@ function fontPrompt() {
   ],
   "suitableVideos": ["适合视频类型"],
   "optimizationSuggestions": ["针对这张图的字体优化建议"],
+  "capcutActionSteps": ["剪映里下一步怎么操作：先搜什么词、找不到搜什么、主标题和辅助字怎么搭配"],
   "usageReminder": "商用和版权提醒，说明剪映字体可能随版本变化，优先按搜索词找相似方向",
   "limitations": ["看不清或无法确认的部分"],
   "uploadAdvice": ["如果识别不准，下一次应如何截图：裁剪文字区域、提高分辨率、避免压缩、保留完整字形等"]
