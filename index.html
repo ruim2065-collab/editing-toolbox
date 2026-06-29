@@ -18,7 +18,7 @@
     });
   })();
   </script>
-  <meta name="description" content="剪辑接单百宝箱——剪辑课程学员专属接单、沟通、作品集与剪映工具箱，9合1，支持 AI 智能生成与离线使用。" />
+  <meta name="description" content="剪辑接单百宝箱——剪辑课程学员专属接单、报价、沟通与剪映工具箱，7合1，支持 AI 智能生成与离线使用。" />
   <title>剪辑接单百宝箱 v2.1</title>
   <!-- PWA -->
   <link rel="manifest" href="manifest.json" />
@@ -1148,7 +1148,7 @@ body:not(.auth-locked) .access-gate { display: none; }
 </style>
   <!-- Open Graph -->
   <meta property="og:title" content="剪辑接单百宝箱" />
-  <meta property="og:description" content="9合1剪辑学员工具箱：报价、话术、作品集、对标、字幕、字体、音乐、音效……从会剪到会接单。" />
+  <meta property="og:description" content="7合1剪辑学员工具箱：报价、话术、对标、字体、音乐、音效……从会剪到会接单。" />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="icon-512.png" />
   <!-- Structured Data -->
@@ -1157,7 +1157,7 @@ body:not(.auth-locked) .access-gate { display: none; }
     "@context": "https://schema.org",
     "@type": "WebApplication",
     "name": "剪辑接单百宝箱",
-    "description": "剪辑课程学员专属接单、报价、沟通、素材与作品集工具箱",
+    "description": "剪辑课程学员专属接单、报价、沟通与剪映辅助工具箱",
     "applicationCategory": "Multimedia",
     "operatingSystem": "All",
     "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CNY" }
@@ -1191,9 +1191,7 @@ body:not(.auth-locked) .access-gate { display: none; }
       <button class="rail-button active" type="button" data-view="home"><span class="icon">首</span><span class="tooltip">首页</span></button>
       <button class="rail-button" type="button" data-view="quote"><span class="icon">价</span><span class="tooltip">接单工具</span></button>
       <button class="rail-button" type="button" data-view="talk"><span class="icon">聊</span><span class="tooltip">沟通话术</span></button>
-       <button class="rail-button" type="button" data-view="portfolio"><span class="icon">集</span><span class="tooltip">作品集工具</span></button>
        <button class="rail-button" type="button" data-view="benchmark"><span class="icon">拆</span><span class="tooltip">对标拆解</span></button>
-      <button class="rail-button" type="button" data-view="subtitle"><span class="icon">字</span><span class="tooltip">字幕优化</span></button>
       <button class="rail-button" type="button" data-view="fontguide"><span class="icon">体</span><span class="tooltip">字体速查</span></button>
       <button class="rail-button" type="button" data-view="music"><span class="icon">曲</span><span class="tooltip">BGM搜歌</span></button>
       <button class="rail-button" type="button" data-view="sfx"><span class="icon">听</span><span class="tooltip">音效特效</span></button>
@@ -1210,7 +1208,7 @@ body:not(.auth-locked) .access-gate { display: none; }
     <div class="brand-copy">
       <p class="eyebrow">Editing Toolbox</p>
       <h1>剪辑接单百宝箱</h1>
-      <p>9 个工具，覆盖接单关键流程。<br>学员练习版 · 可直接套用</p>
+      <p>7 个工具，覆盖接单关键流程。<br>学员练习版 · 可直接套用</p>
     </div>
     <div class="side-section">
       <p class="side-label">全部工具</p>
@@ -1218,9 +1216,7 @@ body:not(.auth-locked) .access-gate { display: none; }
         <button type="button" data-view="home" class="active"><span class="nav-symbol">首</span><span class="nav-name">首页</span><span class="nav-arrow">›</span></button>
         <button type="button" data-view="quote"><span class="nav-symbol">价</span><span class="nav-name">接单工具</span><span class="nav-arrow">›</span></button>
         <button type="button" data-view="talk"><span class="nav-symbol">聊</span><span class="nav-name">沟通话术</span><span class="nav-arrow">›</span></button>
-        <button type="button" data-view="portfolio"><span class="nav-symbol">集</span><span class="nav-name">作品集工具</span><span class="nav-arrow">›</span></button>
         <button type="button" data-view="benchmark"><span class="nav-symbol">拆</span><span class="nav-name">对标拆解</span><span class="nav-arrow">›</span></button>
-        <button type="button" data-view="subtitle"><span class="nav-symbol">字</span><span class="nav-name">字幕优化</span><span class="nav-arrow">›</span></button>
         <button type="button" data-view="fontguide"><span class="nav-symbol">体</span><span class="nav-name">字体速查</span><span class="nav-arrow">›</span></button>
         <button type="button" data-view="music"><span class="nav-symbol">曲</span><span class="nav-name">BGM搜歌</span><span class="nav-arrow">›</span></button>
         <button type="button" data-view="sfx"><span class="nav-symbol">听</span><span class="nav-name">音效特效</span><span class="nav-arrow">›</span></button>
@@ -1228,7 +1224,7 @@ body:not(.auth-locked) .access-gate { display: none; }
     </div>
     <div class="side-note">
       <strong>快捷键</strong>
-      Ctrl+1~9 切换工具<br>
+      Ctrl+1~7 切换工具<br>
       Ctrl+Enter 提交<br>
       Esc 关闭弹窗
     </div>
@@ -1260,14 +1256,14 @@ body:not(.auth-locked) .access-gate { display: none; }
         <div class="flow-hero surface">
           <div>
             <h3>剪辑接单百宝箱</h3>
-            <p>剪辑课学员专属工具箱，帮你完成作品集、报价、沟通和交付。</p>
+            <p>剪辑课学员专属工具箱，帮你完成对标、报价、沟通和交付。</p>
             <p class="helper">不知道先用哪个工具？按你当前卡住的阶段选就行。</p>
           </div>
           <div class="flow-badge">接单<br>流程导航</div>
         </div>
 
         <div class="stat-strip surface">
-          <div class="stat"><small>已内置工具</small><strong id="statToolCount">9 个</strong></div>
+          <div class="stat"><small>已内置工具</small><strong id="statToolCount">7 个</strong></div>
           <div class="stat"><small>历史使用</small><strong id="statTotalRuns">0 次</strong></div>
           <div class="stat"><small>最常用工具</small><strong id="statMostUsed">—</strong></div>
           <div class="stat"><small>最近使用</small><strong id="statLastUsed">—</strong></div>
@@ -1277,11 +1273,11 @@ body:not(.auth-locked) .access-gate { display: none; }
           <h3>第一次使用，先看这里</h3>
           <p>不用从头研究全部工具，先按当前状态选一个入口。</p>
           <div class="starter-list">
-            <div class="starter-item"><strong>没接过单</strong><span>先用「对标拆解」+「作品集包装」，看清方向，再做能展示的样片。</span></div>
-            <div class="starter-item"><strong>有作品但不会展示</strong><span>先用「作品集包装」，把练习片改成客户能看懂的接单证据。</span></div>
+            <div class="starter-item"><strong>没接过单</strong><span>先用「对标拆解」，看清方向，再做能展示的样片。</span></div>
+            <div class="starter-item"><strong>有作品但不会展示</strong><span>先用「对标拆解」梳理样片亮点，再用「接单报价助手」明确服务价值。</span></div>
             <div class="starter-item"><strong>有客户来问价</strong><span>用「接单报价助手」，先明确范围、修改次数和交付时间。</span></div>
             <div class="starter-item"><strong>客户压价、催稿、加需求</strong><span>用「客户沟通话术」，把话说清楚，把边界立住。</span></div>
-            <div class="starter-item"><strong>做样片时卡住</strong><span>用「字幕优化 / 字体速查 / BGM搜歌 / 音效特效」，先把样片质感做稳定。</span></div>
+            <div class="starter-item"><strong>做样片时卡住</strong><span>用「字体速查 / BGM搜歌 / 音效特效」，先把样片质感做稳定。</span></div>
           </div>
         </section>
 
@@ -1289,9 +1285,7 @@ body:not(.auth-locked) .access-gate { display: none; }
           <h3>按课程阶段使用</h3>
           <p>把学习顺序和接单动作连起来，不要只学技巧。</p>
           <div class="stage-grid">
-            <article class="stage-card"><small>第1-2课</small><h4>方向诊断</h4><div class="tool-pills"><button class="tool-pill" type="button" data-view="benchmark">对标拆解</button><button class="tool-pill" type="button" data-view="portfolio">作品集包装</button></div><p>先看清自己适合做哪类短视频，不要一开始就乱学技巧。</p></article>
             <article class="stage-card"><small>第3-4课</small><h4>拆博主 / 选风格</h4><div class="tool-pills"><button class="tool-pill" type="button" data-view="benchmark">对标拆解</button><button class="tool-pill" type="button" data-view="fontguide">字体速查</button><button class="tool-pill" type="button" data-view="music">BGM搜歌</button></div><p>把好看的视频拆成可学习、可迁移的动作。</p></article>
-            <article class="stage-card"><small>第5-6课</small><h4>做样片 / 优化样片</h4><div class="tool-pills"><button class="tool-pill" type="button" data-view="subtitle">字幕优化</button><button class="tool-pill" type="button" data-view="sfx">音效特效</button><button class="tool-pill" type="button" data-view="portfolio">作品集包装</button></div><p>把练习片改成能放进作品集的样片。</p></article>
             <article class="stage-card"><small>接单前</small><h4>报价准备</h4><div class="tool-pills"><button class="tool-pill" type="button" data-view="quote">接单报价助手</button><button class="tool-pill" type="button" data-view="talk">客户沟通话术</button></div><p>报价前先明确服务范围、修改次数和交付时间。</p></article>
             <article class="stage-card"><small>接单后</small><h4>沟通交付</h4><div class="tool-pills"><button class="tool-pill" type="button" data-view="talk">客户沟通话术</button><button class="tool-pill" type="button" data-view="quote">交付范围确认</button></div><p>减少返工，控制边界，避免被客户拖着走。</p></article>
           </div>
@@ -1302,10 +1296,8 @@ body:not(.auth-locked) .access-gate { display: none; }
           <p>直接点当前问题，不需要先想工具名。</p>
           <div class="task-grid">
             <article class="task-card"><div><h4>我不知道自己适合剪什么</h4><p>用对标视频找方向</p></div><button class="primary-button" type="button" data-view="benchmark">去使用</button></article>
-            <article class="task-card"><div><h4>我不知道作品集怎么包装</h4><p>把练习片变成接单证据</p></div><button class="primary-button" type="button" data-view="portfolio">去使用</button></article>
             <article class="task-card"><div><h4>我不知道怎么报价</h4><p>先定范围和修改次数</p></div><button class="primary-button" type="button" data-view="quote">去使用</button></article>
             <article class="task-card"><div><h4>我不知道怎么回复客户</h4><p>压价、催稿、加需求都能处理</p></div><button class="primary-button" type="button" data-view="talk">去使用</button></article>
-            <article class="task-card"><div><h4>我觉得字幕不好看</h4><p>先优化断句和层级</p></div><button class="primary-button" type="button" data-view="subtitle">去使用</button></article>
             <article class="task-card"><div><h4>我不知道用什么字体</h4><p>按视频风格选剪映字体</p></div><button class="primary-button" type="button" data-view="fontguide">去使用</button></article>
             <article class="task-card"><div><h4>我找不到合适BGM</h4><p>按情绪和节奏找关键词</p></div><button class="primary-button" type="button" data-view="music">去使用</button></article>
             <article class="task-card"><div><h4>我不知道怎么加音效/特效</h4><p>先做重点和转场提示</p></div><button class="primary-button" type="button" data-view="sfx">去使用</button></article>
@@ -1319,9 +1311,9 @@ body:not(.auth-locked) .access-gate { display: none; }
             <li>把平面审美转成短视频节奏、字幕、镜头和信息层级</li>
             <li>不只做“好看”，而是做“客户愿意付钱的样片”</li>
             <li>学会拆客户参考，而不是只凭感觉判断高级</li>
-            <li>把作品集从“练习展示”改成“接单证据”</li>
+            <li>把练习片从“自己觉得好看”改成“客户看得懂价值”</li>
           </ul>
-          <div class="designer-flow"><span>对标拆解</span>→<span>字幕优化</span>→<span>作品集包装</span>→<span>接单报价助手</span></div>
+          <div class="designer-flow"><span>对标拆解</span>→<span>字体速查</span>→<span>BGM搜歌</span>→<span>接单报价助手</span></div>
         </section>
       </div>
     </section>
@@ -1329,9 +1321,7 @@ body:not(.auth-locked) .access-gate { display: none; }
     <!-- Tool Views -->
     <section class="view" id="view-quote"></section>
     <section class="view" id="view-talk"></section>
-    <section class="view" id="view-portfolio"></section>
     <section class="view" id="view-benchmark"></section>
-    <section class="view" id="view-subtitle"></section>
     <section class="view" id="view-fontguide"></section>
     <section class="view" id="view-music"></section>
     <section class="view" id="view-sfx"></section>
@@ -1346,9 +1336,7 @@ body:not(.auth-locked) .access-gate { display: none; }
       <button type="button" data-view="home" class="active"><span class="nav-symbol">首</span><span class="nav-name">首页</span><span class="nav-arrow">›</span></button>
       <button type="button" data-view="quote"><span class="nav-symbol">价</span><span class="nav-name">接单工具</span><span class="nav-arrow">›</span></button>
       <button type="button" data-view="talk"><span class="nav-symbol">聊</span><span class="nav-name">沟通话术</span><span class="nav-arrow">›</span></button>
-      <button type="button" data-view="portfolio"><span class="nav-symbol">集</span><span class="nav-name">作品集工具</span><span class="nav-arrow">›</span></button>
       <button type="button" data-view="benchmark"><span class="nav-symbol">拆</span><span class="nav-name">对标拆解</span><span class="nav-arrow">›</span></button>
-      <button type="button" data-view="subtitle"><span class="nav-symbol">字</span><span class="nav-name">字幕优化</span><span class="nav-arrow">›</span></button>
       <button type="button" data-view="fontguide"><span class="nav-symbol">体</span><span class="nav-name">字体速查</span><span class="nav-arrow">›</span></button>
       <button type="button" data-view="music"><span class="nav-symbol">曲</span><span class="nav-name">BGM搜歌</span><span class="nav-arrow">›</span></button>
       <button type="button" data-view="sfx"><span class="nav-symbol">听</span><span class="nav-name">音效特效</span><span class="nav-arrow">›</span></button>
@@ -1876,8 +1864,8 @@ function saveToHistory(toolId, toolName, preview) {
     const amountMatch = text.match(/(?:报价区间[:：]?\s*)?(\d{2,4}\s*(?:-|–|—|到|~)\s*\d{2,4}|\d{2,4})\s*元/);
     const status = toolId === "quote" ? "待跟进"
       : toolId === "talk" ? "沟通中"
-      : toolId === "benchmark" || toolId === "portfolio" ? "做样片"
-      : toolId === "subtitle" || toolId === "fontguide" ? "优化中"
+      : toolId === "benchmark" ? "做样片"
+      : toolId === "fontguide" ? "优化中"
       : "已记录";
     history.unshift({
       toolId,
@@ -2151,9 +2139,7 @@ const tools = [
   { id: "home", name: "首页", short: "首", title: "首页", desc: "查看工具概览与使用入口", subtitle: "剪辑课学员专属增值工具箱 · 支持 AI 智能生成与离线使用", tags: ["概览","入口"] },
   { id: "quote", name: "接单工具", short: "价", title: "接单报价助手", desc: "快速生成报价参考、交付清单和确认问题", subtitle: "根据客户类型、视频需求和交付条件生成报价参考", tags: ["报价","接单","客户"] },
   { id: "talk", name: "沟通话术", short: "聊", title: "客户沟通话术助手", desc: "面对压价、催稿和加需求时更从容", subtitle: "把客户原话整理成温和、专业与强边界三种回复", tags: ["沟通","客户","话术"] },
-  { id: "portfolio", name: "作品集工具", short: "集", title: "作品集包装助手", desc: "把剪过的视频包装成能接单的案例", subtitle: "生成作品集标题、案例介绍与多平台发布文案", tags: ["作品集","包装","展示"] },
   { id: "benchmark", name: "对标拆解", short: "拆", title: "对标链接拆解助手", desc: "拆解爆款视频结构与可迁移方法", subtitle: "只做内容拆解，不下载、不爬取、不违规解析", tags: ["对标","拆解","学习"] },
-  { id: "subtitle", name: "字幕优化", short: "字", title: "字幕文案优化助手", desc: "上传截图识别字幕问题", subtitle: "识别字幕文字、位置、层级、颜色和可读性", tags: ["字幕","文案","口播"] },
   { id: "fontguide", name: "字体速查", short: "体", title: "剪映字体速查助手", desc: "上传截图识别相似字体方向", subtitle: "识别字体类型、字重、字形特征和搭配建议", tags: ["字体","剪映","排版"] },
   { id: "music", name: "BGM搜歌", short: "曲", title: "BGM搜歌助手", desc: "根据视频情绪和节奏推荐背景音乐", subtitle: "按风格/情绪/节奏搜歌，推荐剪映曲库和免版权音乐来源", tags: ["音乐","BGM","情绪"] },
   { id: "sfx", name: "音效特效", short: "听", title: "剪映音效特效速查", desc: "快速找到适合的音效和转场特效", subtitle: "按场景查找剪映音效库和特效，含节奏卡点音效指南", tags: ["音效","特效","剪映"] }
@@ -2569,9 +2555,9 @@ function initTour() {
   if (window.innerWidth < 760) return; // Skip on mobile
 
   const steps = [
-    { icon: "🎬", title: "欢迎使用百宝箱", desc: "这里是剪辑课学员的专属工具箱，帮你完成从接单报价到作品集包装的全流程。" },
-    { icon: "📋", title: "9 个实用工具", desc: "左侧是工具导航栏，点击即可切换。推荐从「接单报价助手」开始，按接单流程依次使用。" },
-    { icon: "⌨️", title: "快捷键支持", desc: "Ctrl+1~9 快速切换工具，Ctrl+Enter 提交表单，Esc 关闭弹窗。试试看！" }
+    { icon: "🎬", title: "欢迎使用百宝箱", desc: "这里是剪辑课学员的专属工具箱，帮你完成从对标拆解到报价沟通的接单流程。" },
+    { icon: "📋", title: "7 个实用工具", desc: "左侧是工具导航栏，点击即可切换。推荐从「接单报价助手」开始，按接单流程依次使用。" },
+    { icon: "⌨️", title: "快捷键支持", desc: "Ctrl+1~7 快速切换工具，Ctrl+Enter 提交表单，Esc 关闭弹窗。试试看！" }
   ];
 
   let step = 0;
@@ -2836,153 +2822,6 @@ function initRevision() {
   });
 }
 
-/* 作品集包装助手 */
-
-function initPortfolio() {
-  el("#view-portfolio").innerHTML = `
-    <div class="tool-layout">
-      <form class="form-panel surface" id="portfolioForm">
-        <div class="panel-title"><h3>填写案例信息</h3><span>多平台文案</span></div>
-        <div class="field-grid">
-          <div class="field"><label>案例类型</label><select class="control" name="type"><option>口播</option><option>vlog</option><option selected>探店</option><option>带货</option><option>课程</option><option>广告</option><option>混剪</option></select></div>
-          <div class="field"><label>客户行业</label><input class="control" name="industry" value="本地餐饮"></div>
-          <div class="field full"><label>这个案例做了什么</label><textarea class="control" name="work">负责素材筛选、节奏重组、字幕包装、产品特写和门店氛围调色。</textarea></div>
-          <div class="field full"><label>亮点描述</label><textarea class="control" name="highlight">前三秒直接展示招牌产品，信息密度高但画面不乱，整体节奏适合本地生活账号。</textarea></div>
-          <div class="field"><label>是否有数据结果</label><input class="control" name="data" placeholder="没有可填写：暂无公开数据" value="完播率比往期提升 18%"></div>
-          <div class="field"><label>想发布的平台</label><select class="control" name="platform"><option>小红书</option><option>抖音</option><option>朋友圈</option><option>简历</option><option>接单页</option></select></div>
-        </div>
-        <div class="form-actions"><span class="form-tip">数据结果请使用真实数据，没有数据也可以突出服务过程和交付价值。</span><button class="primary-button" type="submit">生成作品集文案</button></div>
-      </form>
-      ${resultShell("portfolioResult", "生成作品集文案")}
-    </div>`;
-
-  el("#portfolioForm").addEventListener("submit", event => {
-    event.preventDefault();
-    simulate(event.currentTarget, event.submitter, data => {
-      const type = data.get("type");
-      const industry = data.get("industry");
-      const work = data.get("work");
-      const highlight = data.get("highlight");
-      const resultData = data.get("data");
-
-      el("#portfolioResult").innerHTML = resultLayout("作品标题", `${industry}${type}样片｜从素材整理到成片包装`, [
-        resultCard("服务对象", `适合${industry}账号、同城商家、个人博主或需要稳定发布${type}内容的客户。`),
-        resultCard("作品亮点", [highlight, "前三秒先给客户看到结果或核心卖点", "字幕、节奏、音乐和画面服务同一个目标"]),
-        resultCard("我负责的内容", work, true),
-        resultCard("适合展示在哪里", ["小红书作品集笔记", "朋友圈接单展示", "私聊客户时作为案例链接", "接单页 / 简历案例区"]),
-        resultCard("可复制的小红书文案", `剪辑作品集更新｜这次做的是${industry}${type}案例。
-
-我重点处理的不是“堆特效”，而是前三秒信息、素材顺序、字幕层级和产品/人物重点。
-
-适合想做${type}短视频，但不知道怎么把素材剪成可发布内容的客户参考。`, true),
-        resultCard("可复制的朋友圈文案", `更新一条${industry}剪辑案例：${work}
-
-亮点：${highlight}
-
-目前可承接${type}、口播、探店和本地生活类短视频剪辑。`, true),
-        resultCard("结果补充", resultData || "暂无公开数据时，可以写清楚负责内容、前后对比和交付价值。"),
-        resultCard("下一步建议", "把这条作品放到作品集最前面，并准备 1 句私聊客户时能发的解释：我不是只会剪顺，我能帮你把素材包装成客户看得懂的短视频。"),
-        resultCard("使用提醒", "不要把作品集写成练习记录，要写成客户能理解的交付价值：服务对象、你解决了什么问题、客户为什么该找你。")
-      ]);
-      saveToHistory("portfolio", "作品集包装助手", `${industry} ${type}案例 · 多平台文案`);
-    });
-  });
-}
-
-/* 素材辅助工具 (字体识别 + 混合制作) */
-
-function switchMaterialTab(tab) {
-  const isFont = tab === "font";
-  el("#materialFont").hidden = !isFont;
-  el("#materialMix").hidden = isFont;
-  const input = el(`#materialTabs input[value="${tab}"]`);
-  if (input) input.checked = true;
-}
-
-function initMaterial() {
-  el("#view-material").innerHTML = `
-    <div class="surface" style="padding:10px;margin-bottom:18px">
-      <div class="choice-row" id="materialTabs">
-        <label class="choice"><input type="radio" name="materialTab" value="font" checked><span>封面 / 字幕字体识别</span></label>
-        <label class="choice"><input type="radio" name="materialTab" value="mix"><span>图片 / 视频混合制作</span></label>
-      </div>
-    </div>
-    <div id="materialFont">
-      <div class="tool-layout">
-        <form class="form-panel surface" id="fontForm">
-          <div class="panel-title"><h3>上传截图并描述风格</h3><span>排版参考</span></div>
-          <div class="upload-zone" data-upload="image">
-            <input type="file" accept=".jpg,.jpeg,.png,.webp,image/*">
-            <div class="upload-copy"><div class="upload-symbol">＋</div><strong>拖拽或点击上传截图</strong><p>支持 JPG / PNG / WEBP，图片只在本地预览</p></div>
-            <img class="preview-image" alt="上传图片预览">
-          </div>
-          <div class="field-grid" style="margin-top:17px">
-            <div class="field full"><label>输入截图中的文字</label><input class="control" name="text" value="剪辑小白如何开始接单"></div>
-            <div class="field"><label>选择用途</label><select class="control" name="use"><option>封面大字</option><option>视频字幕</option><option>标题字</option><option>海报字</option></select></div>
-            <div class="field"><label>选择风格</label><select class="control" name="style"><option>干净高级</option><option>可爱活泼</option><option>商业感</option><option>情绪感</option><option>教程感</option></select></div>
-          </div>
-          <div class="form-actions"><span class="form-tip">结果为排版方向建议，商用前请确认字体授权。</span><button class="primary-button" type="submit">开始识别字体</button></div>
-        </form>
-        ${resultShell("fontResult", "开始识别字体")}
-      </div>
-    </div>
-    <div id="materialMix" hidden>
-      <div class="tool-layout">
-        <form class="form-panel surface" id="mixForm">
-          <div class="panel-title"><h3>上传图片或视频素材</h3><span>制作方案</span></div>
-          <div class="upload-zone" data-upload="files">
-            <input type="file" multiple accept="image/*,video/*">
-            <div class="upload-copy"><div class="upload-symbol">＋</div><strong>拖拽或点击上传素材</strong><p>支持常见图片与视频格式，仅显示文件名，不上传服务器</p></div>
-          </div>
-          <div class="file-list"></div>
-          <div class="field-grid" style="margin-top:17px">
-            <div class="field"><label>制作类型</label><select class="control" name="type"><option>作品集展示</option><option>客户案例包装</option><option>小红书封面图</option><option>接单介绍页</option><option>朋友圈展示</option></select></div>
-            <div class="field"><label>选择风格</label><select class="control" name="style"><option>干净高级</option><option>小红书感</option><option>商单感</option><option>教程感</option><option>情绪感</option></select></div>
-            <div class="field"><label>选择画幅</label>${choice("ratio", ["9:16", "16:9", "1:1"])}</div>
-            <div class="field full"><label>想表达的卖点</label><textarea class="control" name="selling">突出我会做节奏、字幕包装、调色和商单案例整理，适合口播与本地生活账号。</textarea></div>
-          </div>
-          <div class="form-actions"><span class="form-tip">生成剪映制作步骤，方便你按步骤完成样片。</span><button class="primary-button" type="submit">生成制作方案</button></div>
-        </form>
-        ${resultShell("mixResult", "生成制作方案")}
-      </div>
-    </div>`;
-
-  el("#materialTabs").addEventListener("change", event => switchMaterialTab(event.target.value));
-
-  el("#fontForm").addEventListener("submit", event => {
-    event.preventDefault();
-    simulate(event.currentTarget, event.submitter, data => {
-      el("#fontResult").innerHTML = resultLayout("排版参考结果", "现代无衬线粗体 · 相似度 82%", [
-        resultCard("剪映搜索词", "剪映里搜：粗黑 / 黑体 / 简黑"),
-        resultCard("剪映可替代字体", "优先尝试：得意黑、雅月体、系统黑体加粗。具体字体名称会随剪映版本变化。"),
-        resultCard("适合的视频类型", `<span class="result-tag">${data.get("use")}</span><span class="result-tag">教程口播</span><span class="result-tag">干货封面</span>`, true),
-        resultCard("字幕 / 封面排版建议", ["两行以内，每行 8-12 个字", "关键词可放大 15%-20%", "文字与背景保持明显明暗对比", "不要同时使用超过两种字重"]),
-        resultCard("是否适合新手模仿", "适合。字体本身克制，重点在字号层级、字间距和留白，不依赖复杂特效。"),
-        resultCard("注意事项", "结果为初稿建议，请结合实际画面调整；商用前请确认字体许可证。")
-      ]);
-      saveToHistory("material", "字体识别", "识别结果：现代无衬线粗体 · 相似度 82%");
-    });
-  });
-
-  el("#mixForm").addEventListener("submit", event => {
-    event.preventDefault();
-    simulate(event.currentTarget, event.submitter, data => {
-      el("#mixResult").innerHTML = resultLayout("推荐方案", `${data.get("type")} · ${data.get("style")} · ${data.get("ratio")}`, [
-        resultCard("推荐画面结构", ["0-3 秒：最强案例画面 + 服务定位", "3-10 秒：展示原素材与处理后对比", "10-22 秒：按能力拆分代表片段", "结尾：服务范围与联系方式"]),
-        resultCard("开头文案", "不是只会剪顺，我会把素材整理成客户看得懂、愿意下单的作品。"),
-        resultCard("展示顺序", "先放最成熟案例，再放字幕包装和节奏对比，最后补充服务范围与合作方式。", true),
-        resultCard("字幕建议", "统一左对齐或居中布局；主标题 1 个字重，解释信息降低 20% 对比度。"),
-        resultCard("BGM 氛围建议", "选择节奏清晰、不过度抢戏的轻电子或简约律动音乐，卡点以段落转换为主。"),
-        resultCard("适合发布的平台", "小红书、抖音、朋友圈、接单介绍页"),
-        resultCard("后续用剪映怎么做", ["先建立统一画幅与安全区", "按案例建复合片段", "统一字幕样式后批量应用", "最后做音乐节奏和音量检查"], true)
-      ]);
-      saveToHistory("material", "混合制作", `${data.get("type")} · ${data.get("style")}`);
-    });
-  });
-}
-
-/* 对标链接拆解助手 */
-
 function initBenchmark() {
   el("#view-benchmark").innerHTML = `
     <div class="tool-layout">
@@ -3040,8 +2879,8 @@ function initBenchmark() {
         resultCard("这次重点看什么", focus, true),
         resultCard("可学习点", [`先看${direction}背后的目的：它是在抓注意力、解释信息，还是推动成交？`, "把你觉得好看的地方翻译成可执行动作：位置、字号、节奏、停顿、信息顺序。", "只学结构和方法，不搬运原文案、画面和人设。"]),
         resultCard("不要照抄的地方", ["不要复制原视频标题、口播文案和封面样式", "不要使用对方无法验证的数据或案例", "不要为了像对标而堆花字、转场和音效"]),
-        resultCard("可以迁移到自己样片的动作", [`围绕“${direction}”做一条 30-60 秒样片`, "把对标里的结构换成自己的真实案例、素材或服务对象", "完成后用作品集包装工具写成客户看得懂的案例说明"], true),
-        resultCard("生成我的样片任务", ["今天先做一条 30 秒样片，不追求完整账号包装", `开头只学习它的${direction}结构，不照抄文案`, "字幕用同样的层级：主字幕清楚，关键词少量突出", "结尾展示你的服务对象：我能帮哪类客户剪成什么效果", "做完后放进作品集工具，包装成一个接单案例"], true),
+        resultCard("可以迁移到自己样片的动作", [`围绕“${direction}”做一条 30-60 秒样片`, "把对标里的结构换成自己的真实案例、素材或服务对象", "完成后整理成客户看得懂的案例说明"], true),
+        resultCard("生成我的样片任务", ["今天先做一条 30 秒样片，不追求完整账号包装", `开头只学习它的${direction}结构，不照抄文案`, "字幕用同样的层级：主字幕清楚，关键词少量突出", "结尾展示你的服务对象：我能帮哪类客户剪成什么效果", "做完后整理成一个能发给客户看的接单案例"], true),
         resultCard("复制给 AI 的拆解提示词", aiPrompt, true),
         resultCard("使用提醒", "对标不是复制爆款，而是把好看的视频拆成你能学习、能迁移、能交付的动作。")
       ]);
@@ -3050,31 +2889,6 @@ function initBenchmark() {
   });
 }
 
-/* 字幕文案优化助手 */
-
-function initSubtitle() {
-  el("#view-subtitle").innerHTML = `
-    <div class="tool-layout vision-tool-layout">
-      <form class="form-panel surface" id="subtitleVisionForm">
-        <div class="panel-title"><h3>上传截图识别字幕</h3><span>真实图片识别</span></div>
-        <div class="upload-zone" data-upload="vision-subtitle">
-          <input type="file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp">
-          <div class="upload-copy"><div class="upload-symbol">＋</div><strong>上传视频截图 / 封面截图</strong><p>支持 JPG / PNG / WEBP。识别图片里的字幕文字、位置、层级、颜色和可读性；接口未配置时不会生成假结果。</p></div>
-          <img class="preview-image" alt="字幕截图预览">
-        </div>
-        <div class="vision-status" data-state="idle">等待上传截图。</div>
-        <div class="form-actions"><span class="form-tip">这里只保留截图识别入口，适合直接判断字幕哪里挡画面、哪里不清楚、怎么改。</span><button class="primary-button" type="submit">识别截图字幕</button></div>
-      </form>
-      ${resultShell("subtitleVisionResult", "识别截图字幕")}
-    </div>`;
-
-  el("#subtitleVisionForm").addEventListener("submit", event => {
-    event.preventDefault();
-    runVisionAnalysis(event.currentTarget, "subtitle", "#subtitleVisionResult");
-  });
-}
-
-/* 剪映字体速查助手 */
 
 function initFontguide() {
   el("#view-fontguide").innerHTML = `
@@ -3398,9 +3212,7 @@ initAccessGate();
 initApp();
 initQuote();
 initTalk();
-initPortfolio();
 initBenchmark();
-initSubtitle();
 initFontguide();
 initMusic();
 initSfx();
