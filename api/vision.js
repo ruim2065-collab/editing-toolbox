@@ -136,7 +136,7 @@ async function runGeminiVision(provider, prompt, image) {
       }],
       generationConfig: {
         temperature: 0.2,
-        maxOutputTokens: 1800,
+        maxOutputTokens: 900,
         responseMimeType: 'application/json'
       }
     })
@@ -171,7 +171,7 @@ async function runResponsesVision(provider, prompt, image) {
           { type: 'input_image', image_url: image.dataUrl }
         ]
       }],
-      max_output_tokens: 1800
+      max_output_tokens: 900
     })
   });
 
@@ -205,7 +205,7 @@ async function runChatVision(provider, prompt, image) {
         ]
       }],
       temperature: 0.2,
-      max_tokens: 1800,
+      max_tokens: 900,
       response_format: { type: 'json_object' }
     })
   });
