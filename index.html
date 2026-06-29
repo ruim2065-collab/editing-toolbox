@@ -2400,6 +2400,8 @@ function renderFontVisionResult(a) {
     resultCard("适合用在哪类视频", safeList(a.suitableVideos)),
     resultCard("这张图怎么优化字体", safeList(a.optimizationSuggestions), true),
     resultCard("字体层级问题", safeText(a.hierarchy)),
+    resultCard("识别限制", safeList(a.limitations, "字体截图只能判断相似风格，不能保证精确字体名")),
+    resultCard("下次截图建议", safeList(a.uploadAdvice, "尽量裁剪文字区域、保留完整字形、提高截图清晰度"), true),
     resultCard("使用提醒", safeText(a.usageReminder || "不提供字体文件；商用前请确认字体授权。"), true)
   ]);
 }
@@ -3052,11 +3054,11 @@ function initFontguide() {
         <div class="panel-title"><h3>入口B：上传截图识别字体风格</h3><span>相似字体方向</span></div>
         <div class="upload-zone" data-upload="vision-font">
           <input type="file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp">
-          <div class="upload-copy"><div class="upload-symbol">＋</div><strong>上传参考截图</strong><p>支持 JPG / PNG / WEBP。系统会分析字体风格，不会假装百分百识别原字体。</p></div>
+          <div class="upload-copy"><div class="upload-symbol">＋</div><strong>上传参考截图</strong><p>支持 JPG / PNG / WEBP。尽量裁剪到文字区域、保留完整字形；系统只判断相似字体方向，不会假装百分百识别原字体。</p></div>
           <img class="preview-image" alt="字体截图预览">
         </div>
         <div class="vision-status" data-state="idle">等待上传截图。</div>
-        <div class="form-actions"><span class="form-tip">只推荐相似字体方向，不提供字体文件；商用前请确认授权。</span><button class="primary-button" type="submit">识别字体风格</button></div>
+        <div class="form-actions"><span class="form-tip">识别结果用于找相似风格和搭配方向，不等于精确字体鉴定。</span><button class="primary-button" type="submit">识别字体风格</button></div>
       </form>
       ${resultShell("fontVisionResult", "识别字体风格")}
     </div>`;

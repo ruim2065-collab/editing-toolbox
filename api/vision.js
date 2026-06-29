@@ -42,7 +42,8 @@ export default async function handler(req, res) {
       });
     }
 
-    const analysis = await maybeRefineWithDeepSeek(mode, vision.analysis);
+    const refinedAnalysis = await maybeRefineWithDeepSeek(mode, vision.analysis);
+    const analysis = mode === 'font' ? normalizeFontAnalysis(refinedAnalysis) : refinedAnalysis;
 
     return res.status(200).json({
       ok: true,
@@ -261,12 +262,55 @@ async function maybeRefineWithDeepSeek(mode, analysis) {
   return refined || analysis;
 }
 
+function normalizeFontAnalysis(analysis) {
+  if (!analysis || typeof analysis !== 'object') return analysis;
+
+  const confidencePrefix = '无法百分百确认原字体，以下为相似风格推荐。';
+  const currentNote = String(analysis.confidenceNote || '').trim();
+  if (!currentNote.includes('无法百分百确认')) {
+    analysis.confidenceNote = currentNote ? `${confidencePrefix}${currentNote}` : confidencePrefix;
+  }
+
+  analysis.limitations = ensureArray(analysis.limitations);
+  if (!analysis.limitations.some(item => String(item).includes('精确字体'))) {
+    analysis.limitations.unshift('截图只能判断相似风格和字形特征，不能保证精确字体名。');
+  }
+
+  analysis.uploadAdvice = ensureArray(analysis.uploadAdvice);
+  if (!analysis.uploadAdvice.length) {
+    analysis.uploadAdvice = [
+      '尽量裁剪到文字区域，保留完整字形。',
+      '上传更高清的原图或视频截图，避免聊天软件压缩。',
+      '如果有主标题、辅助字、强调词，分别截清楚。'
+    ];
+  }
+
+  if (Array.isArray(analysis.similarFonts)) {
+    analysis.similarFonts = analysis.similarFonts.map(item => {
+      if (!item || typeof item !== 'object') return item;
+      const name = String(item.name || '').trim();
+      if (name && !name.includes('方向') && !name.includes('相似')) {
+        return { ...item, name: `${name}（相似方向，非精确识别）` };
+      }
+      return item;
+    });
+  }
+
+  return analysis;
+}
+
+function ensureArray(value) {
+  if (Array.isArray(value)) return value.filter(Boolean);
+  if (!value) return [];
+  return [String(value)];
+}
+
 function deepSeekPrompt(mode, analysis) {
   const base = JSON.stringify(analysis || {}, null, 2);
   if (mode === 'subtitle') {
     return `请把下面的截图字幕识别结果整理成同字段 JSON。要求：建议更适合剪辑小白接单交付；不能编造未识别到的文字；保留 recognizedText、position、lineCount、colors、effects、contrast、occlusion、density、hierarchy、textIssues、currentProblems、optimizationSuggestions、optimizedSubtitle、editorJudgment、confidence、limitations 字段。\n\n${base}`;
   }
-  return `请把下面的截图字体识别结果整理成同字段 JSON。要求：只推荐相似字体方向，不要假装百分百确认具体字体；不提供字体文件或盗版下载；保留 detectedStyle、confidenceNote、fontType、weight、shapeFeatures、hierarchy、issues、similarFonts、suitableVideos、optimizationSuggestions、usageReminder 字段。\n\n${base}`;
+  return `请把下面的截图字体识别结果整理成同字段 JSON。要求：只做字体风格诊断和相似方向推荐，不要猜测精确字体名；如果输入结果里有具体字体名但证据不足，要改写为“相似方向”。不提供字体文件或盗版下载；保留 detectedStyle、confidenceNote、fontType、weight、shapeFeatures、hierarchy、issues、similarFonts、suitableVideos、optimizationSuggestions、usageReminder、limitations、uploadAdvice 字段。\n\n${base}`;
 }
 
 function parseVisionText(text) {
@@ -319,30 +363,39 @@ function subtitlePrompt() {
 }
 
 function fontPrompt() {
-  return `你是短视频剪辑课助教，必须真实分析用户上传截图中的字体风格。不要假装百分百识别出具体字体名称；如果不能确认原字体，请说明只能做相似风格推荐。不要提供盗版字体文件，不要编造下载链接。只返回 JSON，不要 Markdown，不要代码块。
+  return `你是短视频剪辑课助教，任务不是识别精确字体文件名，而是基于截图做可靠的“字体风格诊断”。必须真实观察图片中的文字形态；不要假装百分百识别出具体字体名称。除非图片本身明确显示字体名称，否则禁止写“就是某某字体”，只能写“相似风格方向”。
+
+先判断图片是否适合识别：
+- 如果文字太小、模糊、被压缩、只露出一两个字、背景干扰很强，要降低 confidence，并在 limitations 和 uploadAdvice 里说明。
+- 如果有多个字体，请分别判断主标题、辅助字、强调词，不要混成一个结论。
+- 如果只是普通系统黑体/无衬线，也要直接说“偏通用黑体/无衬线方向”，不要编造高级字体名。
+
 请分析：
-1. 字体类型：黑体 / 宋体 / 手写 / 圆体 / 综艺字 / 美术字 / 毛笔字 / 英文字体等
+1. 字体类型：黑体 / 宋体 / 手写 / 圆体 / 综艺字 / 美术字 / 毛笔字 / 英文字体 / 通用无衬线等
 2. 字重：细 / 常规 / 中粗 / 加粗 / 特粗
-3. 字形特征：圆润、锐利、复古、可爱、高级、商业、综艺、手作感等
-4. 使用场景
+3. 字形特征：笔画端点、转角、字腔、宽窄、重心、圆润/锐利/复古/可爱/商业/综艺/手作感
+4. 使用场景：口播字幕、封面标题、探店、美妆、知识号、综艺包装等
 5. 字体层级：主标题、辅助字、强调词是否区分
 6. 是否字体混乱、风格不统一、字号层级不清
+7. 只能推荐常见可替代方向或剪映/系统里容易搜索的方向，不要提供字体文件或下载链接
 
 返回 JSON 字段：
 {
-  "detectedStyle": "识别到的字体风格",
-  "confidenceNote": "置信度说明，必须说明是否能确认具体字体",
+  "detectedStyle": "识别到的字体风格，用风格描述，不写精确字体断言",
+  "confidenceNote": "置信度说明，必须写清：无法百分百确认原字体，以下为相似风格推荐；如果画面不清楚要说明原因",
   "fontType": "字体类型",
   "weight": "字重",
-  "shapeFeatures": ["字形特征"],
+  "shapeFeatures": ["具体字形特征，例如笔画粗细、转角、字腔、重心、端点"],
   "hierarchy": "字体层级判断",
   "issues": ["字体混乱/风格不统一/字号层级问题，没有就写未发现明显问题"],
   "similarFonts": [
-    {"name":"字体名称或方向","style":"风格说明","usage":"适合用途"}
+    {"name":"相似字体方向或常见可搜索名称","style":"为什么相似","usage":"适合用途"}
   ],
   "suitableVideos": ["适合视频类型"],
   "optimizationSuggestions": ["针对这张图的字体优化建议"],
-  "usageReminder": "商用和版权提醒"
+  "usageReminder": "商用和版权提醒",
+  "limitations": ["看不清或无法确认的部分"],
+  "uploadAdvice": ["如果识别不准，下一次应如何截图：裁剪文字区域、提高分辨率、避免压缩、保留完整字形等"]
 }`;
 }
 
