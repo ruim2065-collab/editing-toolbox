@@ -2098,7 +2098,7 @@ const tools = [
   { id: "portfolio", name: "作品集工具", short: "集", title: "作品集包装助手", desc: "把剪过的视频包装成能接单的案例", subtitle: "生成作品集标题、案例介绍与多平台发布文案", tags: ["作品集","包装","展示"] },
   { id: "benchmark", name: "对标拆解", short: "拆", title: "对标链接拆解助手", desc: "拆解爆款视频结构与可迁移方法", subtitle: "只做内容拆解，不下载、不爬取、不违规解析", tags: ["对标","拆解","学习"] },
   { id: "subtitle", name: "字幕优化", short: "字", title: "字幕文案优化助手", desc: "上传截图识别字幕问题", subtitle: "识别字幕文字、位置、层级、颜色和可读性", tags: ["字幕","文案","口播"] },
-  { id: "fontguide", name: "字体速查", short: "体", title: "剪映字体速查助手", desc: "根据视频风格推荐剪映内置字体搭配", subtitle: "查找适合你视频风格的剪映字体、字号与排版方案", tags: ["字体","剪映","排版"] },
+  { id: "fontguide", name: "字体速查", short: "体", title: "剪映字体速查助手", desc: "上传截图识别相似字体方向", subtitle: "识别字体类型、字重、字形特征和搭配建议", tags: ["字体","剪映","排版"] },
   { id: "music", name: "BGM搜歌", short: "曲", title: "BGM搜歌助手", desc: "根据视频情绪和节奏推荐背景音乐", subtitle: "按风格/情绪/节奏搜歌，推荐剪映曲库和免版权音乐来源", tags: ["音乐","BGM","情绪"] },
   { id: "sfx", name: "音效特效", short: "听", title: "剪映音效特效速查", desc: "快速找到适合的音效和转场特效", subtitle: "按场景查找剪映音效库和特效，含节奏卡点音效指南", tags: ["音效","特效","剪映"] }
 ];
@@ -2991,61 +2991,19 @@ function initSubtitle() {
 
 function initFontguide() {
   el("#view-fontguide").innerHTML = `
-    <div class="entry-note surface">
-      <h3>两个入口</h3>
-      <p>入口A：按风格搜索字体，适合你已经知道想要高级感、综艺感、可爱或知识口播。入口B：上传截图识别字体风格，适合拿参考图找相似方向。</p>
-    </div>
-    <div class="tool-layout">
-      <form class="form-panel surface" id="fontguideForm">
-        <div class="panel-title"><h3>入口A：按风格搜索字体</h3><span>剪映字体速查</span></div>
-        <div class="field-grid">
-          <div class="field"><label>视频类型</label><select class="control" name="type"><option>口播/知识</option><option>vlog/生活</option><option>探店/美食</option><option>带货/种草</option><option>课程/教程</option><option>情绪/故事</option><option>综艺/搞笑</option></select></div>
-          <div class="field"><label>使用位置</label><select class="control" name="position"><option>封面标题</option><option>视频字幕</option><option>重点花字</option><option>人名条/标签</option><option>结尾引流</option></select></div>
-          <div class="field"><label>风格感觉</label><select class="control" name="style"><option>干净高级</option><option>可爱活泼</option><option>商业质感</option><option>网感综艺</option><option>文艺情绪</option><option>科技简约</option></select></div>
-          <div class="field full"><label>📎 粘贴视频/截图链接（可选）</label><input class="control" name="link" placeholder="贴一个你想参考字体的视频链接，帮你判断字体方向"></div>
-          <div class="field"><label>是否商用</label>${choice("license", ["是，商用单", "否，个人练习"], 1)}</div>
-        </div>
-        <div class="form-actions"><span class="form-tip">字体建议基于剪映当前内置字体库，实际字体随版本更新变化。</span><button class="primary-button" type="submit">查询字体方案</button></div>
-      </form>
-      ${resultShell("fontguideResult", "查询字体方案")}
-    </div>
     <div class="tool-layout vision-tool-layout">
       <form class="form-panel surface" id="fontVisionForm">
-        <div class="panel-title"><h3>入口B：上传截图识别字体风格</h3><span>相似字体方向</span></div>
+        <div class="panel-title"><h3>上传截图识别字体风格</h3><span>相似字体方向</span></div>
         <div class="upload-zone" data-upload="vision-font">
           <input type="file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp">
           <div class="upload-copy"><div class="upload-symbol">＋</div><strong>上传参考截图</strong><p>支持 JPG / PNG / WEBP。尽量裁剪到文字区域、保留完整字形；系统只判断相似字体方向，不会假装百分百识别原字体。</p></div>
           <img class="preview-image" alt="字体截图预览">
         </div>
         <div class="vision-status" data-state="idle">等待上传截图。</div>
-        <div class="form-actions"><span class="form-tip">识别结果用于找相似风格和搭配方向，不等于精确字体鉴定。</span><button class="primary-button" type="submit">识别字体风格</button></div>
+        <div class="form-actions"><span class="form-tip">这里只保留截图识别入口；结果用于找相似风格和搭配方向，不等于精确字体鉴定。</span><button class="primary-button" type="submit">识别字体风格</button></div>
       </form>
       ${resultShell("fontVisionResult", "识别字体风格")}
     </div>`;
-
-  el("#fontguideForm").addEventListener("submit", event => {
-    event.preventDefault();
-    simulate(event.currentTarget, event.submitter, data => {
-      const style = data.get("style");
-      const position = data.get("position");
-      const link = data.get("link") || "";
-      const info = fontDB[style] || fontDB["干净高级"];
-      const posTip = positionTips[position] || "";
-
-      el("#fontguideResult").innerHTML = resultLayout("推荐字体", style + " / " + position, [
-        resultCard("中文推荐", info.cn.join("、")),
-        resultCard("剪映内搜索", info.cn.slice(0, 2).join("、") + " / 在剪映文字-字体中直接搜索"),
-        resultCard("排版建议", info.tip),
-        resultCard(position + "专属建议", posTip),
-        resultCard("📎 链接参考提示", link
-          ? "你贴了链接：分析目标视频的风格倾向。如果视频偏干净克制→选无衬线字体；偏综艺热闹→选粗体撞色；偏文艺情绪→选衬线/手写体。具体推荐见上方。"
-          : "没贴链接。建议贴一个参考视频链接，我能帮你判断字体方向。"),
-        resultCard("下一步建议", ["先在剪映里试 2 个候选字体", "固定主标题/副标题/说明字三层字号", "导出前用手机预览，确认小屏也能看清"]),
-        resultCard("使用提醒", "字体不是越特别越好。接单样片优先做到清楚、稳定、客户能看懂。")
-      ]);
-      saveToHistory("fontguide", "字体速查", `${style} / ${position}`);
-    });
-  });
 
   el("#fontVisionForm").addEventListener("submit", event => {
     event.preventDefault();
