@@ -1654,6 +1654,13 @@ function getAuthEndpoint() {
   return "/api/auth";
 }
 
+function getRecordEndpoint() {
+  if (location.hostname.includes("github.io") || location.protocol === "file:") {
+    return "https://editing-toolbox-6i5o.vercel.app/api/record";
+  }
+  return "/api/record";
+}
+
 function initAccessGate() {
   const form = el("#accessForm");
   const input = form?.querySelector("input[name='code']");
@@ -1859,6 +1866,7 @@ function exportToPdf(element) {
 
 // ---- localStorage History ----
 const HISTORY_KEY = "toolbox_history";
+const RECORD_SYNC_DISABLED_UNTIL_KEY = "toolbox_record_sync_disabled_until";
 const MAX_HISTORY = 50;
 
 function saveToHistory(toolId, toolName, preview) {
@@ -1878,11 +1886,50 @@ function saveToHistory(toolId, toolName, preview) {
       full: text,
       amount: amountMatch ? amountMatch[0] : "",
       status,
+      syncStatus: "pending",
       time: Date.now()
     });
     if (history.length > MAX_HISTORY) history.length = MAX_HISTORY;
     localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+    syncLatestRecordToLark();
   } catch (e) { /* quota exceeded, ignore */ }
+}
+
+async function syncLatestRecordToLark() {
+  if (Number(localStorage.getItem(RECORD_SYNC_DISABLED_UNTIL_KEY) || 0) > Date.now()) return;
+  const history = getHistory();
+  const record = history[0];
+  if (!record || record.syncStatus === "synced") return;
+  const session = readAccessSession() || {};
+  const payload = {
+    record: {
+      ...record,
+      studentName: session.displayName || "",
+      accessType: session.accessType || "",
+      deviceId: getDeviceId(),
+      source: "toolbox-web"
+    }
+  };
+
+  try {
+    const res = await fetch(getRecordEndpoint(), {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json().catch(() => ({}));
+    record.syncStatus = res.ok && data.ok ? "synced" : "local-only";
+    record.syncMessage = data.message || "";
+    if (data.error === "record_sync_not_configured") {
+      localStorage.setItem(RECORD_SYNC_DISABLED_UNTIL_KEY, String(Date.now() + 60 * 60 * 1000));
+    }
+  } catch (err) {
+    record.syncStatus = "local-only";
+    record.syncMessage = "飞书同步失败，已保存在本机";
+  }
+  history[0] = record;
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+  if (el("#historyPanel")?.classList.contains("open")) renderHistoryList();
 }
 
 function getHistory() {
@@ -2215,7 +2262,7 @@ function renderHistoryList() {
   }
   list.innerHTML = history.map((h, i) => `
     <div class="history-item" data-idx="${i}">
-      <div class="tool-name">${escapeHtml(h.toolName)} · ${escapeHtml(h.status || "已记录")}${h.amount ? " · " + escapeHtml(h.amount) : ""}</div>
+      <div class="tool-name">${escapeHtml(h.toolName)} · ${escapeHtml(h.status || "已记录")}${h.amount ? " · " + escapeHtml(h.amount) : ""}${h.syncStatus === "synced" ? " · 已同步飞书" : h.syncStatus === "local-only" ? " · 本机记录" : ""}</div>
       <div class="preview">${escapeHtml(h.preview)}</div>
       <div class="time">${new Date(h.time).toLocaleString("zh-CN")} · 点击回到对应工具</div>
     </div>

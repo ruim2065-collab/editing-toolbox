@@ -11,6 +11,10 @@
     "api/auth.js": {
       "memory": 512,
       "maxDuration": 10
+    },
+    "api/record.js": {
+      "memory": 512,
+      "maxDuration": 10
     }
   },
   "headers": [
