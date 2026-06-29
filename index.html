@@ -1472,7 +1472,7 @@ const goalLabels = {
 
 const fontDB = {
   "干净高级": {
-    cn: ["思源黑体 Bold", "阿里巴巴普惠体 M", "HarmonyOS Sans SC"],
+    cn: ["黑体 / 简黑", "圆体 / 黑体", "系统黑体方向"],
     tip: "克制风格优先选无衬线字体，字重不超过2种，关键信息加大15-20%。"
   },
   "可爱活泼": {
@@ -1492,7 +1492,7 @@ const fontDB = {
     tip: "细字重+留白+慢节奏；字幕字号比常规小一号，保持呼吸感。"
   },
   "科技简约": {
-    cn: ["优设标题黑", "站酷酷黑", "HarmonyOS Sans SC"],
+    cn: ["优设标题黑", "站酷酷黑", "系统黑体方向"],
     tip: "几何感强的无衬线字体，线条干净；配合冷色调画面。"
   }
 };
@@ -2388,21 +2388,23 @@ function renderSubtitleVisionResult(a) {
 }
 
 function renderFontVisionResult(a) {
-  const fontList = Array.isArray(a.similarFonts) && a.similarFonts.length
-    ? a.similarFonts.map(item => `${escapeHtml(item.name || "相似字体方向")}：${escapeHtml(item.style || "")}｜${escapeHtml(item.usage || "")}`)
-    : ["未生成相似字体推荐"];
+  const keywordList = Array.isArray(a.jianyingSearchKeywords) && a.jianyingSearchKeywords.length
+    ? a.jianyingSearchKeywords.map(item => `${escapeHtml(item.keyword || "搜索词")}：${escapeHtml(item.reason || "")}｜${escapeHtml(item.usage || "")}`)
+    : Array.isArray(a.similarFonts) && a.similarFonts.length
+      ? a.similarFonts.map(item => `${escapeHtml(item.name || "黑体")}：${escapeHtml(item.style || "")}｜${escapeHtml(item.usage || "")}`)
+      : ["建议先在剪映里搜：黑体、粗黑、圆体、手写、综艺，根据画面风格逐个试。"];
   return resultLayout("截图字体识别", safeText(a.detectedStyle, "识别到的字体风格"), [
     resultCard("识别到的字体风格", safeText(a.detectedStyle), true),
-    resultCard("置信度说明", safeText(a.confidenceNote || "无法百分百确认原字体，以下为相似风格推荐。"), true),
+    resultCard("置信度说明", safeText(a.confidenceNote || "无法百分百确认原字体，以下为剪映内相似搜索方向。"), true),
     resultCard("字体类型 / 字重", [`类型：${safeText(a.fontType)}`, `字重：${safeText(a.weight)}`]),
     resultCard("字形特征", safeList(a.shapeFeatures)),
-    resultCard("相似字体推荐", fontList, true),
+    resultCard("剪映里建议这样搜", keywordList, true),
     resultCard("适合用在哪类视频", safeList(a.suitableVideos)),
     resultCard("这张图怎么优化字体", safeList(a.optimizationSuggestions), true),
     resultCard("字体层级问题", safeText(a.hierarchy)),
-    resultCard("识别限制", safeList(a.limitations, "字体截图只能判断相似风格，不能保证精确字体名")),
+    resultCard("识别限制", safeList(a.limitations, "字体截图只能判断相似风格；剪映字体库会变，不能保证原字体名可搜索。")),
     resultCard("下次截图建议", safeList(a.uploadAdvice, "尽量裁剪文字区域、保留完整字形、提高截图清晰度"), true),
-    resultCard("使用提醒", safeText(a.usageReminder || "不提供字体文件；商用前请确认字体授权。"), true)
+    resultCard("使用提醒", safeText(a.usageReminder || "不要拿外部字体名去剪映硬搜；优先使用上面的剪映搜索词找相似方向，商用前确认授权。"), true)
   ]);
 }
 
@@ -2867,7 +2869,7 @@ function initMaterial() {
     event.preventDefault();
     simulate(event.currentTarget, event.submitter, data => {
       el("#fontResult").innerHTML = resultLayout("排版参考结果", "现代无衬线粗体 · 相似度 82%", [
-        resultCard("可能相似字体", "思源黑体 Heavy / 阿里巴巴普惠体 Bold / HarmonyOS Sans SC Black"),
+        resultCard("剪映搜索词", "剪映里搜：粗黑 / 黑体 / 简黑"),
         resultCard("剪映可替代字体", "优先尝试：得意黑、雅月体、系统黑体加粗。具体字体名称会随剪映版本变化。"),
         resultCard("适合的视频类型", `<span class="result-tag">${data.get("use")}</span><span class="result-tag">教程口播</span><span class="result-tag">干货封面</span>`, true),
         resultCard("字幕 / 封面排版建议", ["两行以内，每行 8-12 个字", "关键词可放大 15%-20%", "文字与背景保持明显明暗对比", "不要同时使用超过两种字重"]),
@@ -2996,7 +2998,7 @@ function initFontguide() {
         <div class="panel-title"><h3>上传截图识别字体风格</h3><span>相似字体方向</span></div>
         <div class="upload-zone" data-upload="vision-font">
           <input type="file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp">
-          <div class="upload-copy"><div class="upload-symbol">＋</div><strong>上传参考截图</strong><p>支持 JPG / PNG / WEBP。尽量裁剪到文字区域、保留完整字形；系统只判断相似字体方向，不会假装百分百识别原字体。</p></div>
+          <div class="upload-copy"><div class="upload-symbol">＋</div><strong>上传参考截图</strong><p>支持 JPG / PNG / WEBP。尽量裁剪到文字区域、保留完整字形；系统会给出剪映里更容易搜到的关键词，不会让你拿外部字体名硬搜。</p></div>
           <img class="preview-image" alt="字体截图预览">
         </div>
         <div class="vision-status" data-state="idle">等待上传截图。</div>
