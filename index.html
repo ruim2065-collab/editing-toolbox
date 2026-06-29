@@ -939,6 +939,72 @@ select.control { appearance: none; background-image: linear-gradient(45deg, tran
 .bottom-tab .tab-icon { font-size: 18px; font-weight: 700; }
 .bottom-tab.active { color: var(--ink); background: rgba(255,255,255,.18); }
 
+/* ---- Access Gate ---- */
+body.auth-locked .app-shell,
+body.auth-locked #mobileOverlay,
+body.auth-locked #bottomTabBar,
+body.auth-locked #historyPanel,
+body.auth-locked #toast { display: none !important; }
+.access-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  display: grid;
+  place-items: center;
+  padding: 22px;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(222,232,246,.85), transparent 34%),
+    radial-gradient(circle at 78% 18%, rgba(231,222,248,.68), transparent 30%),
+    #f5f5f2;
+}
+body:not(.auth-locked) .access-gate { display: none; }
+.access-card {
+  width: min(440px, 100%);
+  padding: 28px;
+  border-radius: 24px;
+  background: rgba(255,255,255,.78);
+  border: 1px solid rgba(255,255,255,.72);
+  box-shadow: 0 24px 80px rgba(51,52,49,.16);
+  backdrop-filter: blur(24px);
+}
+.access-card h1 { margin: 0 0 8px; font-size: 28px; letter-spacing: 0; }
+.access-card p { margin: 0; color: #676864; font-size: 13px; line-height: 1.7; }
+.access-form { display: grid; gap: 14px; margin-top: 20px; }
+.access-input {
+  width: 100%;
+  min-height: 48px;
+  padding: 0 15px;
+  border: 1px solid rgba(82,83,78,.14);
+  border-radius: 14px;
+  background: rgba(255,255,255,.74);
+  box-shadow: var(--shadow-inset);
+  color: var(--ink);
+  font: inherit;
+}
+.access-input:focus { outline: none; border-color: rgba(66,91,120,.32); }
+.access-status {
+  min-height: 20px;
+  color: #777872;
+  font-size: 12px;
+  line-height: 1.6;
+}
+.access-status[data-state="error"] { color: #8d3c3c; }
+.access-status[data-state="success"] { color: #2f6044; }
+.access-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 18px;
+  color: #7b7c76;
+  font-size: 11px;
+  line-height: 1.5;
+}
+@media (max-width: 560px) {
+  .access-card { padding: 23px; border-radius: 20px; }
+  .access-card h1 { font-size: 24px; }
+  .access-meta { flex-direction: column; }
+}
+
 /* ---- Guided Tour ---- */
 .tour-overlay {
   position: fixed;
@@ -1098,7 +1164,23 @@ select.control { appearance: none; background-image: linear-gradient(45deg, tran
   }
   </script>
 </head>
-<body>
+<body class="auth-locked">
+
+<div class="access-gate" id="accessGate">
+  <section class="access-card">
+    <h1>剪辑接单百宝箱</h1>
+    <p>仅限剪辑课学员使用。请输入统一访问密码或你的学员专属码。</p>
+    <form class="access-form" id="accessForm">
+      <input class="access-input" name="code" type="password" autocomplete="one-time-code" placeholder="访问密码 / 学员专属码">
+      <button class="primary-button" type="submit">进入工具箱</button>
+      <div class="access-status" id="accessStatus" data-state="idle">验证通过后，本设备 7 天内免重复输入。</div>
+    </form>
+    <div class="access-meta">
+      <span>请勿把访问码转发给非学员。</span>
+      <span>异常分享可单独停用学员码。</span>
+    </div>
+  </section>
+</div>
 
 <div class="app-shell">
   <!-- 左侧图标栏 -->
@@ -1558,6 +1640,123 @@ function el(selector, root = document) {
 
 function all(selector, root = document) {
   return [...root.querySelectorAll(selector)];
+}
+
+// ---- Access Gate ----
+const AUTH_SESSION_KEY = "toolbox_access_session";
+const AUTH_DEVICE_KEY = "toolbox_access_device";
+const AUTH_COOLDOWN_KEY = "toolbox_access_cooldown";
+
+function getAuthEndpoint() {
+  if (location.hostname.includes("github.io") || location.protocol === "file:") {
+    return "https://editing-toolbox-6i5o.vercel.app/api/auth";
+  }
+  return "/api/auth";
+}
+
+function initAccessGate() {
+  const form = el("#accessForm");
+  const input = form?.querySelector("input[name='code']");
+  const status = el("#accessStatus");
+  if (!form || !input || !status) return;
+
+  const session = readAccessSession();
+  if (session?.expiresAt && Number(session.expiresAt) > Date.now()) {
+    unlockApp();
+    return;
+  }
+
+  document.body.classList.add("auth-locked");
+  setAccessStatus("idle", "验证通过后，本设备 7 天内免重复输入。");
+
+  form.addEventListener("submit", async event => {
+    event.preventDefault();
+    const cooldownUntil = Number(localStorage.getItem(AUTH_COOLDOWN_KEY) || 0);
+    if (cooldownUntil > Date.now()) {
+      const seconds = Math.ceil((cooldownUntil - Date.now()) / 1000);
+      setAccessStatus("error", `尝试次数过多，请 ${seconds} 秒后再试。`);
+      return;
+    }
+
+    const code = input.value.trim();
+    if (!code) {
+      setAccessStatus("error", "请输入访问密码或学员专属码。");
+      return;
+    }
+
+    const button = form.querySelector("button[type='submit']");
+    const original = button.textContent;
+    button.disabled = true;
+    button.textContent = "验证中";
+    setAccessStatus("idle", "正在验证访问权限。");
+
+    try {
+      const res = await fetch(getAuthEndpoint(), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code, deviceId: getDeviceId() })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.ok) {
+        registerAccessFailure();
+        throw new Error(data.message || "访问验证失败。");
+      }
+      localStorage.setItem(AUTH_SESSION_KEY, JSON.stringify({
+        displayName: data.displayName,
+        accessType: data.accessType,
+        expiresAt: data.expiresAt
+      }));
+      localStorage.removeItem(AUTH_COOLDOWN_KEY);
+      localStorage.removeItem("toolbox_access_failures");
+      input.value = "";
+      setAccessStatus("success", "验证通过，正在进入工具箱。");
+      unlockApp();
+    } catch (err) {
+      setAccessStatus("error", err.message || "访问验证失败，请稍后重试。");
+    } finally {
+      button.disabled = false;
+      button.textContent = original;
+    }
+  });
+}
+
+function unlockApp() {
+  document.body.classList.remove("auth-locked");
+  el("#accessGate")?.setAttribute("aria-hidden", "true");
+}
+
+function setAccessStatus(state, message) {
+  const status = el("#accessStatus");
+  if (!status) return;
+  status.dataset.state = state;
+  status.textContent = message;
+}
+
+function readAccessSession() {
+  try {
+    return JSON.parse(localStorage.getItem(AUTH_SESSION_KEY) || "null");
+  } catch (err) {
+    return null;
+  }
+}
+
+function getDeviceId() {
+  let deviceId = localStorage.getItem(AUTH_DEVICE_KEY);
+  if (!deviceId) {
+    deviceId = "dev_" + Math.random().toString(36).slice(2) + Date.now().toString(36);
+    localStorage.setItem(AUTH_DEVICE_KEY, deviceId);
+  }
+  return deviceId;
+}
+
+function registerAccessFailure() {
+  const key = "toolbox_access_failures";
+  const failures = Number(localStorage.getItem(key) || 0) + 1;
+  localStorage.setItem(key, String(failures));
+  if (failures >= 5) {
+    localStorage.setItem(AUTH_COOLDOWN_KEY, String(Date.now() + 10 * 60 * 1000));
+    localStorage.setItem(key, "0");
+  }
 }
 
 // ---- Toast ----
@@ -3188,6 +3387,7 @@ function initContract() {
 }
 
 // ===== INIT =====
+initAccessGate();
 initApp();
 initQuote();
 initTalk();
