@@ -2,3 +2,6 @@ index.backup-before-*.html
 .local-backups/
 api/*.backup-before-*.js
 vercel.backup-before-*.json
+tmp/
+node_modules/
+*.traineddata

@@ -109,10 +109,6 @@ export function buildToolPrompt(toolId, formData) {
     benchmark: {
       system: `你是短视频剪辑课助教，请根据我手动补充的信息做对标拆解，不要假设你已经读取了平台原视频。`,
       user: `平台：${data.platform || ''}，标题：${data.title || ''}，前3秒：${data.hook || ''}，内容描述：${data.description || ''}，字幕/画面风格：${data.visual || ''}，节奏/BGM：${data.rhythm || ''}，热评：${data.comments || ''}，我要迁移的动作：${data.transfer || ''}。\n\n请输出：1. 前3秒钩子拆解；2. 内容结构；3. 字幕/画面/节奏特点；4. 评论区需求；5. 可迁移动作；6. 不建议模仿的地方；7. 作品集样片方案。`
-    },
-    subtitle: {
-      system: `你是短视频剪辑课的字幕优化助教。你帮学员把口播文案优化成适合短视频字幕的表达。减少废话、优化断句、强调关键词。`,
-      user: `原始文案：${data.content || ''}，视频类型：${data.type || ''}，想要风格：${data.style || ''}，是否需要封面标题：${data.cover || ''}。\n\n请输出：1. 优化后的字幕版；2. 可做封面大字的句子；3. 建议强调的关键词；4. 字幕断句建议；5. 不建议保留的废话。`
     }
   };
 

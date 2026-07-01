@@ -1334,7 +1334,7 @@ body:not(.auth-locked) .access-gate { display: none; }
     <div class="drawer-head"><h3>选择工具</h3><button class="drawer-close" id="drawerClose" type="button">×</button></div>
     <nav class="side-nav" id="mobileNav">
       <button type="button" data-view="home" class="active"><span class="nav-symbol">首</span><span class="nav-name">首页</span><span class="nav-arrow">›</span></button>
-      <button type="button" data-view="quote"><span class="nav-symbol">价</span><span class="nav-name">接单工具</span><span class="nav-arrow">›</span></button>
+      <button type="button" data-view="quote"><span class="nav-symbol">价</span><span class="nav-name">报价接单</span><span class="nav-arrow">›</span></button>
       <button type="button" data-view="talk"><span class="nav-symbol">聊</span><span class="nav-name">沟通话术</span><span class="nav-arrow">›</span></button>
       <button type="button" data-view="benchmark"><span class="nav-symbol">拆</span><span class="nav-name">对标拆解</span><span class="nav-arrow">›</span></button>
       <button type="button" data-view="fontguide"><span class="nav-symbol">体</span><span class="nav-name">字体速查</span><span class="nav-arrow">›</span></button>
@@ -1452,45 +1452,6 @@ const goalLabels = {
   "想拒绝": "当前策略：设定清晰边界，允许客户自然退出",
   "想解释": "当前策略：先帮客户理解决策逻辑，不急着要答复",
   "想确认需求": "当前策略：先追问锁定方向，不急着报价格或推进度"
-};
-
-/* ============================================================
-   字体数据库 — 剪映字体速查
-   ============================================================ */
-
-const fontDB = {
-  "干净高级": {
-    cn: ["黑体 / 简黑", "圆体 / 黑体", "系统黑体方向"],
-    tip: "克制风格优先选无衬线字体，字重不超过2种，关键信息加大15-20%。"
-  },
-  "可爱活泼": {
-    cn: ["得意黑", "站酷快乐体", "沐瑶软笔手写体"],
-    tip: "圆体/手写体为主，颜色可以鲜艳，字数不超过2行。"
-  },
-  "商业质感": {
-    cn: ["思源宋体 Bold", "站酷高端黑", "造字工房力黑"],
-    tip: "衬线字体显质感，适合品牌/广告；字间距略微拉开5-10%。"
-  },
-  "网感综艺": {
-    cn: ["优设标题黑", "庞门正道标题体", "锐字真言体"],
-    tip: "粗+大+撞色=网感；花字加描边和投影，配合音效节奏出现。"
-  },
-  "文艺情绪": {
-    cn: ["思源宋体 Light", "方正静蕾简体", "杨任东竹石体"],
-    tip: "细字重+留白+慢节奏；字幕字号比常规小一号，保持呼吸感。"
-  },
-  "科技简约": {
-    cn: ["优设标题黑", "站酷酷黑", "系统黑体方向"],
-    tip: "几何感强的无衬线字体，线条干净；配合冷色调画面。"
-  }
-};
-
-const positionTips = {
-  "封面标题": "封面字要大（字号>=画面高度1/8），2行以内每行<=10字。",
-  "视频字幕": "字幕字号适中（画面高度1/15-1/12），居中对齐或左下对齐。",
-  "重点花字": "花字可加大到正常字幕1.5-2倍，每屏不超过2个。",
-  "人名条/标签": "人名条字号偏小（画面高度1/20-1/15），放在人物旁边。",
-  "结尾引流": "结尾引流用中等字号，放在画面中央偏下，不要挡住主体。"
 };
 
 /* ============================================================
@@ -1654,6 +1615,16 @@ function initAccessGate() {
   const input = form?.querySelector("input[name='code']");
   const status = el("#accessStatus");
   if (!form || !input || !status) return;
+
+  if (location.hostname.includes("github.io") || location.protocol === "file:") {
+    localStorage.setItem(AUTH_SESSION_KEY, JSON.stringify({
+      displayName: "静态离线版学员",
+      accessType: "static-local",
+      expiresAt: Date.now() + 365 * 24 * 60 * 60 * 1000
+    }));
+    unlockApp();
+    return;
+  }
 
   const session = readAccessSession();
   if (session?.expiresAt && Number(session.expiresAt) > Date.now()) {
@@ -1884,6 +1855,7 @@ function saveToHistory(toolId, toolName, preview) {
 }
 
 async function syncLatestRecordToLark() {
+  if (location.hostname.includes("github.io") || location.protocol === "file:") return;
   if (Number(localStorage.getItem(RECORD_SYNC_DISABLED_UNTIL_KEY) || 0) > Date.now()) return;
   const history = getHistory();
   const record = history[0];
@@ -2083,12 +2055,6 @@ function buildToolPrompt(toolId, formData) {
       user: `平台：${data.platform || ''}，标题：${data.title || ''}，前3秒：${data.hook || ''}，内容描述：${data.description || ''}，字幕/画面风格：${data.visual || ''}，节奏/BGM：${data.rhythm || ''}，热评：${data.comments || ''}，我要迁移的动作：${data.transfer || ''}。
 
 请输出：1. 前3秒钩子拆解；2. 内容结构；3. 字幕/画面/节奏特点；4. 评论区需求；5. 可迁移动作；6. 不建议模仿的地方；7. 作品集样片方案。`
-    },
-    subtitle: {
-      system: `你是短视频剪辑课的字幕优化助教。你帮学员把口播文案优化成适合短视频字幕的表达。减少废话、优化断句、强调关键词。`,
-      user: `原始文案：${data.content || ''}，视频类型：${data.type || ''}，想要风格：${data.style || ''}，是否需要封面标题：${data.cover || ''}。
-
-请输出：1. 优化后的字幕版；2. 可做封面大字的句子；3. 建议强调的关键词；4. 字幕断句建议；5. 不建议保留的废话。`
     }
   };
 
@@ -2137,10 +2103,10 @@ window._aiGenerate = async function(formData, callback, button, originalText) {
 // ---- Tool Registry ----
 const tools = [
   { id: "home", name: "首页", short: "首", title: "首页", desc: "查看工具概览与使用入口", subtitle: "剪辑课学员专属增值工具箱 · 支持 AI 智能生成与离线使用", tags: ["概览","入口"] },
-  { id: "quote", name: "接单工具", short: "价", title: "接单报价助手", desc: "快速生成报价参考、交付清单和确认问题", subtitle: "根据客户类型、视频需求和交付条件生成报价参考", tags: ["报价","接单","客户"] },
+  { id: "quote", name: "报价接单", short: "价", title: "报价接单流程助手", desc: "生成报价参考、接单话术、定金和交付流程", subtitle: "先看参考和素材，再确认报价、档期、定金和初稿时间", tags: ["报价","接单","客户"] },
   { id: "talk", name: "沟通话术", short: "聊", title: "客户沟通话术助手", desc: "面对压价、催稿和加需求时更从容", subtitle: "把客户原话整理成温和、专业与强边界三种回复", tags: ["沟通","客户","话术"] },
   { id: "benchmark", name: "对标拆解", short: "拆", title: "对标链接拆解助手", desc: "拆解爆款视频结构与可迁移方法", subtitle: "只做内容拆解，不下载、不爬取、不违规解析", tags: ["对标","拆解","学习"] },
-  { id: "fontguide", name: "字体速查", short: "体", title: "剪映字体速查助手", desc: "上传截图识别相似字体方向", subtitle: "识别字体类型、字重、字形特征和搭配建议", tags: ["字体","剪映","排版"] },
+  { id: "fontguide", name: "字体速查", short: "体", title: "剪映字体速查助手", desc: "上传截图识别具体字体", subtitle: "优先匹配自建字体库，再推荐类似字体", tags: ["字体","剪映","排版"] },
   { id: "music", name: "BGM搜歌", short: "曲", title: "BGM搜歌助手", desc: "根据视频情绪和节奏推荐背景音乐", subtitle: "按风格/情绪/节奏搜歌，推荐剪映曲库和免版权音乐来源", tags: ["音乐","BGM","情绪"] },
   { id: "sfx", name: "音效特效", short: "听", title: "剪映音效特效速查", desc: "快速找到适合的音效和转场特效", subtitle: "按场景查找剪映音效库和特效，含节奏卡点音效指南", tags: ["音效","特效","剪映"] }
 ];
@@ -2283,7 +2249,7 @@ function initUploadZones() {
 
 function handleFiles(zone, files) {
   if (!files?.length) return;
-  const isVisionUpload = zone.dataset.upload === "vision-subtitle" || zone.dataset.upload === "vision-font";
+  const isVisionUpload = zone.dataset.upload === "vision-font";
   if (zone.dataset.upload === "image" || isVisionUpload) {
     const file = files[0];
     if (isVisionUpload && !["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
@@ -2337,6 +2303,266 @@ function fileToDataUrl(file) {
   });
 }
 
+function imageFromDataUrl(dataUrl) {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => resolve(image);
+    image.onerror = () => reject(new Error("图片指纹读取失败"));
+    image.src = dataUrl;
+  });
+}
+
+async function buildFontVisualSignatures(dataUrl) {
+  const image = await imageFromDataUrl(dataUrl);
+  const crops = [
+    [0, 0, 1, 1],
+    [0, .3, 1, 1],
+    [0, .4, 1, 1],
+    [0, .5, 1, 1],
+    [0, .2, 1, .85],
+    [.1, .25, .9, .9]
+  ];
+  return crops.map(crop => buildFontSignatureForCrop(image, crop)).filter(Boolean);
+}
+
+function buildFontSignatureForCrop(image, crop) {
+  const sourceWidth = image.naturalWidth || image.width;
+  const sourceHeight = image.naturalHeight || image.height;
+  const sx = Math.floor(sourceWidth * crop[0]);
+  const sy = Math.floor(sourceHeight * crop[1]);
+  const sw = Math.max(1, Math.floor(sourceWidth * (crop[2] - crop[0])));
+  const sh = Math.max(1, Math.floor(sourceHeight * (crop[3] - crop[1])));
+  const probe = document.createElement("canvas");
+  probe.width = sw;
+  probe.height = sh;
+  const probeCtx = probe.getContext("2d", { willReadFrequently: true });
+  probeCtx.drawImage(image, sx, sy, sw, sh, 0, 0, sw, sh);
+  const probeData = probeCtx.getImageData(0, 0, sw, sh).data;
+  const box = findInkBox(probeData, sw, sh);
+  if (!box || box.width < 12 || box.height < 8) return null;
+
+  const canvas = document.createElement("canvas");
+  canvas.width = 64;
+  canvas.height = 24;
+  const ctx = canvas.getContext("2d", { willReadFrequently: true });
+  ctx.drawImage(probe, box.x, box.y, box.width, box.height, 0, 0, 64, 24);
+  const data = ctx.getImageData(0, 0, 64, 24).data;
+  const grays = [];
+  for (let i = 0; i < data.length; i += 4) grays.push(Math.round(data[i] * .299 + data[i + 1] * .587 + data[i + 2] * .114));
+  const mean = grays.reduce((sum, value) => sum + value, 0) / grays.length;
+  let bits = grays.map(value => value > mean ? 1 : 0);
+  if (bits.reduce((sum, value) => sum + value, 0) > bits.length / 2) bits = bits.map(value => value ? 0 : 1);
+  let hex = "";
+  for (let i = 0; i < bits.length; i += 4) {
+    hex += ((bits[i] << 3) | (bits[i + 1] << 2) | (bits[i + 2] << 1) | bits[i + 3]).toString(16);
+  }
+  return hex;
+}
+
+function findInkBox(data, width, height) {
+  const grayAt = (x, y) => {
+    const i = (y * width + x) * 4;
+    return Math.round(data[i] * .299 + data[i + 1] * .587 + data[i + 2] * .114);
+  };
+  const border = [];
+  for (let x = 0; x < width; x += 1) {
+    border.push(grayAt(x, 0), grayAt(x, height - 1));
+  }
+  for (let y = 0; y < height; y += 1) {
+    border.push(grayAt(0, y), grayAt(width - 1, y));
+  }
+  border.sort((a, b) => a - b);
+  const bg = border[Math.floor(border.length / 2)] || 0;
+  const step = Math.max(1, Math.floor((width * height) / 160000));
+  let minX = width, minY = height, maxX = -1, maxY = -1;
+  for (let y = 0; y < height; y += step) {
+    for (let x = 0; x < width; x += step) {
+      const value = grayAt(x, y);
+      const isInk = Math.abs(value - bg) > 35 && ((bg < 128 && value > 100) || (bg >= 128 && value < 180) || Math.abs(value - bg) > 70);
+      if (isInk) {
+        minX = Math.min(minX, x);
+        minY = Math.min(minY, y);
+        maxX = Math.max(maxX, x);
+        maxY = Math.max(maxY, y);
+      }
+    }
+  }
+  if (maxX < 0 || maxY < 0) return null;
+  const pad = 6;
+  minX = Math.max(0, minX - pad);
+  minY = Math.max(0, minY - pad);
+  maxX = Math.min(width, maxX + pad + 1);
+  maxY = Math.min(height, maxY + pad + 1);
+  return { x: minX, y: minY, width: maxX - minX, height: maxY - minY };
+}
+
+const LOCAL_FONT_MANUAL_ALIASES = new Map([
+  ["d570ef763cdb61595607dd29c7c50c36e74aa01d78c0a96584c306cdf6d8234b", {
+    id: "manual-font-sea-island-forest-gold-summer",
+    source: "人工校准",
+    fileName: "summer-crop-confirmed-by-user.png",
+    relativePath: "manual/summer-crop-confirmed-by-user.png",
+    width: 438,
+    height: 222,
+    visibleFontName: "海岛森林金字符",
+    ocrStatus: "manual-confirmed",
+    matchType: "manual-sha256-confirmed",
+    styleTags: "英文手写 / 细线 / 度假感 / 自然随性",
+    jianyingSearchKeywords: "海岛森林金字符/海岛森林/手写/英文",
+    usageNotes: "适合夏日、旅行、海岛、vlog、生活方式类视频标题或点缀字。"
+  }]
+]);
+const LOCAL_FONT_MAX_VISUAL_DISTANCE = 0.18;
+const HEX_BIT_COUNTS = [0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4];
+let localFontKnowledgePromise = null;
+
+function dataUrlToArrayBuffer(dataUrl) {
+  const base64 = String(dataUrl || "").split(",")[1] || "";
+  const binary = atob(base64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i += 1) bytes[i] = binary.charCodeAt(i);
+  return bytes.buffer;
+}
+
+async function sha256HexFromDataUrl(dataUrl) {
+  const digest = await crypto.subtle.digest("SHA-256", dataUrlToArrayBuffer(dataUrl));
+  return [...new Uint8Array(digest)].map(byte => byte.toString(16).padStart(2, "0")).join("");
+}
+
+function loadLocalFontKnowledge() {
+  if (localFontKnowledgePromise) return localFontKnowledgePromise;
+  localFontKnowledgePromise = Promise.all([
+    fetch("api/data/font-screenshot-index.json").then(res => {
+      if (!res.ok) throw new Error("字体索引读取失败");
+      return res.json();
+    }),
+    fetch("api/data/font-visual-signatures.json").then(res => {
+      if (!res.ok) throw new Error("字体指纹库读取失败");
+      return res.json();
+    })
+  ]).then(([index, signatures]) => {
+    const bySha256 = new Map();
+    const byId = new Map();
+    for (const item of index.items || []) {
+      if (item.sha256) bySha256.set(String(item.sha256).toLowerCase(), item);
+      if (item.id) byId.set(item.id, item);
+    }
+    return { index, signatures, bySha256, byId };
+  });
+  return localFontKnowledgePromise;
+}
+
+async function analyzeFontLocally(dataUrl, visualSignatures) {
+  const knowledge = await loadLocalFontKnowledge();
+  const sha256 = await sha256HexFromDataUrl(dataUrl);
+  const manual = LOCAL_FONT_MANUAL_ALIASES.get(sha256);
+  if (manual) return buildLocalFontAnalysis({ ...manual, sha256 });
+
+  const exact = knowledge.bySha256.get(sha256);
+  if (exact?.visibleFontName) return buildLocalFontAnalysis({ ...exact, matchType: "sha256-exact" });
+
+  const visualMatch = findLocalVisualFontMatch(visualSignatures, knowledge);
+  if (visualMatch) return buildLocalFontAnalysis(visualMatch);
+  return null;
+}
+
+function findLocalVisualFontMatch(visualSignatures, knowledge) {
+  const query = (visualSignatures || []).filter(isValidSignatureHex);
+  if (!query.length) return null;
+  let best = null;
+  for (const entry of knowledge.signatures.items || []) {
+    const item = knowledge.byId.get(entry.id);
+    if (!item?.visibleFontName) continue;
+    for (const candidate of entry.signatures || []) {
+      if (!isValidSignatureHex(candidate?.hex)) continue;
+      for (const queryHex of query) {
+        const distance = normalizedHexHammingDistance(queryHex, candidate.hex);
+        if (distance == null) continue;
+        if (!best || distance < best.distance) best = { item, distance, crop: candidate.crop };
+      }
+    }
+  }
+  if (!best || best.distance > LOCAL_FONT_MAX_VISUAL_DISTANCE) return null;
+  return {
+    ...best.item,
+    matchType: "visual-signature-strong",
+    visualScore: Number((1 - best.distance).toFixed(4)),
+    matchedCrop: best.crop
+  };
+}
+
+function isValidSignatureHex(value) {
+  return typeof value === "string" && /^[0-9a-f]+$/i.test(value) && value.length >= 128;
+}
+
+function normalizedHexHammingDistance(a, b) {
+  if (!isValidSignatureHex(a) || !isValidSignatureHex(b) || a.length !== b.length) return null;
+  let diff = 0;
+  for (let i = 0; i < a.length; i += 1) {
+    diff += HEX_BIT_COUNTS[parseInt(a[i], 16) ^ parseInt(b[i], 16)];
+  }
+  return diff / (a.length * 4);
+}
+
+function buildLocalFontAnalysis(match) {
+  const publicMatch = {
+    id: match.id,
+    source: match.source,
+    fileName: match.fileName,
+    relativePath: match.relativePath,
+    width: match.width,
+    height: match.height,
+    visibleFontName: match.visibleFontName || "",
+    ocrStatus: match.ocrStatus || "pending",
+    matchType: match.matchType || "local-match",
+    visualScore: match.visualScore || null
+  };
+  const keywords = buildLocalConfirmedFontKeywords(match);
+  const confidenceNote = match.matchType === "visual-signature-strong"
+    ? `已通过本地字形指纹强匹配到自建字体库，匹配度约 ${Math.round((match.visualScore || 0) * 100)}%。`
+    : "已在浏览器本地命中自建字体知识库，不需要调用后端接口。";
+  return {
+    detectedStyle: `已命中自建字体库：${match.visibleFontName}`,
+    visibleFontName: match.visibleFontName,
+    confidenceNote,
+    fontType: match.styleTags || "已入库字体",
+    weight: "",
+    shapeFeatures: ["来自自建字体截图库的本地匹配结果"],
+    hierarchy: "该结果基于字体库匹配，不判断复杂排版层级。",
+    issues: ["未发现需要额外修正的问题"],
+    jianyingSearchKeywords: keywords,
+    similarFonts: [{
+      name: match.visibleFontName,
+      style: `已命中自建字体库：${match.source} / ${match.id}`,
+      usage: match.usageNotes || "优先使用这个准确字体；找不到时再看相似方向。"
+    }],
+    suitableVideos: match.usageNotes ? [match.usageNotes] : ["按该字体原风格使用"],
+    optimizationSuggestions: ["如果剪映/Capcut 当前版本搜不到该字体，再按搜索词里的相似方向尝试。"],
+    capcutActionSteps: [
+      "打开剪映/Capcut：文字 → 字体",
+      `优先查找：${match.visibleFontName}`,
+      "如果找不到，按结果里的剪映搜索词或类似方向继续尝试"
+    ],
+    usageReminder: "字体库可能随剪映/Capcut版本变化，商用前仍需确认授权。",
+    limitations: [match.matchType === "visual-signature-strong" ? "该结果来自裁剪图字形指纹强匹配；如果画面中文字太少、压缩严重或只露出局部，仍建议人工复核。" : "该结果来自本地字体知识库匹配。"],
+    uploadAdvice: ["上传原始字体截图或清晰裁剪到文字区域，命中率最高。"],
+    knowledgeBaseMatches: [publicMatch]
+  };
+}
+
+function buildLocalConfirmedFontKeywords(match) {
+  const keywords = [];
+  const add = (keyword, reason, usage) => {
+    const clean = String(keyword || "").trim();
+    if (clean && !keywords.some(item => item.keyword === clean)) keywords.push({ keyword: clean, reason, usage });
+  };
+  add(match.visibleFontName, "已确认的具体字体名，优先在剪映/Capcut 字体列表里直接搜这个名字。", match.usageNotes || "优先使用准确字体。");
+  String(match.jianyingSearchKeywords || "").split("/").map(item => item.trim()).filter(Boolean).forEach(item => {
+    add(item, "来自已入库字体搜索词。", match.usageNotes || "用于找同款或相近字体。");
+  });
+  return keywords.slice(0, 6);
+}
+
 function escapeHtml(value) {
   return String(value ?? "").replace(/[&<>"']/g, char => ({
     "&": "&amp;",
@@ -2357,6 +2583,11 @@ function safeText(value, fallback = "未识别到明确内容") {
 }
 
 async function runVisionAnalysis(form, mode, resultSelector) {
+  if (mode !== "font") {
+    setVisionStatus(form, "error", "当前只保留字体截图识别。");
+    el(resultSelector).innerHTML = renderVisionMessage("识别入口已关闭", "当前百宝箱只保留字体截图识别。");
+    return;
+  }
   const zone = form.querySelector(`[data-upload="vision-${mode}"]`);
   const file = zone?._visionFile;
   if (!file) {
@@ -2368,13 +2599,31 @@ async function runVisionAnalysis(form, mode, resultSelector) {
   try {
     setVisionStatus(form, "uploading", "上传中：正在读取图片。");
     const dataUrl = await fileToDataUrl(file);
-    setVisionStatus(form, "recognizing", "识别中：正在调用服务端图片识别。");
+    const visualSignatures = await buildFontVisualSignatures(dataUrl).catch(() => []);
+    setVisionStatus(form, "recognizing", "识别中：正在本地匹配字体库，不消耗接口费用。");
+    const localAnalysis = await analyzeFontLocally(dataUrl, visualSignatures);
+    if (localAnalysis) {
+      setVisionStatus(form, "analyzing", "分析中：已命中本地字体库，正在整理结果。");
+      el(resultSelector).innerHTML = renderFontVisionResult(localAnalysis);
+      saveToHistory("fontguide", "截图字体识别", localAnalysis.detectedStyle || file.name);
+      setVisionStatus(form, "done", "完成：已在本地字体库中识别，不需要后端接口。");
+      showToast("本地字体识别完成。");
+      return;
+    }
+
+    if (location.hostname.includes("github.io") || location.protocol === "file:") {
+      setVisionStatus(form, "error", "本地字体库未命中。为避免 VPN 和接口费用，已停止调用后端兜底识别。");
+      el(resultSelector).innerHTML = renderVisionMessage("本地字体库未命中", "这张图没有在本地字体库里匹配到足够接近的字体。请尽量上传更清晰、完整的文字截图；如果是新字体，需要先补充进字体库。");
+      return;
+    }
+
+    setVisionStatus(form, "recognizing", "本地未命中，正在调用服务端兜底识别。");
     const res = await fetch(getVisionEndpoint(), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         mode,
-        image: { dataUrl, mime: file.type, name: file.name, size: file.size }
+        image: { dataUrl, mime: file.type, name: file.name, size: file.size, visualSignatures }
       })
     });
     const data = await res.json().catch(() => ({}));
@@ -2386,13 +2635,8 @@ async function runVisionAnalysis(form, mode, resultSelector) {
       return;
     }
     setVisionStatus(form, "analyzing", "分析中：正在整理识别结果。");
-    if (mode === "subtitle") {
-      el(resultSelector).innerHTML = renderSubtitleVisionResult(data.analysis);
-      saveToHistory("subtitle", "截图字幕识别", (data.analysis.recognizedText || []).join(" / ").substring(0, 80) || file.name);
-    } else {
-      el(resultSelector).innerHTML = renderFontVisionResult(data.analysis);
-      saveToHistory("fontguide", "截图字体识别", data.analysis.detectedStyle || file.name);
-    }
+    el(resultSelector).innerHTML = renderFontVisionResult(data.analysis);
+    saveToHistory("fontguide", "截图字体识别", data.analysis.detectedStyle || file.name);
     setVisionStatus(form, "done", "完成：已基于真实图片识别结果生成建议。");
     showToast("图片识别完成。");
   } catch (err) {
@@ -2408,49 +2652,27 @@ function renderVisionMessage(title, message) {
   ]);
 }
 
-function renderSubtitleVisionResult(a) {
-  const parameterTips = Array.isArray(a.capcutParameters) && a.capcutParameters.length ? a.capcutParameters : [
-    "字体：黑体 / 粗黑，先保证手机上看得清",
-    "颜色：白字优先；背景亮时加黑色描边",
-    "描边：黑色 4-6，背景复杂时加到 6-8",
-    "阴影：20%-30%，不要太重",
-    "位置：底部 15%-20%，避开人物脸和产品主体",
-    "每行字数：8-14 字，一屏不要超过 2 行"
-  ];
-  const actionSteps = Array.isArray(a.capcutActionSteps) && a.capcutActionSteps.length ? a.capcutActionSteps : [
-    "先把识别到的字幕复制到剪映文本里",
-    "按语义断句：一句只讲一个重点",
-    "主字幕用黑体/粗黑，关键词单独加粗或换色",
-    "预览一遍手机小屏，挡脸、挡产品就上移或下移",
-    "导出前静音看一遍，确认不听声音也能看懂"
-  ];
-  return resultLayout("截图字幕识别", safeText(a.confidence ? "置信度：" + a.confidence : "基于截图分析"), [
-    resultCard("识别到的字幕", safeList(a.recognizedText, "未识别到字幕文字"), true),
-    resultCard("当前问题", safeList(a.currentProblems, "未发现明确字幕问题")),
-    resultCard("优化建议", safeList(a.optimizationSuggestions, "未生成具体建议")),
-    resultCard("剪映参数建议", parameterTips, true),
-    resultCard("剪映实操步骤", actionSteps, true),
-    resultCard("可直接复制的优化后字幕", safeText(a.optimizedSubtitle, "未生成优化后字幕"), true),
-    resultCard("剪辑师判断", safeText(a.editorJudgment, "未生成接单视角判断"), true),
-    resultCard("识别细节", [
-      `位置：${safeText(a.position)}`,
-      `行数：${safeText(a.lineCount)}`,
-      `颜色：${safeList(a.colors).join(" / ")}`,
-      `效果：${safeList(a.effects).join(" / ")}`,
-      `对比度：${safeText(a.contrast)}`,
-      `遮挡主体：${safeText(a.occlusion)}`,
-      `层级：${safeText(a.hierarchy)}`
-    ], true),
-    resultCard("限制说明", safeList(a.limitations, "无特别限制说明"))
-  ]);
-}
-
 function renderFontVisionResult(a) {
   const keywordList = Array.isArray(a.jianyingSearchKeywords) && a.jianyingSearchKeywords.length
     ? a.jianyingSearchKeywords.map(item => `${escapeHtml(item.keyword || "搜索词")}：${escapeHtml(item.reason || "")}｜${escapeHtml(item.usage || "")}`)
     : Array.isArray(a.similarFonts) && a.similarFonts.length
       ? a.similarFonts.map(item => `${escapeHtml(item.name || "黑体")}：${escapeHtml(item.style || "")}｜${escapeHtml(item.usage || "")}`)
       : ["建议先在剪映里搜：黑体、粗黑、圆体、手写、综艺，根据画面风格逐个试。"];
+  const similarFontList = Array.isArray(a.similarFonts) && a.similarFonts.length
+    ? a.similarFonts.map(item => {
+        if (!item || typeof item !== "object") return escapeHtml(item);
+        return `${escapeHtml(item.name || "相似方向")}：${escapeHtml(item.style || "字形风格接近")}｜${escapeHtml(item.usage || "在剪映里作为替代方向尝试")}`;
+      })
+    : keywordList;
+  const knowledgeMatches = Array.isArray(a.knowledgeBaseMatches) && a.knowledgeBaseMatches.length
+    ? a.knowledgeBaseMatches.map(item => {
+        if (!item || typeof item !== "object") return escapeHtml(item);
+        const source = item.source || "字体库";
+        const id = item.id || "未编号";
+        const matchType = item.matchType === "sha256-exact" ? "原图精确匹配" : (item.matchType || "相似匹配");
+        return `${escapeHtml(source)} / ${escapeHtml(id)}：${escapeHtml(matchType)}`;
+      })
+    : ["未命中自建字体截图原图；已按上传截图做视觉风格识别。"];
   const firstKeyword = Array.isArray(a.jianyingSearchKeywords) && a.jianyingSearchKeywords[0]?.keyword ? a.jianyingSearchKeywords[0].keyword : "粗黑";
   const secondKeyword = Array.isArray(a.jianyingSearchKeywords) && a.jianyingSearchKeywords[1]?.keyword ? a.jianyingSearchKeywords[1].keyword : "黑体";
   const fontSteps = Array.isArray(a.capcutActionSteps) && a.capcutActionSteps.length ? a.capcutActionSteps : [
@@ -2461,11 +2683,14 @@ function renderFontVisionResult(a) {
     "关键词可以单独加粗、换色或加描边，不要整屏都花",
     "商用前确认字体授权，找不到原字体就用相似方向替代"
   ];
-  return resultLayout("截图字体识别", safeText(a.detectedStyle, "识别到的字体风格"), [
-    resultCard("识别到的字体风格", safeText(a.detectedStyle), true),
+  return resultLayout("截图字体识别", safeText(a.visibleFontName, "未识别到具体字体名"), [
+    resultCard("识别到的字体名", safeText(a.visibleFontName, "未识别到具体字体名"), true),
+    resultCard("字体风格说明", safeText(a.detectedStyle), true),
+    resultCard("自建字体库命中", knowledgeMatches, true),
     resultCard("置信度说明", safeText(a.confidenceNote || "无法百分百确认原字体，以下为剪映内相似搜索方向。"), true),
     resultCard("字体类型 / 字重", [`类型：${safeText(a.fontType)}`, `字重：${safeText(a.weight)}`]),
     resultCard("字形特征", safeList(a.shapeFeatures)),
+    resultCard("类似字体 / 替代方向", similarFontList, true),
     resultCard("剪映里建议这样搜", keywordList, true),
     resultCard("剪映实操步骤", fontSteps, true),
     resultCard("适合用在哪类视频", safeList(a.suitableVideos)),
@@ -2646,7 +2871,7 @@ function initQuote() {
   el("#view-quote").innerHTML = `
     <div class="tool-layout">
       <form class="form-panel surface" id="quoteForm">
-        <div class="panel-title"><h3>填写客户需求</h3><span>约 1 分钟</span></div>
+        <div class="panel-title"><h3>填写客户需求</h3><span>报价 + 接单流程</span></div>
         <div class="field-grid">
           <div class="field"><label>客户类型</label><select class="control" name="client"><option>个人博主</option><option>商家账号</option><option>课程博主</option><option>探店账号</option><option>本地商家</option><option>其他</option></select></div>
           <div class="field"><label>视频类型</label><select class="control" name="video"><option>口播</option><option>vlog</option><option>探店</option><option>带货</option><option>课程切片</option><option>混剪</option></select></div>
@@ -2655,9 +2880,9 @@ function initQuote() {
           <div class="field full"><label>客户要求</label><textarea class="control" name="request" placeholder="例如：60秒口播，配字幕，简单花字，1-2天交付">60秒口播，配字幕，简单花字，节奏剪紧一点，有1个参考视频。</textarea></div>
           <div class="field"><label>是否加急</label>${choice("urgent", ["是", "否"], 1)}</div>
         </div>
-        <div class="form-actions"><span class="form-tip">默认按剪辑小白接单常见区间估算：单条 100-250 元内，复杂需求再单独加价。</span><button class="primary-button" type="submit">生成报价建议</button></div>
+        <div class="form-actions"><span class="form-tip">先看参考、问清片长和素材，再看档期；新客户统一先收 50% 定金。</span><button class="primary-button" type="submit">生成报价接单流程</button></div>
       </form>
-      ${resultShell("quoteResult", "生成报价建议")}
+      ${resultShell("quoteResult", "生成报价接单流程")}
     </div>`;
 
   el("#quoteForm").addEventListener("submit", event => {
@@ -2697,6 +2922,39 @@ function initQuote() {
         packageLevel.includes("封面") ? "封面图 1 张" : null,
         "默认 1-2 轮小改"
       ].filter(Boolean);
+      const orderFlow = [
+        "客户发来参考：先说“我先看看哈”，把参考转给负责确认的人或自己先判断能不能接。",
+        "能接：先报大概单价，例如“这种我大概是 xxx/min 的哦”，先看客户能不能接受。",
+        "客户接受：继续问素材什么时候来、预计成片多长、片子类型和交付时间。",
+        "根据素材和难度估算制作周期：例如“我大概要剪 2 天 / 3 天”。",
+        "再看档期：能外包的先问外包档期；不能外包的再继续确认自己的档期。",
+        "档期确定后：发报价图、注意事项图、出片提示图。",
+        "客户确认没问题：新客户收 50% 定金。",
+        "收定金后：确认初稿日期，例如“这边就是 xx 号给到初稿哦”。"
+      ];
+      const copyScript = `哈喽宝~有没有参考呀？
+
+我先看看哈~
+
+宝我看过了，这种我大概是 ${recommended}/条 的哦。
+
+好滴，素材啥时候来呀？咱们片子预计要剪多长呢？我看看我要剪多久。
+
+okk，那我大概要剪 ${isUrgent ? "1-2 天" : "2-3 天"}，稍等我看看档期哈。
+
+档期这边可以的话，我把报价、注意事项和出片提示发你。
+
+没问题的话，这边是付 50% 定金的。
+
+收到定金后，我这边就排期，预计 xx 号给到初稿哦。`;
+      const dealRules = [
+        "新客户 + 老客户新类型：先看参考，确定能不能接，再问片子多长和类型，最后看档期。",
+        "看了参考但不确定能不能接：先看素材，再决定能不能接和怎么排档期。",
+        "新客户统一收 50% 定金，并备注清楚价格、范围、修改次数、初稿时间。",
+        "以后不接包月；档期多就直接约档，客户素材迟到，交付顺延。",
+        "定稿给成片时告知客户本条价格；新客户先转尾款，再交付无水印成片。",
+        "客户临时新增需求：先确认是否加钱、是否顺延，不要默认免费加。"
+      ];
 
       const html = resultLayout("建议报价区间", priceLabel, [
         resultCard("报价参考", `新人接单建议不要按“几百到上千一分钟”去报。这个工具现在按单条短视频估算：基础 ${basicPrice} 元左右，标准 ${standardPrice} 元左右，复杂但仍建议控制在 ${highPrice} 元以内。当前更适合报：${recommended}。`),
@@ -2705,6 +2963,9 @@ function initQuote() {
         resultCard("修改次数 / 交付时间", [`默认包含 1-2 轮小改`, `建议交付时间：${isUrgent ? "加急 24-48 小时，可加 30-50 元" : "正常 2-3 天"}`, "新增需求单独报价，交期顺延"], true),
         resultCard("需要提前问客户的问题", ["视频大概多长？素材有多少？", "是否只剪 1 条，还是长期合作？", "要不要字幕、花字、封面、BGM？", "有没有参考视频？", "能接受几天交付、几轮修改？"], true),
         resultCard("可复制给客户的话术", `我看了一下，这条属于${valueLabel}类短视频。\n\n如果是基础剪辑+字幕，单条大概 ${basicPrice} 元起；如果需要节奏优化、少量花字和BGM，建议按 ${recommended} 来做。\n\n这个价格包含：${dStandard.join("、")}。\n不包含临时新增需求和大改重剪。你先确认素材量、交付时间和修改轮次，我再给你定最终价。`, true),
+        resultCard("接单顺序", orderFlow, true),
+        resultCard("可复制给客户的流程话术", copyScript, true),
+        resultCard("定金 / 档期 / 交付规则", dealRules, true),
         resultCard("100 / 150 / 200 / 250 四档报价模板", ["100 元：基础剪辑 + 基础字幕，适合练手和简单口播", "150 元：剪辑 + 字幕 + 少量花字，适合大多数新人单", "200 元：节奏优化 + 花字 + BGM/简单音效，适合想要质感的客户", "250 元：含封面或更精细包装，适合素材清楚、要求明确的单条项目"], true),
         resultCard("使用提醒", "先按 100-250 元区间练成交和交付，不要一上来报太高。后面有稳定作品集、客户案例和复购，再逐步涨价。"),
         resultCard("下一步建议", ["把报价话术发给客户前，先补上具体交付清单", "客户压价时，优先减少范围，不要交付不变直接降价", "成交后把价格、范围、修改次数写进聊天记录"], true)
@@ -2894,16 +3155,16 @@ function initFontguide() {
   el("#view-fontguide").innerHTML = `
     <div class="tool-layout vision-tool-layout">
       <form class="form-panel surface" id="fontVisionForm">
-        <div class="panel-title"><h3>上传截图识别字体风格</h3><span>相似字体方向</span></div>
+        <div class="panel-title"><h3>上传截图识别具体字体</h3><span>字体库匹配</span></div>
         <div class="upload-zone" data-upload="vision-font">
           <input type="file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp">
-          <div class="upload-copy"><div class="upload-symbol">＋</div><strong>上传参考截图</strong><p>支持 JPG / PNG / WEBP。尽量裁剪到文字区域、保留完整字形；系统会给出剪映里更容易搜到的关键词，不会让你拿外部字体名硬搜。</p></div>
+          <div class="upload-copy"><div class="upload-symbol">＋</div><strong>上传参考截图</strong><p>支持 JPG / PNG / WEBP。尽量裁剪到文字区域、保留完整字形；系统会优先匹配自建剪映/Capcut字体库。</p></div>
           <img class="preview-image" alt="字体截图预览">
         </div>
         <div class="vision-status" data-state="idle">等待上传截图。</div>
-        <div class="form-actions"><span class="form-tip">这里只保留截图识别入口；结果用于找相似风格和搭配方向，不等于精确字体鉴定。</span><button class="primary-button" type="submit">识别字体风格</button></div>
+        <div class="form-actions"><span class="form-tip">先给最可能的具体字体名，再给类似字体和替代方向。</span><button class="primary-button" type="submit">识别字体</button></div>
       </form>
-      ${resultShell("fontVisionResult", "识别字体风格")}
+      ${resultShell("fontVisionResult", "识别字体")}
     </div>`;
 
   el("#fontVisionForm").addEventListener("submit", event => {
@@ -3222,13 +3483,12 @@ initUploadZones();
 
 <!-- Link Analyzer + PWA (non-module: uses DOM events) -->
 <script>
-  // API: on Vercel use relative path; on GitHub Pages use full Vercel URL
-  const API_BASE = window.location.hostname.includes('github.io')
-    ? 'https://editing-toolbox-6i5o-ezedblyvp-ruim2065-collabs-projects.vercel.app'
-    : '/api';
+  // Static GitHub Pages mode avoids backend calls so students do not need a VPN.
+  const API_BASE = window.location.hostname.includes('github.io') ? '' : '/api';
   window._API_BASE = API_BASE;
 
   async function analyzeLink(url) {
+    if (!API_BASE) return null;
     try {
       var controller = new AbortController();
       var id = setTimeout(function() { controller.abort(); }, 8000);

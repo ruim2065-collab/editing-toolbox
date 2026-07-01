@@ -8,18 +8,12 @@ import { el, all, showToast, formatBytes, initTheme, toggleTheme, getHistory, cl
 // ---- Tool Registry ----
 export const tools = [
   { id: "home", name: "首页", short: "首", title: "首页", desc: "查看工具概览与使用入口", subtitle: "剪辑课学员专属增值工具箱 · 支持 AI 智能生成与离线使用", tags: ["概览","入口"] },
-  { id: "quote", name: "接单工具", short: "价", title: "接单报价助手", desc: "快速生成报价参考、交付清单和确认问题", subtitle: "根据客户类型、视频需求和交付条件生成报价参考", tags: ["报价","接单","客户"] },
+  { id: "quote", name: "报价接单", short: "价", title: "报价接单流程助手", desc: "生成报价参考、接单话术、定金和交付流程", subtitle: "先看参考和素材，再确认报价、档期、定金和初稿时间", tags: ["报价","接单","客户"] },
   { id: "talk", name: "沟通话术", short: "聊", title: "客户沟通话术助手", desc: "面对压价、催稿和加需求时更从容", subtitle: "把客户原话整理成温和、专业与强边界三种回复", tags: ["沟通","客户","话术"] },
-  { id: "revision", name: "修改整理", short: "改", title: "修改意见整理助手", desc: "把零散反馈变成可执行修改清单", subtitle: "整理时间点、修改类型、优先级与二次确认事项", tags: ["修改","整理"] },
-  { id: "portfolio", name: "作品集工具", short: "集", title: "作品集包装助手", desc: "把剪过的视频包装成能接单的案例", subtitle: "生成作品集标题、案例介绍与多平台发布文案", tags: ["作品集","包装","展示"] },
-  { id: "material", name: "素材工具", short: "材", title: "素材辅助工具", desc: "字体参考与图片视频混合制作方案", subtitle: "识别风格、整理素材，并生成作品集制作方案", tags: ["素材","字体","混合"] },
   { id: "benchmark", name: "对标拆解", short: "拆", title: "对标链接拆解助手", desc: "拆解爆款视频结构与可迁移方法", subtitle: "只做内容拆解，不下载、不爬取、不违规解析", tags: ["对标","拆解","学习"] },
-  { id: "subtitle", name: "字幕优化", short: "字", title: "字幕文案优化助手", desc: "让普通口播更适合短视频观看", subtitle: "优化字幕表达、断句、封面大字与强调关键词", tags: ["字幕","文案","口播"] },
-  { id: "fontguide", name: "字体速查", short: "体", title: "剪映字体速查助手", desc: "根据视频风格推荐剪映内置字体搭配", subtitle: "查找适合你视频风格的剪映字体、字号与排版方案", tags: ["字体","剪映","排版"] },
+  { id: "fontguide", name: "字体速查", short: "体", title: "剪映字体速查助手", desc: "上传截图识别相似字体方向", subtitle: "识别字体类型、字重、字形特征和搭配建议", tags: ["字体","剪映","排版"] },
   { id: "music", name: "BGM搜歌", short: "曲", title: "BGM搜歌助手", desc: "根据视频情绪和节奏推荐背景音乐", subtitle: "按风格/情绪/节奏搜歌，推荐剪映曲库和免版权音乐来源", tags: ["音乐","BGM","情绪"] },
-  { id: "sfx", name: "音效特效", short: "听", title: "剪映音效特效速查", desc: "快速找到适合的音效和转场特效", subtitle: "按场景查找剪映音效库和特效，含节奏卡点音效指南", tags: ["音效","特效","剪映"] },
-  { id: "organize", name: "素材整理", short: "夹", title: "素材库整理助手", desc: "自动生成项目文件夹结构和命名规范", subtitle: "告别乱糟糟的素材库，一键生成分类清晰的文件夹方案", tags: ["整理","素材库","文件夹"] },
-  { id: "contract", name: "合同模板", short: "约", title: "接单合同模板生成器", desc: "生成剪辑接单确认书与简易合同", subtitle: "保护双方权益，交付内容、修改次数、付款方式一目了然", tags: ["合同","法律","确认"] }
+  { id: "sfx", name: "音效特效", short: "听", title: "剪映音效特效速查", desc: "快速找到适合的音效和转场特效", subtitle: "按场景查找剪映音效库和特效，含节奏卡点音效指南", tags: ["音效","特效","剪映"] }
 ];
 
 // ---- Update Stats ----

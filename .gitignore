@@ -1,7 +1,10 @@
 .DS_Store
 Thumbs.db
 *.log
+node_modules/
+*.traineddata
 _check*.js
+tmp/
 
 .vercel
 .env*

@@ -6,7 +6,8 @@
     },
     "api/vision.js": {
       "memory": 1024,
-      "maxDuration": 60
+      "maxDuration": 60,
+      "includeFiles": "api/data/font-screenshot-index.json"
     },
     "api/auth.js": {
       "memory": 512,
